@@ -1,10 +1,14 @@
 define([
-	'./mapview'
+	'./mapview',
+	'./wms_layer',
+	'./layer_collection'
 ], 
-function(MapViewModel){
+function(MapViewModel, WMSLayerModel, LayerCollection){
 
 	var models = {
-		MapViewModel: MapViewModel
+		MapViewModel: MapViewModel,
+		WMSLayerModel: WMSLayerModel,
+		LayerCollection: LayerCollection,
 	};
 
 	return models;

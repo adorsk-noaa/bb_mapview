@@ -3,18 +3,20 @@ define([
 ], 
 function(Backbone){
 
-var MapViewModel = Backbone.Model.extend({
+var LayerModel = Backbone.Model.extend({
 
 	defaults: {
-		layers: {}
+		name: '',
+		type: ''
 	},
 
 	initialize: function(){
 	}
+	
 
 });
 
-return MapViewModel;
+return LayerModel;
 
 });
 
