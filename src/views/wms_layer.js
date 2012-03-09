@@ -10,6 +10,8 @@ function($, Backbone, _, ol){
 
 		initialize: function(){
 			this.setup();
+
+			this.model.on('change:params', this.updateParams, this);
 		},
 
 		setup: function(){
