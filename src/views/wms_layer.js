@@ -21,7 +21,7 @@ function($, Backbone, _, ol){
 				this.model.get('service_url'),
 				this.model.get('params'),
 				{
-					singleTile: true
+					singleTile: true,
 				}
 			);
 		},

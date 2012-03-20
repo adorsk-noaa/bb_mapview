@@ -23,10 +23,19 @@ function($, Backbone, _, ol, template, WMSLayerView){
 				div: $('.map', this.el).get(0)
 			});
 
+			is_first_layer = true;
 			this.model.get('layers').each(function(layer){
 				layer_view = this.getLayerView(layer);
 				this.layer_views[layer.get('name')] = layer_view;
 				this.map.addLayer(layer_view.layer);
+
+				if (is_first_layer){
+					layer_view.layer.isBaseLayer = true;
+				}
+				else{
+					layer_view.layer.isBaseLayer = false;
+				}
+				is_first_layer = false;
 			}, this);
 
 			this.map.zoomToExtent(new OpenLayers.Bounds(-80, 40, -65, 45));
