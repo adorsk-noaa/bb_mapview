@@ -6,7 +6,8 @@ function(Backbone){
 var MapViewModel = Backbone.Model.extend({
 
 	defaults: {
-		layers: {}
+		layers: {},
+		options: {}
 	},
 
 	initialize: function(){

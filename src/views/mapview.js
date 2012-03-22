@@ -19,33 +19,23 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			rendered_html = _.template(template);
 			$(this.el).html(rendered_html);
 
-			this.map = new OpenLayers.Map({
-				div: $('.map', this.el).get(0)
-			});
+			this.map = new OpenLayers.Map(
+				$('.map', this.el).get(0),
+				this.model.get('options')
+			);
 
-			is_first_layer = true;
-			this.model.get('layers').each(function(layer){
-				layer_view = this.getLayerView(layer);
-				this.layer_views[layer.get('name')] = layer_view;
-				this.map.addLayer(layer_view.layer);
+			scaleline = new OpenLayers.Control.ScaleLine();
+			this.map.addControl(scaleline);
 
-				if (is_first_layer){
-					layer_view.layer.isBaseLayer = true;
-				}
-				else{
-					layer_view.layer.isBaseLayer = false;
-				}
-				is_first_layer = false;
-			}, this);
-
-			this.map.zoomToExtent(new OpenLayers.Bounds(-80, 40, -65, 45));
+			scale= new OpenLayers.Control.Scale();
+			this.map.addControl(scale);
 		},
 
-		getLayerView: function(layer){
-			if (layer.get('type') == 'WMS'){
-				return new WMSLayerView({model: layer});
-			}
+		addLayerView: function(layer_view){
+			this.layer_views[layer_view.model.id] = layer_view;
+			this.map.addLayer(layer_view.layer);
 		}
+
 	});
 
 	return MapViewView

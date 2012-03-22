@@ -3,34 +3,21 @@ define([
 	"use!backbone",
 	"use!underscore",
 	"use!openlayers",
+	"./layer",
 		],
-function($, Backbone, _, ol){
+function($, Backbone, _, ol, LayerView){
 
-	var WMSLayerView = Backbone.View.extend({
-
-		initialize: function(){
-			this.setup();
-
-			this.model.on('change:params', this.updateParams, this);
-		},
+	var WMSLayerView = LayerView.extend({
 
 		setup: function(){
-
 			this.layer = new OpenLayers.Layer.WMS(
 				this.model.get('name'),
 				this.model.get('service_url'),
 				this.model.get('params'),
-				{
-					singleTile: true,
-				}
+				this.model.get('options')
 			);
 		},
 
-		// Update layer parameters.
-		updateParams: function(){
-			this.layer.mergeNewParams(this.model.get('params'));	
-	    }
-				
 	});
 
 	return WMSLayerView;

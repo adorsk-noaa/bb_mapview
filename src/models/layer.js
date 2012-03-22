@@ -6,8 +6,8 @@ function(Backbone){
 var LayerModel = Backbone.Model.extend({
 
 	defaults: {
+		type: '',
 		name: '',
-		type: ''
 	},
 
 	initialize: function(){
