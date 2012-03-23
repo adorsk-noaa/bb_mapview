@@ -26,7 +26,7 @@ function($, Backbone, _, ol, LayerView){
 	
 
 			$(this.layer.div).animate({
-				opacity: 0
+				opacity: .5
 			},500, function(){
 
 				load_end_func = function(){
