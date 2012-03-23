@@ -13,6 +13,8 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		initialize: function(){
 			this.layer_views = {};
 			this.render();
+			this._rendering_counter = 0;
+			this._loading_placeholder = $('<div></div>').addClass("loading-placeholder");
 		},
 
 		render: function(){
@@ -34,7 +36,36 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		addLayerView: function(layer_view){
 			this.layer_views[layer_view.model.id] = layer_view;
 			this.map.addLayer(layer_view.layer);
+			layer_view.on('render:start', this.onRenderStart, this);
+			layer_view.on('render:end', this.onRenderEnd, this);
+		},
+
+		onRenderStart: function(){
+			if (this._rendering_counter == 0){
+				this.showLoadingPlaceholder();
+			}
+			this._rendering_counter += 1;
+		},
+
+		onRenderEnd: function(){
+			this._rendering_counter -= 1;
+			if (this._rendering_counter == 0){
+				this.hideLoadingPlaceholder();
+			}
+		},
+
+		showLoadingPlaceholder: function(){
+			$('.olMapViewport', $(this.el)).append(this._loading_placeholder);
+			this._loading_placeholder.animate({opacity: 1}, 500);
+		},
+
+		hideLoadingPlaceholder: function(){
+			_this = this;
+			this._loading_placeholder.animate({opacity: 0}, 750, function(){
+				_this._loading_placeholder.remove();
+			});
 		}
+		
 
 	});
 
