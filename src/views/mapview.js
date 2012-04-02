@@ -11,10 +11,16 @@ function($, Backbone, _, ol, template, WMSLayerView){
 	var MapViewView = Backbone.View.extend({
 
 		initialize: function(){
+			$(this.el).addClass('mapview');
 			this.layer_views = {};
 			this.render();
 			this._rendering_counter = 0;
 			this._loading_placeholder = $('<div></div>').addClass("loading-placeholder");
+			var _this = this;
+			$(this.el).on('viewResize', function(){
+				console.log(_this.map.div);
+				console.log(_this.map.getSize());
+			});
 		},
 
 		render: function(){
