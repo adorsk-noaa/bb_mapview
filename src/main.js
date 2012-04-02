@@ -1,12 +1,11 @@
 define([
-	"./mapview",
+	"./models/main",
+	"./views/main",
 ],
-function(MapViewModel){
-
-	models = {
-		MapViewModel: MapViewModel
-	};
-
-	return models;
+function(models, views){
+	return {
+		models: models,
+		views: views
+	}
 });
 
