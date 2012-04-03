@@ -36,6 +36,11 @@ function($, Backbone, _, ol, template, WMSLayerView){
 				this.model.get('options')
 			);
 
+			// Disable mouse wheel zoom.
+			var nav_control = this.map.getControlsByClass('OpenLayers.Control.Navigation')[0];
+			nav_control.disableZoomWheel();
+
+
 			scaleline = new OpenLayers.Control.ScaleLine({
 				div: $('.map-controls .scale.control', this.el)[0]
 			});
