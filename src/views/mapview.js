@@ -36,12 +36,12 @@ function($, Backbone, _, ol, template, WMSLayerView){
 				this.model.get('options')
 			);
 
-			scaleline = new OpenLayers.Control.ScaleLine();
+			scaleline = new OpenLayers.Control.ScaleLine({
+				div: $('.map-controls .scale.control', this.el)[0]
+			});
 			this.map.addControl(scaleline);
-
-			scale= new OpenLayers.Control.Scale();
-			this.map.addControl(scale);
 		},
+
 
 		addLayerView: function(layer_view){
 			this.layer_views[layer_view.model.id] = layer_view;
@@ -81,9 +81,8 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		},
 
 		onReady: function(){
-			this.map.zoomToMaxExtent();
-		}
-		
+			this.map.zoomTo(1);
+		},
 
 	});
 
