@@ -10,17 +10,21 @@ function($, Backbone, _, ol, template, WMSLayerView){
 
 	var MapViewView = Backbone.View.extend({
 
-		initialize: function(){
+		initialize: function(options){
 			$(this.el).addClass('mapview');
 			this.layer_views = {};
 			this.render();
 			this._rendering_counter = 0;
 			this._loading_placeholder = $('<div></div>').addClass("loading-placeholder");
 			var _this = this;
-			$(this.el).on('viewResize', function(){
-				console.log(_this.map.div);
-				console.log(_this.map.getSize());
-			});
+
+			this.on('resizeView', this.resize, this);
+			this.on('ready', this.onReady, this);
+
+			if (options.ready){
+				this.trigger('ready');
+			}
+
 		},
 
 		render: function(){
@@ -70,6 +74,14 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			this._loading_placeholder.animate({opacity: 0}, 750, function(){
 				_this._loading_placeholder.remove();
 			});
+		},
+
+		resize: function(){
+			this.map.updateSize();
+		},
+
+		onReady: function(){
+			this.map.zoomToMaxExtent();
 		}
 		
 
