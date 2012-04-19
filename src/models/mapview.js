@@ -7,7 +7,8 @@ var MapViewModel = Backbone.Model.extend({
 
 	defaults: {
 		layers: {},
-		options: {}
+		options: {},
+		graticule_intervals: [60, 1]
 	},
 
 	initialize: function(){

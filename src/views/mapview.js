@@ -86,7 +86,15 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		},
 
 		onReady: function(){
-			this.map.zoomTo(1);
+			// Add graticule.
+			var graticule = new OpenLayers.Control.Graticule({
+				intervals: this.model.get('graticule_intervals'),
+				numPoints: 2, 
+				labelled: true,
+				labelFormat: 'dd'
+			});
+			this.map.addControl(graticule);
+			console.log(graticule);
 		},
 
 	});
