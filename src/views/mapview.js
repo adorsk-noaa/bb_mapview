@@ -32,7 +32,7 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			$(this.el).html(rendered_html);
 
 			this.map = new OpenLayers.Map(
-				$('.map', this.el).get(0),
+				//$('.map', this.el).get(0),
 				this.model.get('options')
 			);
 
@@ -40,11 +40,11 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			var nav_control = this.map.getControlsByClass('OpenLayers.Control.Navigation')[0];
 			nav_control.disableZoomWheel();
 
-
 			scaleline = new OpenLayers.Control.ScaleLine({
 				div: $('.map-controls .scale.control', this.el)[0]
 			});
 			this.map.addControl(scaleline);
+
 		},
 
 
@@ -53,11 +53,21 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			this.map.addLayer(layer_view.layer);
 			layer_view.on('render:start', this.onRenderStart, this);
 			layer_view.on('render:end', this.onRenderEnd, this);
+			layer_view.on('load:start', this.onLoadStart, this);
+			layer_view.on('load:end', this.onLoadEnd, this);
+		},
+
+		onLoadStart: function(){
+			this.onRenderStart();
+		},
+		onLoadEnd: function(){
+			this.onRenderEnd();
 		},
 
 		onRenderStart: function(){
 			if (this._rendering_counter == 0){
-				this.showLoadingPlaceholder();
+				var _this = this;
+				this.loading_placeholder_timeout = setTimeout(function(){_this.showLoadingPlaceholder()}, 600);
 			}
 			this._rendering_counter += 1;
 		},
@@ -65,12 +75,17 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		onRenderEnd: function(){
 			this._rendering_counter -= 1;
 			if (this._rendering_counter == 0){
+				clearTimeout(this.loading_placeholder_timeout);
 				this.hideLoadingPlaceholder();
 			}
 		},
 
 		showLoadingPlaceholder: function(){
-			$('.olMapViewport', $(this.el)).append(this._loading_placeholder);
+			viewport_el = $('.olMapViewport', this.el);
+			viewport_el.append(this._loading_placeholder);
+			$(this._loading_placeholder).css('left', viewport_el.width()/2 - this._loading_placeholder.width()/2);
+			$(this._loading_placeholder).css('top', viewport_el.height()/2 - this._loading_placeholder.height()/2);
+
 			this._loading_placeholder.animate({opacity: 1}, 500);
 		},
 
@@ -86,6 +101,8 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		},
 
 		onReady: function(){
+			this.map.render($('.map', this.el).get(0));
+
 			// Add graticule.
 			var graticule = new OpenLayers.Control.Graticule({
 				intervals: this.model.get('graticule_intervals'),
@@ -94,7 +111,6 @@ function($, Backbone, _, ol, template, WMSLayerView){
 				labelFormat: 'dd'
 			});
 			this.map.addControl(graticule);
-			console.log(graticule);
 		},
 
 	});
