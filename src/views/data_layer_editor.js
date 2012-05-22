@@ -28,9 +28,14 @@ function($, Backbone, _, _s, ui, DataLayerFormView, template){
 		render: function(){
 			this.clearLayerDefinitions();
 			$(this.el).html(_.template(template));
+
 			_.each(this.model.get('layer_definitions'), function(layer_definition){
 				this.addLayerDefinition(layer_definition);
 			}, this);
+
+			if (this.model.get('layer_definitions').length > 0){
+				this.setSelectedLayer(this.model.get('layer_definitions')[0]['layer_id']);
+			}
 		},
 
 		addLayerDefinition: function(definition){
@@ -92,6 +97,7 @@ function($, Backbone, _, _s, ui, DataLayerFormView, template){
 
 		setSelectedLayer: function(layer_id){
 			$('.layer-select', this.el).val(layer_id).change();
+			this.onLayerSelectChange();
 		}
 
 	});

@@ -1,0 +1,12 @@
+<form class="config-form">
+	<table>
+		<tr class="min">
+			<td>Min: </td>
+			<td><input data-minmax="min" type="text" value="<% print((model.get('min') != null) ? model.get('min') : ''); %>"></td>
+		</tr>
+		<tr class="max">
+			<td>Max: </td>
+			<td><input data-minmax="max" type="text" value="<% print((model.get('max') != null) ? model.get('max') : ''); %>"></td>
+		</tr>
+	</table>
+</form>
