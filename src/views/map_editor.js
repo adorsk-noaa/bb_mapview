@@ -4,9 +4,10 @@ define([
 	"use!underscore",
 	"_s",
 	"use!ui",
+	"./data_layer_editor",
 	"text!./templates/map_editor.html"
 		],
-function($, Backbone, _, _s, ui, template){
+function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 
 	var MapEditorView = Backbone.View.extend({
 
@@ -21,6 +22,24 @@ function($, Backbone, _, _s, ui, template){
 
 		initialRender: function(){
 			$(this.el).html(_.template(template));
+
+			// Create Data Layer Editor.
+			this.setupDataLayerEditor();
+		},
+
+		setupDataLayerEditor: function(){
+			var data_layer_editor_m = new Backbone.Model({
+				layer_definitions: this.model.get('data_layer_definitions')
+			});
+			var data_layer_editor_v = new DataLayerEditorView({
+				el: $('.data-layer-editor', this.el),
+				model: data_layer_editor_m
+			});
+
+			data_layer_editor_m.on('change:selected_data_layer', this.onSelectedDataLayerChange, this);
+		},
+
+		onSelectedDataLayerChange: function(){
 		},
 
 		render: function(){
