@@ -30,6 +30,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 		},
 
 		setupMap: function(){
+			$('.map-container', this.el).append(this.model.get('map').el);
 		},
 
 		setupDataLayerEditor: function(){

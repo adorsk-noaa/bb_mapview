@@ -12,6 +12,8 @@ function($, Backbone, _, ol, template, WMSLayerView){
 
 		initialize: function(options){
 			$(this.el).addClass('mapview');
+
+			this.layerRegistry = {};
 			this.layer_views = {};
 			this.render();
 			this._rendering_counter = 0;
@@ -118,12 +120,40 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			this.map.addControl(graticule);
 		},
 
-		onAddLayer: function(){
-			console.log('addlayer');
+		getLayerView: function(){
+			var TempLayerView = Backbone.View.extend({
+				initialize: function(){
+					this.layer = {};
+				}
+			});
+			var layer_view = new TempLayerView();
+
+			return layer_view;
 		},
 
-		onRemoveLayer: function(){
-			console.log('removelayer');
+		onAddLayer: function(model, layers, options){
+			var layer_view = this.getLayerView(model);
+
+			//this.map.addLayer(layer_view.layer);
+
+			layer_view.on('render:start', this.onRenderStart, this);
+			layer_view.on('render:end', this.onRenderEnd, this);
+			layer_view.on('load:start', this.onLoadStart, this);
+			layer_view.on('load:end', this.onLoadEnd, this);
+
+
+			this.layerRegistry[model.get('layer_id')] = {
+				model: model,
+				view: layer_view,
+			};
+			
+		},
+
+		onRemoveLayer: function(model, layers, options){
+			var layer = this.layerRegistry[model.get('layer_id')];
+			// this.map.removeLayer(layer.view.layer);
+			layer.view.remove();
+			delete this.layerRegistry[model.get('layer_id')];
 		}
 
 	});
