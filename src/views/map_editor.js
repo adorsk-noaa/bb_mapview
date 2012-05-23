@@ -16,7 +16,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 		},
 
 		initialize: function(options){
-			this.layers = this.model.get('map').get('layers');
+			this.layers = this.model.get('map').model.get('layers');
 			$(this.el).addClass('map-editor');
 			this.initialRender();
 		},
@@ -24,8 +24,12 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 		initialRender: function(){
 			$(this.el).html(_.template(template));
 
-			// Create Data Layer Editor.
+			this.setupMap();
+
 			this.setupDataLayerEditor();
+		},
+
+		setupMap: function(){
 		},
 
 		setupDataLayerEditor: function(){

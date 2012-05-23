@@ -16,10 +16,15 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			this.render();
 			this._rendering_counter = 0;
 			this._loading_placeholder = $('<div></div>').addClass("loading-placeholder");
-			var _this = this;
+
+			this.layers = this.model.get('layers');
+
+			this.layers.on('add', this.onAddLayer, this);
+			this.layers.on('remove', this.onRemoveLayer, this);
 
 			this.on('resizeView', this.resize, this);
 			this.on('ready', this.onReady, this);
+
 
 			if (options.ready){
 				this.trigger('ready');
@@ -112,6 +117,14 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			});
 			this.map.addControl(graticule);
 		},
+
+		onAddLayer: function(){
+			console.log('addlayer');
+		},
+
+		onRemoveLayer: function(){
+			console.log('removelayer');
+		}
 
 	});
 
