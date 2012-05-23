@@ -49,6 +49,21 @@
 		width: @tw;
 		height: @th;
 
+		.map-row{
+
+			.map-cell{
+				position: relative;
+
+				.map-container{
+					position: absolute;
+					top: 0;
+					bottom: 0;
+					left: 0;
+					right: 0;
+				}
+			}
+		}
+
 		.layer-editor-row{
 			border: thin solid blue;
 			height: @tab_h;			
