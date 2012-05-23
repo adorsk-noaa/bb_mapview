@@ -22,7 +22,7 @@ function($, Backbone, _, ol, LayerView){
 			this.layer.events.register("loadend", this, this.onLoadEnd);
 
 			this.model.on('change:service_url', this.onServiceURLChange, this);
-
+			this.model.on('change:params', this.updateParams, this);
 		},
 
 		onLoadStart: function(){
