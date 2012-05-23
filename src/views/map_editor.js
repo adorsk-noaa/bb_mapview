@@ -16,6 +16,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 		},
 
 		initialize: function(options){
+			this.layers = this.model.get('map').get('layers');
 			$(this.el).addClass('map-editor');
 			this.initialRender();
 		},
@@ -28,18 +29,27 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 		},
 
 		setupDataLayerEditor: function(){
-			var data_layer_editor_m = new Backbone.Model({
+			data_layer_editor_m = new Backbone.Model({
 				layer_definitions: this.model.get('data_layer_definitions')
 			});
-			var data_layer_editor_v = new DataLayerEditorView({
+
+			data_layer_editor_m.on('change:selected_layer', this.onSelectedDataLayerChange, this);
+
+			this.data_layer_editor = new DataLayerEditorView({
 				el: $('.data-layer-editor', this.el),
 				model: data_layer_editor_m
 			});
 
-			data_layer_editor_m.on('change:selected_data_layer', this.onSelectedDataLayerChange, this);
+			this.data_layer_editor.postInitialize();
+
 		},
 
 		onSelectedDataLayerChange: function(){
+			if (this.selected_data_layer){
+				this.removeDataLayer(this.selected_data_layer);
+			}
+			this.selected_data_layer = this.data_layer_editor.model.get('selected_layer');
+			this.addDataLayer(this.selected_data_layer);
 		},
 
 		render: function(){
@@ -101,6 +111,23 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 						}
 					}
 			);
+		},
+
+		addDataLayer: function(layer){
+			// Get index of last base layer.
+			var last_base_idx = 0;
+			_.each(this.layers, function(l, idx){
+				if (l.get('layer_type') == 'base'){
+					last_base_idx = idx;
+				}
+			}, this);
+
+			// Add data layer after the base layer.
+			this.layers.add(layer, {at: last_base_idx + 1});
+		},
+
+		removeDataLayer: function(layer){
+			this.layers.remove([layer]);
 		}
 	});
 

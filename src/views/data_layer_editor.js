@@ -33,6 +33,9 @@ function($, Backbone, _, _s, ui, DataLayerFormView, template){
 				this.addLayerDefinition(layer_definition);
 			}, this);
 
+		},
+
+		postInitialize: function(){
 			if (this.model.get('layer_definitions').length > 0){
 				this.setSelectedLayer(this.model.get('layer_definitions')[0]['layer_id']);
 			}
