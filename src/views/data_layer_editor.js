@@ -26,80 +26,73 @@ function($, Backbone, _, _s, ui, DataLayerFormView, template){
 		},
 
 		render: function(){
-			this.clearLayerDefinitions();
+			this.clearLayers();
 			$(this.el).html(_.template(template));
 
-			_.each(this.model.get('layer_definitions'), function(layer_definition){
-				this.addLayerDefinition(layer_definition);
+			_.each(this.model.get('layers').models, function(layer){
+				this.addLayer(layer);
 			}, this);
 
 		},
 
 		postInitialize: function(){
-			if (this.model.get('layer_definitions').length > 0){
-				this.setSelectedLayer(this.model.get('layer_definitions')[0]['layer_id']);
+			if (this.model.get('layers').length > 0){
+				this.setSelectedLayer(this.model.get('layers').at(0));
 			}
 		},
 
-		addLayerDefinition: function(definition){
-			if (! this.layerRegistry.hasOwnProperty(definition['layer_id'])){
+		addLayer: function(layer){
+			if (! this.layerRegistry.hasOwnProperty(layer.cid)){
 
-				var option = $(_s.sprintf('<option value="%s">%s</option>', definition['layer_id'], definition['label']));
+				var option = $(_s.sprintf('<option value="%s">%s</option>', layer.cid, layer.get('name')));
 				$('.layer-select', this.el).append(option);
 
-				var model = new Backbone.Model(definition);
-				var view = this.getLayerView(model);
+				var view = this.getLayerFormView(layer);
 				$('.layer-options', this.el).append(view.el);
 
-				this.layerRegistry[definition['layer_id']] = {
-					'layer_id': definition['layer_id'],
+				this.layerRegistry[layer.cid] = {
 					'option': option,
-					'model': model,
+					'model': layer,
 					'view': view
 				};
 			}
 		},
 
-		removeLayerDefinition: function(definition){
-			if (this.layerRegistry.hasOwnProperty(definition['layer_id'])){
-				layer = this.layerRegistry[definition['layer_id']];
-				layer.option.remove();
-				layer.view.remove();
-				layer.model = null;
-				delete this.layerRegistry[definition['layer_id']];
-				layer = null;
+		removeLayer: function(layer){
+			if (this.layerRegistry.hasOwnProperty(layer.cid)){
+				layer_record = this.layerRegistry[layer.cid];
+				layer_record.option.remove();
+				layer_record.view.remove();
+				delete this.layerRegistry[layer.cid];
 			}
 		},
 
-		clearLayerDefinitions: function(){
-			_.each(this.layerRegistry, function(layer){
-				this.removeLayerDefinition({layer_id: layer.get('layer_id')});
+		clearLayers: function(){
+			_.each(this.layerRegistry, function(layer_record){
+				this.removeLayer(layer_record.model)
 			}, this);
 		},
 
-		getLayerView: function(model){
-			var layer_type = model.get('layer_type');
+		getLayerFormView: function(layer){
 
-			var viewClass = DataLayerFormView;
-
-			return new viewClass({
-				model: model
+			return new DataLayerFormView({
+				model: layer
 			});
 		},
 
 		onLayerSelectChange: function(e){
 			if (this.model.get('selected_layer')){
-				var previously_selected_id = this.model.get('selected_layer').get('layer_id');
-				$(this.layerRegistry[previously_selected_id].view.el).removeClass('selected');
+				var previously_selected_cid = this.model.get('selected_layer').cid;
+				$(this.layerRegistry[previously_selected_cid].view.el).removeClass('selected');
 			}
-			var selected_id = $('.layer-select option:selected', this.el).val();
-			var selected_view = this.layerRegistry[selected_id].view;
+			var selected_cid = $('.layer-select option:selected', this.el).val();
+			var selected_view = this.layerRegistry[selected_cid].view;
 			$(selected_view.el).addClass('selected');
-			this.model.set({'selected_layer': this.layerRegistry[selected_id].model});
+			this.model.set({'selected_layer': this.layerRegistry[selected_cid].model});
 		},
 
-		setSelectedLayer: function(layer_id){
-			$('.layer-select', this.el).val(layer_id).change();
+		setSelectedLayer: function(layer){
+			$('.layer-select', this.el).val(layer.cid).change();
 			this.onLayerSelectChange();
 		}
 

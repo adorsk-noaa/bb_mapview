@@ -13,9 +13,6 @@ function($, Backbone, _, ol){
 			this.model.on('change:params', this.updateParams, this);
 		},
 
-		setup: function(){
-		},
-
 		// Update layer parameters.
 		updateParams: function(){
 			this.layer.mergeNewParams(this.model.get('params'));	

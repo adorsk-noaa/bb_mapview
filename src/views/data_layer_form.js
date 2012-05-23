@@ -16,17 +16,22 @@ function($, Backbone, _, ui, _s, template){
 
 		initialize: function(opts){
 			$(this.el).addClass('layer-form data-layer-form');
+
+			this.field = this.model.get('field');
+
 			this.template = template;
 			this.render();
+
 
 			// Set initial properties on inputs.
 			_.each(['min', 'max'], function(minmax){
 				this.setMinMaxText(minmax);
 			},this);
 
+			this.field.on('change:min', function(){this.setMinMaxText('min')}, this);
+			this.field.on('change:max', function(){this.setMinMaxText('max')}, this);
 
-			this.model.on('change:min', function(){this.setMinMaxText('min')}, this);
-			this.model.on('change:max', function(){this.setMinMaxText('max')}, this);
+			this.field.on('change', function(){this.model.trigger('change:field')}, this);
 		},
 
 		render: function(){
@@ -37,12 +42,12 @@ function($, Backbone, _, ui, _s, template){
 			var minmax = $(e.target).data('minmax');
 			var raw_val = this.getMinMaxElements(minmax).$text.val();
 			var val = parseFloat(raw_val);
-			this.model.set(minmax, val);
+			this.field.set(minmax, val);
 		},
 
 		setMinMaxText: function(minmax){
 			var minmax_els = this.getMinMaxElements(minmax);
-			minmax_els.$text.val(this.model.get(minmax));
+			minmax_els.$text.val(this.field.get(minmax));
 		},
 
 		getMinMaxElements: function(minmax){

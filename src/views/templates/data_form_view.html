@@ -1,10 +1,10 @@
 <form class="config-form">
 	<table>
-		<tr class="min">
+		<tr class="min minmax">
 			<td>Min: </td>
 			<td><input data-minmax="min" type="text" value="<% print((model.get('min') != null) ? model.get('min') : ''); %>"></td>
 		</tr>
-		<tr class="max">
+		<tr class="max minmax">
 			<td>Max: </td>
 			<td><input data-minmax="max" type="text" value="<% print((model.get('max') != null) ? model.get('max') : ''); %>"></td>
 		</tr>

@@ -16,9 +16,16 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 		},
 
 		initialize: function(options){
-			this.layers = this.model.get('map').model.get('layers');
+			this.map = this.model.get('map');
+			this.layers = this.map.model.get('layers');
 			$(this.el).addClass('map-editor');
 			this.initialRender();
+
+			this.on('ready', this.onReady, this);
+
+			if (options.ready){
+				this.trigger('ready');
+			}
 		},
 
 		initialRender: function(){
@@ -27,6 +34,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 			this.setupMap();
 
 			this.setupDataLayerEditor();
+
 		},
 
 		setupMap: function(){
@@ -35,7 +43,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 
 		setupDataLayerEditor: function(){
 			data_layer_editor_m = new Backbone.Model({
-				layer_definitions: this.model.get('data_layer_definitions')
+				layers: this.model.get('data_layers')
 			});
 
 			data_layer_editor_m.on('change:selected_layer', this.onSelectedDataLayerChange, this);
@@ -122,7 +130,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 			// Get index of last base layer.
 			var last_base_idx = 0;
 			_.each(this.layers, function(l, idx){
-				if (l.get('layer_type') == 'base'){
+				if (l.get('layer_category') == 'base'){
 					last_base_idx = idx;
 				}
 			}, this);
@@ -133,6 +141,10 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, template){
 
 		removeDataLayer: function(layer){
 			this.layers.remove([layer]);
+		},
+
+		onReady: function(){
+			this.map.trigger('ready');
 		}
 	});
 
