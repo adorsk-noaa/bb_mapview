@@ -15,7 +15,10 @@ function($, Backbone, _, ol, LayerView){
 				this.model.get('name'),
 				this.model.get('service_url'),
 				this.model.get('params'),
-				this.model.get('options')
+				_.extend({}, this.model.get('options'),{
+					visibility: this.model.get('disabled'),
+					opacity: this.model.get('opacity')
+				})
 			);
 
 			this.layer.events.register("loadstart", this, this.onLoadStart);
@@ -23,6 +26,8 @@ function($, Backbone, _, ol, LayerView){
 
 			this.model.on('change:service_url', this.onServiceURLChange, this);
 			this.model.on('change:params', this.updateParams, this);
+			this.model.on('change:disabled', this.onDisabledChange, this);
+			this.model.on('change:opacity', this.onOpacityChange, this);
 		},
 
 		onLoadStart: function(){
@@ -82,7 +87,16 @@ function($, Backbone, _, ol, LayerView){
 			$(this.layer.div).animate({opacity: 1}, 750); 
 			this.layer.events.unregister("loadend", this, this.mergeParamsEnd);
 			this.trigger('load:end');
-		}
+		},
+
+		onDisabledChange: function(){
+			this.layer.setVisibility(this.model.get('disabled'));
+		},
+
+		onOpacityChange: function(){
+			this.layer.setOpacity(this.model.get('opacity'));
+		},
+
 
 	});
 

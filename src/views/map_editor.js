@@ -6,9 +6,10 @@ define([
 	"use!ui",
 	"./data_layer_editor",
 	"./base_layer_editor",
+	"./overlay_layer_editor",
 	"text!./templates/map_editor.html"
 		],
-function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, template){
+function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, OverlayLayerEditorView, template){
 
 	var MapEditorView = Backbone.View.extend({
 
@@ -38,10 +39,29 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, templ
 			
 			this.setupDataLayerEditor();
 
+			this.setupOverlayLayerEditor();
+
 		},
 
 		setupMap: function(){
 			$('.map-container', this.el).append(this.model.get('map').el);
+		},
+
+
+		setupBaseLayerEditor: function(){
+			base_layer_editor_m = new Backbone.Model({
+				layers: this.model.get('base_layers')
+			});
+
+			base_layer_editor_m.on('change:selected_layer', this.onSelectedBaseLayerChange, this);
+
+			this.base_layer_editor = new BaseLayerEditorView({
+				el: $('.base-layer-editor', this.el),
+				model: base_layer_editor_m
+			});
+
+			this.base_layer_editor.postInitialize();
+
 		},
 
 		setupDataLayerEditor: function(){
@@ -60,20 +80,28 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, templ
 
 		},
 
-		setupBaseLayerEditor: function(){
-			base_layer_editor_m = new Backbone.Model({
-				layers: this.model.get('base_layers')
+		setupOverlayLayerEditor: function(){
+			overlay_layer_editor_m = new Backbone.Model({
+				layers: this.model.get('overlay_layers')
 			});
 
-			base_layer_editor_m.on('change:selected_layer', this.onSelectedBaseLayerChange, this);
+			overlay_layer_editor_m.on('change:layers', this.onOverlayLayersChange, this);
 
-			this.base_layer_editor = new BaseLayerEditorView({
-				el: $('.base-layer-editor', this.el),
-				model: base_layer_editor_m
+			this.overlay_layer_editor = new OverlayLayerEditorView({
+				el: $('.overlay-layer-editor', this.el),
+				model: overlay_layer_editor_m
 			});
 
-			this.base_layer_editor.postInitialize();
+			this.overlay_layer_editor.postInitialize();
 
+		},
+
+		onSelectedBaseLayerChange: function(){
+			if (this.selected_base_layer){
+				this.removeLayer(this.selected_base_layer);
+			}
+			this.selected_base_layer = this.base_layer_editor.model.get('selected_layer');
+			this.addBaseLayer(this.selected_base_layer);
 		},
 
 		onSelectedDataLayerChange: function(){
@@ -84,13 +112,10 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, templ
 			this.addDataLayer(this.selected_data_layer);
 		},
 
-		onSelectedBaseLayerChange: function(){
-			if (this.selected_base_layer){
-				this.removeLayer(this.selected_base_layer);
-			}
-			this.selected_base_layer = this.base_layer_editor.model.get('selected_layer');
-			this.addBaseLayer(this.selected_base_layer);
+		onOverlayLayersChange: function(){
+			console.log('overlay layers change');
 		},
+
 
 		render: function(){
 		},
@@ -177,7 +202,6 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, templ
 
 			// Add data layer after the base layer.
 			this.layers.add(layer, {at: last_base_idx + 1});
-			console.log("l, is", this.layers);
 		},
 
 		removeLayer: function(layer){
