@@ -48,8 +48,9 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 		},
 
 		onVisibilityToggleChange: function(){
-			var $visibility_cb =  $('.visibility-toggle-cb', this.el);
-			this.model.set('disabled', $visibility_cb.is(':checked'));
+			var is_disabled =  $('.visibility-toggle-cb', this.el).is(':checked');
+			this.model.set('disabled', is_disabled);
+			$(this.el).toggleClass('disabled');
 		},
 
 		setVisibilityToggle: function(){
