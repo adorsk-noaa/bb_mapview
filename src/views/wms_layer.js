@@ -21,7 +21,6 @@ function($, Backbone, _, ol, LayerView){
 				})
 			);
 			this.layer.setZIndex(this.model.get('index'));
-			console.log('lz is', this.layer.getZIndex());
 
 			this.layer.events.register("loadstart", this, this.onLoadStart);
 			this.layer.events.register("loadend", this, this.onLoadEnd);

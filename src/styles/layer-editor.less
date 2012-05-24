@@ -38,13 +38,16 @@
 	> .container{
 		@body_h: 225px;
 		min-height: @tab_h;
+		/*
 		max-height: @tab_h + @tab_corner_radius + @body_h + 2 * @padding_normal;
 		height: @tab_h;
+		*/
+		height: @tab_h + @tab_corner_radius + @body_h + 2 * @padding_normal;
 		width: 100%;
 		overflow: hidden;
 		position: relative;
 
-		> .tab-container{
+		> .header{
 			.rounded_corners(@tab_corner_radius);
 			position: absolute;
 			left: 0;
@@ -53,19 +56,11 @@
 			bottom: 0;
 			background: @chrome_primary;  
 
-			.tab {
+			.header-table {
 				height: @tab_h;
 				width: 100%;
 
-				@cell_w : 5em;
-
-				.drag-handle-container{
-					width: @cell_w;
-					height: 100%;
-				}
-
 				.title-container{
-					text-align: center;
 					height: 100%;
 
 					.title {
@@ -83,14 +78,15 @@
 				}
 
 				.visibility-toggle-container{
-					width: @cell_w;
+					width: 5em;
 				}
 
 
 			}
 		}
 
-		> .body-container{
+		> .body {
+			display: none;
 			position: absolute;
 			top: @tab_h;
 			left: @tab_bw;
@@ -102,7 +98,7 @@
 			border-style: solid;
 			font-size: 14px;
 
-			> .body{
+			> .layer-form{
 				overflow-y: auto;
 				position: absolute;
 				top: 0;
@@ -111,9 +107,6 @@
 				height: @body_h + 2 * @padding_normal;
 				background: white;
 
-				> .inner{
-					padding: @padding_normal;
-				}
 			}
 		}
 	}
@@ -121,16 +114,11 @@
 
 
 .layer-editor.disabled{
-	> .container{
-		> .tab-container{
-			background: @chrome_secondary;  
-			.tab {
-				.title {
-					color: gray;
-					button {
-						color: gray;
-					}
-				}
+	.header {
+		.title {
+			color: gray;
+			button {
+				color: gray;
 			}
 		}
 	}

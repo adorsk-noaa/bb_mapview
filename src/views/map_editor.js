@@ -7,14 +7,16 @@ define([
 	"./data_layer_editor",
 	"./base_layer_editor",
 	"./overlay_layer_editor",
+	"./layer_editor",
 	"text!./templates/map_editor.html"
 		],
-function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, OverlayLayerEditorView, template){
+function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, OverlayLayerEditorView, LayerEditorView, template){
 
 	var MapEditorView = Backbone.View.extend({
 
 		events: {
-			'click .layers-editor-tab .title': 'toggleLayersEditor',
+			'click .layers-editor-container > .header': 'toggleLayerEditor',
+			'click .layers-editor > .layers-editor-section > .header': 'toggleAccordion'
 		},
 
 		initialize: function(options){
@@ -46,7 +48,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 				this.trigger('ready');
 			}
 
-			this.toggleLayersEditor();
+			//this.toggleLayerEditor({currentTarget: $('.layers-editor-container > .header', this.el)});
 			window.m = this.map;
 		},
 
@@ -70,6 +72,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 		setupBaseLayers: function(){
 
+			/*
 			base_layer_editor_m = new Backbone.Model({
 				layers: this.model.get('base_layers')
 			});
@@ -82,6 +85,14 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 			});
 
 			this.base_layer_editor.postInitialize();
+			*/
+			_.each(this.model.get('base_layers').models, function(layer){
+				var layer_view = new LayerEditorView({
+					model: layer
+				});
+				$('.base-layers', this.el).append(layer_view.el);
+				this.addLayer(layer);
+			}, this);
 
 		},
 
@@ -152,61 +163,28 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		resizeStop: function(){
 		},
 
-		toggleLayersEditor: function(){
-			var $letc = $('.layers-editor-container', this.el);
-			if (! $letc.hasClass('changing')){
-				this.expandContractTabContainer({
-					expand: ! $letc.hasClass('expanded'),
-					tab_container: $letc,
-					dimension: 'height'
-				});
-			}
+		toggleLayerEditor: function(e){
+			this.toggleAccordion(e);
+
+			// Toggle button text.
+			$header = $(e.currentTarget);
+			var $toggle_button = $('button.toggle', $header);
+			var button_text = ($toggle_button.html() == '\u25B2') ? '\u25BC' : '\u25B2';
+			$toggle_button.html(button_text);
 		},
 
-		expandContractTabContainer: function(opts){
-			var _this = this;
-			var expand = opts.expand;
-			var $tc = opts.tab_container;
-			var dim = opts.dimension;
-
-			// Calculate how much to change dimension.
-			var delta = parseInt($tc.css('max' + _s.capitalize(dim)), 10) - parseInt($tc.css('min' + _s.capitalize(dim)), 10);
-			if (! expand){
-				delta = -1 * delta;
+		toggleAccordion: function(e){
+			$header = $(e.currentTarget);
+			$body = $header.next();
+			if ($body.is(':hidden')){
+				$body.slideDown('slow');
 			}
-
-			// Animate field container dimension.
-			$tc.addClass('changing');
-
-			// Toggle button text
-			var button_text = ($('button.toggle', $tc).html() == '\u25B2') ? '\u25BC' : '\u25B2';
-			$('button.toggle', $tc).html(button_text);
-
-			// Execute the animation.
-			var fc_dim_opts = {};
-			fc_dim_opts[dim] = parseInt($tc.css(dim),10) + delta;
-			$tc.animate(
-					fc_dim_opts,
-					{
-						complete: function(){
-							$tc.removeClass('changing');
-
-							if (expand){
-								$tc.addClass('expanded')
-							}
-							else{
-								$tc.removeClass('expanded')
-								_this.resize();
-								_this.resizeStop();
-							}
-						}
-					}
-			);
+			else{
+				$body.slideUp('slow');
+			}
 		},
 
 		addLayer: function(layer){
-			console.log('adding layer', layer.get('name'), layer);
-			console.log('idx is',  this.computeLayerIndex(layer));
 			layer.set('index', this.computeLayerIndex(layer));
 			this.layers.add(layer);
 		},

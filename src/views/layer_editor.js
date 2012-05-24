@@ -12,7 +12,7 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 	var LayerEditorView = Backbone.View.extend({
 
 		events: {
-			'click .tab .title': 'toggleLayerForm',
+			'click .header .title': 'toggleLayerForm',
 			'change .visibility-toggle-cb' : 'onVisibilityToggleChange'
 		},
 
@@ -20,7 +20,6 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 			$(this.el).addClass('layer-editor');
 			this.initialRender();
 
-			console.log(this.model.toJSON());
 			this.setVisibilityToggle();
 		},
 
@@ -55,18 +54,16 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 
 		setVisibilityToggle: function(){
 			var $visibility_cb =  $('.visibility-toggle-cb', this.el);
-			console.log(this.model.get('disabled'));
 			$visibility_cb.attr('checked', ! this.model.get('disabled'));
 		},
 
 		toggleLayerForm: function(){
-			var $lefc = $(this.el).children('.container');
-			if (! $lefc.hasClass('changing')){
-				this.expandContractContainer({
-					expand: ! $lefc.hasClass('expanded'),
-					container: $lefc,
-					dimension: 'height'
-				});
+			$body = $('.body', this.el);
+			if ($body.is(':hidden')){
+				$body.slideDown('slow');
+			}
+			else{
+				$body.slideUp('slow');
 			}
 		},
 

@@ -70,30 +70,22 @@
 
 			.layers-editor-container{
 				@body_h: 225px;
+				padding-bottom: @tab_corner_radius;
 				min-height: @tab_h;
-				max-height: @tab_h + @tab_corner_radius + @body_h + 2 * @padding_normal;
-				height: @tab_h;
+				display: block-inline;
 				width: 100%;
 				overflow: hidden;
 				position: relative;
 
-				.layers-editor-tab{
-					.rounded_corners_bottom(@tab_corner_radius);
-					position: absolute;
-					left: 0;
-					right: 0;
-					top: 0;
-					bottom: 0;
+				.rounded_corners_bottom(@tab_corner_radius);
+				background: @chrome_primary;  
 
-					background: @chrome_primary;  
+				> .header{
+					height: @tab_h;
 
 					> .title-container{
-						position: absolute;
-						top: 0;
-						left: 0;
-						width: 100%;
-						height: @tab_h;
 						text-align: center;
+						height: 100%;
 
 						.title {
 							.button;
@@ -108,37 +100,39 @@
 							}
 						}
 					}
+				}
 
-					> .body-container{
+				> .body{
+					display: none;
+					height: @body_h;
+					overflow: hidden;
+					border-width: 0 0;
+					border-color: @chrome_primary;
+					border-style: solid;
+					font-size: 14px;
+					position: relative;
+
+					> .layers-editor{
+						overflow-y: auto;
 						position: absolute;
-						top: @tab_h;
-						left: @tab_bw;
-						right: @tab_bw;
-						bottom: @tab_corner_radius;
-						overflow: hidden;
-						border-width: 0 0;
-						border-color: @chrome_primary;
-						border-style: solid;
-						font-size: 14px;
+						top: 0;
+						left: 0;
+						right: 0;
+						height: @body_h + 2 * @padding_normal;
+						background: white;
 
-						> .body{
-							overflow-y: auto;
-							position: absolute;
-							top: 0;
-							left: 0;
-							right: 0;
-							height: @body_h + 2 * @padding_normal;
-							background: white;
+						> .layers-editor-section {
 
-							> .inner{
-								padding: @padding_normal;
+							> .body{
+								display: none;
 							}
 						}
+
 					}
 				}
+				
 			}
 
 		}
 	}
-
 }
