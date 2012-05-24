@@ -147,8 +147,6 @@ function($, Backbone, _, ol, template, WMSLayerView){
 				view: layer_view,
 			};
 
-			this.syncLayerOrder();
-			
 		},
 
 		onRemoveLayer: function(model, layers, options){
@@ -156,15 +154,7 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			this.map.removeLayer(layer.view.layer);
 			layer.view.remove();
 			delete this.layerRegistry[model.cid];
-			this.syncLayerOrder();
-		},
-
-		syncLayerOrder: function(){
-			_.each(this.layers.models, function(model, idx){
-				var layer_view = this.layerRegistry[model.cid].view;
-				this.map.setLayerIndex(layer_view.layer, idx);
-			}, this);
-		},
+		}
 
 	});
 

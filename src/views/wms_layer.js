@@ -16,10 +16,12 @@ function($, Backbone, _, ol, LayerView){
 				this.model.get('service_url'),
 				this.model.get('params'),
 				_.extend({}, this.model.get('options'),{
-					visibility: this.model.get('disabled'),
-					opacity: this.model.get('opacity')
+					visibility: ! this.model.get('disabled'),
+					opacity: this.model.get('opacity'),
 				})
 			);
+			this.layer.setZIndex(this.model.get('index'));
+			console.log('lz is', this.layer.getZIndex());
 
 			this.layer.events.register("loadstart", this, this.onLoadStart);
 			this.layer.events.register("loadend", this, this.onLoadEnd);
@@ -28,6 +30,7 @@ function($, Backbone, _, ol, LayerView){
 			this.model.on('change:params', this.updateParams, this);
 			this.model.on('change:disabled', this.onDisabledChange, this);
 			this.model.on('change:opacity', this.onOpacityChange, this);
+			this.model.on('change:index', this.onIndexChange, this);
 		},
 
 		onLoadStart: function(){
@@ -95,6 +98,10 @@ function($, Backbone, _, ol, LayerView){
 
 		onOpacityChange: function(){
 			this.layer.setOpacity(this.model.get('opacity'));
+		},
+
+		onOpacityChange: function(){
+			this.layer.setZIndex(this.model.get('index'));
 		},
 
 

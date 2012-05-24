@@ -15,8 +15,11 @@ function($, Backbone, _, _s, ui, template){
 
 		initialize: function(){
 
+			this.layers = this.model.get('layers');
+			this.layers.on('change', function(){this.model.trigger('change:layers')}, this);
+
 			// Keep layers sorted by category index.
-			this.model.get('layers').comparator = function(layer){
+			this.layers.comparator = function(layer){
 				return layer.get('category_index');
 			};
 
@@ -44,7 +47,7 @@ function($, Backbone, _, _s, ui, template){
 				}
 			});
 	
-			_.each(this.model.get('layers').models, function(layer){
+			_.each(this.layers.models, function(layer){
 				this.addLayer(layer);
 			}, this);
 
@@ -58,8 +61,7 @@ function($, Backbone, _, _s, ui, template){
 			_.each(ordered_cids, function(cid, idx){
 				this.layerRegistry[cid].model.set('category_index', idx);
 			}, this);
-			this.model.get('layers').sort();
-			console.log(this.model.get('layers'));
+			this.layers.sort();
 		},
 
 		addLayer: function(layer){
@@ -108,7 +110,9 @@ function($, Backbone, _, _s, ui, template){
 
 			var SimpleLayerFormView = Backbone.View.extend({
 				initialize: function(){this.render()},
-				render: function(){$(this.el).html(this.model.get('name'));}
+				render: function(){
+					$(this.el).html(this.model.get('name') + ',' + this.model.get('disabled'));
+				}
 			});
 			return new SimpleLayerFormView({
 				model: layer

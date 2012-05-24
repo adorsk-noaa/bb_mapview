@@ -20,7 +20,24 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		initialize: function(options){
 			this.map = this.model.get('map');
 			this.layers = this.map.model.get('layers');
+
+			// Sort layers by index.
+			this.layers.comparator = function(layer){
+				return layer.get('index');
+			};
+
+			// Listen for changes in layer category indices.
+			this.layers.on('change:category_index', this.onLayerCategoryIndexChange, this);
+
 			$(this.el).addClass('map-editor');
+
+			// Set index namespaces for ordering layer categories.
+			this.category_index_namespaces = {
+				'base': 100,
+				'data': 200,
+				'overlay': 300
+			};
+
 			this.initialRender();
 
 			this.on('ready', this.onReady, this);
@@ -28,6 +45,9 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 			if (options.ready){
 				this.trigger('ready');
 			}
+
+			this.toggleLayerEditor();
+			window.m = this.map;
 		},
 
 		initialRender: function(){
@@ -35,11 +55,11 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 			this.setupMap();
 
-			this.setupBaseLayerEditor();
+			this.setupBaseLayers();
 			
-			this.setupDataLayerEditor();
+			this.setupDataLayers();
 
-			this.setupOverlayLayerEditor();
+			this.setupOverlayLayers();
 
 		},
 
@@ -48,7 +68,8 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		},
 
 
-		setupBaseLayerEditor: function(){
+		setupBaseLayers: function(){
+
 			base_layer_editor_m = new Backbone.Model({
 				layers: this.model.get('base_layers')
 			});
@@ -64,7 +85,8 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 		},
 
-		setupDataLayerEditor: function(){
+		setupDataLayers: function(){
+
 			data_layer_editor_m = new Backbone.Model({
 				layers: this.model.get('data_layers')
 			});
@@ -80,12 +102,12 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 		},
 
-		setupOverlayLayerEditor: function(){
+		setupOverlayLayers: function(){
+			var overlay_layers = this.model.get('overlay_layers');
+
 			overlay_layer_editor_m = new Backbone.Model({
 				layers: this.model.get('overlay_layers')
 			});
-
-			overlay_layer_editor_m.on('change:layers', this.onOverlayLayersChange, this);
 
 			this.overlay_layer_editor = new OverlayLayerEditorView({
 				el: $('.overlay-layer-editor', this.el),
@@ -94,6 +116,10 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 			this.overlay_layer_editor.postInitialize();
 
+			_.each(overlay_layers.models, function(layer){
+				this.addLayer(layer);
+			}, this);
+
 		},
 
 		onSelectedBaseLayerChange: function(){
@@ -101,7 +127,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 				this.removeLayer(this.selected_base_layer);
 			}
 			this.selected_base_layer = this.base_layer_editor.model.get('selected_layer');
-			this.addBaseLayer(this.selected_base_layer);
+			this.addLayer(this.selected_base_layer);
 		},
 
 		onSelectedDataLayerChange: function(){
@@ -109,7 +135,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 				this.removeLayer(this.selected_data_layer);
 			}
 			this.selected_data_layer = this.data_layer_editor.model.get('selected_layer');
-			this.addDataLayer(this.selected_data_layer);
+			this.addLayer(this.selected_data_layer);
 		},
 
 		onOverlayLayersChange: function(){
@@ -178,34 +204,26 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 			);
 		},
 
-		addDataLayer: function(layer){
-			// Get index of last base layer.
-			var last_base_idx = -1;
-			_.each(this.layers.models, function(l, idx){
-				if (l.get('layer_category') == 'base'){
-					last_base_idx = idx;
-				}
-			}, this);
-
-			// Add data layer after the base layer.
-			this.layers.add(layer, {at: last_base_idx + 1});
-		},
-
-		addBaseLayer: function(layer){
-			// Get index of last base layer.
-			var last_base_idx = -1;
-			_.each(this.layers.models, function(l, idx){
-				if (l.get('layer_category') == 'base'){
-					last_base_idx = idx;
-				}
-			}, this);
-
-			// Add data layer after the base layer.
-			this.layers.add(layer, {at: last_base_idx + 1});
+		addLayer: function(layer){
+			console.log('adding layer', layer.get('name'), layer);
+			console.log('idx is',  this.computeLayerIndex(layer));
+			layer.set('index', this.computeLayerIndex(layer));
+			this.layers.add(layer);
 		},
 
 		removeLayer: function(layer){
 			this.layers.remove([layer]);
+		},
+
+		onLayerCategoryIndexChange: function(layer){
+			layer.set('index', this.computeLayerIndex(layer));
+			this.layers.sort();
+		},
+
+		computeLayerIndex: function(layer){
+			var cat_idx_ns = this.category_index_namespaces[layer.get('layer_category')] || 0;
+			var cat_idx = layer.get('category_index') || 0;
+			return cat_idx_ns+ cat_idx;
 		},
 
 		onReady: function(){

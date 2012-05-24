@@ -17,7 +17,6 @@ function($, Backbone, _, _s, ui, DataLayerFormView, template){
 
 		initialize: function(){
 			this.layerRegistry = {};
-
 			this.initialRender();
 			this.render();
 		},
