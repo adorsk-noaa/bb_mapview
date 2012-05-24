@@ -1,13 +1,15 @@
 define([
 	'./mapview',
 	'./wms_layer',
-	'./map_editor'
+	'./map_editor',
+	'./layer_editor'
 ], 
-function(MapViewView, WMSLayerView, MapEditorView){
+function(MapViewView, WMSLayerView, MapEditorView, LayerEditorView){
 	views = {
 		MapViewView: MapViewView,
 		WMSLayerView: WMSLayerView,
-		MapEditorView: MapEditorView
+		MapEditorView: MapEditorView,
+		LayerEditorView: LayerEditorView
 	};
 	
 	return views;
