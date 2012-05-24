@@ -4,9 +4,10 @@ define([
 	"use!underscore",
 	"_s",
 	"use!ui",
+	"./opacity_form", 
 	"text!./templates/layer_editor.html"
 		],
-function($, Backbone, _, _s, ui, template){
+function($, Backbone, _, _s, ui, OpacityFormView, template){
 
 	var LayerEditorView = Backbone.View.extend({
 
@@ -25,12 +26,25 @@ function($, Backbone, _, _s, ui, template){
 
 		initialRender: function(){
 			$(this.el).html(_.template(template, {model: this.model}));
+
+			this.$layer_form = $('.layer-form', this.el);
+
+			this.renderFormElements();
 		},
 
 		resize: function(){
 		},
 
 		resizeStop: function(){
+		},
+
+		renderFormElements: function(){
+			opacity_form = new OpacityFormView({
+				model: this.model
+			});
+
+			this.$layer_form.append(opacity_form.el);
+
 		},
 
 		onVisibilityToggleChange: function(){
