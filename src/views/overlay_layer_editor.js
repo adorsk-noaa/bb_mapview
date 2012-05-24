@@ -4,9 +4,10 @@ define([
 	"use!underscore",
 	"_s",
 	"use!ui",
+	"./layer_editor",
 	"text!./templates/overlay_layer_editor.html"
 		],
-function($, Backbone, _, _s, ui, template){
+function($, Backbone, _, _s, ui, LayerEditor, template){
 
 	var OverlayLayerEditorView = Backbone.View.extend({
 
