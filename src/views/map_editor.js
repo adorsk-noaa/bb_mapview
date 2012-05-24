@@ -153,7 +153,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		},
 
 		toggleLayersEditor: function(){
-			var $letc = $('.layer-editor-container', this.el);
+			var $letc = $('.layers-editor-container', this.el);
 			if (! $letc.hasClass('changing')){
 				this.expandContractTabContainer({
 					expand: ! $letc.hasClass('expanded'),
