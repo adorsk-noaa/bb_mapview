@@ -14,6 +14,12 @@ function($, Backbone, _, _s, ui, template){
 		},
 
 		initialize: function(){
+
+			// Keep layers sorted by category index.
+			this.model.get('layers').comparator = function(layer){
+				return layer.get('category_index');
+			};
+
 			this.layerRegistry = {};
 			this.initialRender();
 			this.render();
@@ -26,6 +32,18 @@ function($, Backbone, _, _s, ui, template){
 			this.clearLayers();
 			$(this.el).html(_.template(template));
 
+
+			var _this = this;
+			this.$layers = $('.layers', this.el);
+			this.$layers.sortable({
+				containment: $('.layers-container', this.el),
+				scroll: false,
+				placeholder: "ui-state-highlight",
+				stop: function(e, ui){
+					_this.onSortStop.call(_this, e, ui);
+				}
+			});
+	
 			_.each(this.model.get('layers').models, function(layer){
 				this.addLayer(layer);
 			}, this);
@@ -35,6 +53,15 @@ function($, Backbone, _, _s, ui, template){
 		postInitialize: function(){
 		},
 
+		onSortStop: function(e, ui){
+			var ordered_cids = this.$layers.sortable('toArray');
+			_.each(ordered_cids, function(cid, idx){
+				this.layerRegistry[cid].model.set('category_index', idx);
+			}, this);
+			this.model.get('layers').sort();
+			console.log(this.model.get('layers'));
+		},
+
 		addLayer: function(layer){
 			if (! this.layerRegistry.hasOwnProperty(layer.cid)){
 
@@ -42,21 +69,31 @@ function($, Backbone, _, _s, ui, template){
 				$('.layer-select', this.el).append(option);
 
 				var view = this.getLayerFormView(layer);
-				$('.layer-options', this.el).append(view.el);
+				var $sortable = $(_s.sprintf('<li id="%s" class="layer-container"></li>', layer.cid));
+				$sortable.append(view.el);
+
+				this.$layers.append($sortable);
+
+				this.$layers.sortable('refresh');
 
 				this.layerRegistry[layer.cid] = {
-					'option': option,
+					'sortable': $sortable,
 					'model': layer,
 					'view': view
 				};
+
+				this.onSortStop();
+
 			}
 		},
 
 		removeLayer: function(layer){
 			if (this.layerRegistry.hasOwnProperty(layer.cid)){
 				layer_record = this.layerRegistry[layer.cid];
-				layer_record.option.remove();
+				layer_record.sortable.remove();
 				layer_record.view.remove();
+				this.$layers.sortable('refresh');
+				this.onSortStop();
 				delete this.layerRegistry[layer.cid];
 			}
 		},
