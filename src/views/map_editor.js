@@ -14,7 +14,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 	var MapEditorView = Backbone.View.extend({
 
 		events: {
-			'click .layer-editor-tab .title': 'toggleLayerEditor',
+			'click .layers-editor-tab .title': 'toggleLayersEditor',
 		},
 
 		initialize: function(options){
@@ -46,7 +46,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 				this.trigger('ready');
 			}
 
-			this.toggleLayerEditor();
+			this.toggleLayersEditor();
 			window.m = this.map;
 		},
 
@@ -152,7 +152,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		resizeStop: function(){
 		},
 
-		toggleLayerEditor: function(){
+		toggleLayersEditor: function(){
 			var $letc = $('.layer-editor-container', this.el);
 			if (! $letc.hasClass('changing')){
 				this.expandContractTabContainer({
