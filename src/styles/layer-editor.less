@@ -35,7 +35,7 @@
 
 .layer-editor{
 
-	.tab-container{
+	> .container{
 		@body_h: 225px;
 		min-height: @tab_h;
 		max-height: @tab_h + @tab_corner_radius + @body_h + 2 * @padding_normal;
@@ -44,62 +44,75 @@
 		overflow: hidden;
 		position: relative;
 
-		.layer-editor-tab{
-			.rounded_corners_bottom(@tab_corner_radius);
+		> .tab-container{
+			.rounded_corners(@tab_corner_radius);
 			position: absolute;
 			left: 0;
 			right: 0;
 			top: 0;
 			bottom: 0;
-
 			background: @chrome_primary;  
 
-			> .title-container{
+			.tab {
+				height: @tab_h;
+				width: 100%;
+
+				@cell_w : 5em;
+
+				.drag-handle-container{
+					width: @cell_w;
+					height: 100%;
+				}
+
+				.title-container{
+					text-align: center;
+					height: 100%;
+
+					.title {
+						.button;
+						display: inline-block;
+						.rounded_corners(@tab_corner_radius);
+						margin: @padding_tight;
+						font-size: 18px;
+						padding: 1px @padding_looser;
+
+						button.toggle {
+							.button;
+						}
+					}
+				}
+
+				.visibility-toggle-container{
+					width: @cell_w;
+				}
+
+
+			}
+		}
+
+		> .body-container{
+			position: absolute;
+			top: @tab_h;
+			left: @tab_bw;
+			right: @tab_bw;
+			bottom: @tab_corner_radius;
+			overflow: hidden;
+			border-width: 0 0;
+			border-color: @chrome_primary;
+			border-style: solid;
+			font-size: 14px;
+
+			> .body{
+				overflow-y: auto;
 				position: absolute;
 				top: 0;
 				left: 0;
-				width: 100%;
-				height: @tab_h;
-				text-align: center;
+				right: 0;
+				height: @body_h + 2 * @padding_normal;
+				background: white;
 
-				.title {
-					.button;
-					display: inline-block;
-					.rounded_corners(@tab_corner_radius);
-					margin: @padding_tight;
-					font-size: 18px;
-					padding: 1px @padding_looser;
-
-					button.toggle {
-						.button;
-					}
-				}
-			}
-
-			> .body-container{
-				position: absolute;
-				top: @tab_h;
-				left: @tab_bw;
-				right: @tab_bw;
-				bottom: @tab_corner_radius;
-				overflow: hidden;
-				border-width: 0 0;
-				border-color: @chrome_primary;
-				border-style: solid;
-				font-size: 14px;
-
-				> .body{
-					overflow-y: auto;
-					position: absolute;
-					top: 0;
-					left: 0;
-					right: 0;
-					height: @body_h + 2 * @padding_normal;
-					background: white;
-
-					> .inner{
-						padding: @padding_normal;
-					}
+				> .inner{
+					padding: @padding_normal;
 				}
 			}
 		}

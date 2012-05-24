@@ -1,19 +1,27 @@
-<div class="tab-container">
+<div class="container">
 
-	<div class="header-container">
+	<div class="tab-container">
 
-		<div class="drag-handle-container">
-		</div>
+		<table class="tab">
+			<tr>
+				<td class="drag-handle-container">
+				</td>
 
-		<div class="title-container">
-			<div class="title">
-				Layer Name
-				<button class="toggle">&#x25B2;</button>
-			</div>
-		</div>
+				<td class="title-container">
+					<div class="title">
+						Layer Name
+						<button class="toggle">&#x25BC;</button>
+					</div>
+				</td>
 
-		<div class="visibility-toggle-container">
-		</div>
+				<td class="visibility-toggle-container">
+					<div class="visibility-toggle">
+						<input id="<%= model.cid %>-visibility-toggle" class="visibility-toggle-cb" type="checkbox"/>
+						<label for="<%= model.cid %>-visibility-toggle">show</label>
+					</div>
+				</td>
+			</tr>
+		</table>
 
 	</div>
 
