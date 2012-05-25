@@ -47,8 +47,7 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 				this.trigger('ready');
 			}
 
-			//this.toggleLayerEditor({currentTarget: $('.layers-editor-container > .header', this.el)});
-			window.m = this.map;
+			this.toggleLayerEditor({currentTarget: $('.layers-editor-container > .header', this.el)});
 		},
 
 		initialRender: function(){
