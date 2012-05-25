@@ -1,27 +1,13 @@
 <div class="inner">
 	<div class="overlay"></div>
+
 	<div class="header">
-
-		<table class="header-table">
-			<tr>
-				<td class="title-container">
-					<div class="title">
-						<%= model.get('name') %>
-						<button class="toggle">&#x25BC;</button>
-					</div>
-				</td>
-
-				<td class="visibility-toggle-container">
-					<div class="visibility-toggle">
-						<input id="<%= model.cid %>-visibility-toggle" class="visibility-toggle-cb" type="checkbox"/>
-						<label for="<%= model.cid %>-visibility-toggle">show</label>
-					</div>
-				</td>
-			</tr>
-		</table>
-
+		<div class="title-container">
+			<div class="title">
+				<%= model.get('name') %> <span class="arrow">&#x25BC</span>
+			</div>
+		</div>
 	</div>
-
 
 	<div class="body">
 		<div class="layer-form">

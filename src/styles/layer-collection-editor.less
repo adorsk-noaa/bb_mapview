@@ -33,62 +33,36 @@
 @tab_bw: 1px;
 @tab_corner_radius: 7px;
 
-.layer-editor > .inner{
-	position: relative;
+.layer-collection-editor > table{
+	width: 100%;
 
-	> .overlay{
-		display: none;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: @faint_grey;
-	}
+	> tbody{
+		> tr {
 
-	> .header{
-		height: @tab_h;
-		width: 100%;
-		
-		.title-container{
-			height: 100%;
+			td {
+				vertical-align: top;
+			}
 
-			.title {
-				.button;
-				display: inline-block;
-				font-size: 14px;
-				margin-left: @padding_tight;
-				padding: 1px @padding_looser;
-				vertical-align: middle;
+			.drag-handle-container{
+				width: 16px;
+				min-height: 16px;
 
-				button.toggle {
-					.button;
+				> .drag-handle{
+					background-image: url('images/drag_arrow.png');
+					background-size: 100% 100%;
+					width: 16px;
+					height: 16px;
+					cursor: pointer;
 				}
 			}
-		}
-	}
 
-	> .body {
-		@body_h: 225px;
-		display: none;
-		overflow: auto;
-		max-height: @body_h;
-		font-size: 14px;
-		padding: @padding_normal;
-
-		> .layer-form{
-			background: white;
+			.layer-toggle-container{
+				width: 16px;
+			}
 
 		}
 	}
-	
-}
 
 
-.layer-editor.disabled > .inner{
-	.overlay{
-		display: block;
-		opacity: .5;
-	}
 }
 

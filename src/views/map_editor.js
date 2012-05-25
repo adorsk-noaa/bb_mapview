@@ -4,13 +4,10 @@ define([
 	"use!underscore",
 	"_s",
 	"use!ui",
-	"./data_layer_editor",
-	"./base_layer_editor",
-	"./overlay_layer_editor",
-	"./layer_editor",
+	"./layer_collection_editor",
 	"text!./templates/map_editor.html"
 		],
-function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, OverlayLayerEditorView, LayerEditorView, template){
+function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 
 	var MapEditorView = Backbone.View.extend({
 
@@ -68,9 +65,21 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 			// Setup layer categories.
 			_.each(_.keys(this.category_configs), function(category){
 				var category_layers = this.model.get(category + '_layers') || [];
+
+				// Create layer collection editor.
+				new LayerCollectionEditorView({
+					model: new Backbone.Model({
+						layers: category_layers,
+						start_index: this.category_configs[category]['start_index']
+					}),
+					el: $(_s.sprintf('.%s-layers', category), this.el)
+				});
+				
+				// Add layers to overall map layer collection.
 				_.each(category_layers.models, function(layer){
-					this.addLayer(layer);
+					this.layers.add(layer);
 				}, this);
+
 			}, this);
 
 		},
@@ -115,31 +124,6 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 			else{
 				$body.slideUp('slow');
 			}
-		},
-
-		addLayer: function(layer){
-			var category = layer.get('layer_category');
-			var layer_view = new LayerEditorView({
-				model: layer
-			});
-			$(_s.sprintf('.%s-layers', category), this.el).append(layer_view.el);
-			layer.set('index', this.computeLayerIndex(layer));
-			this.layers.add(layer);
-		},
-
-		removeLayer: function(layer){
-			this.layers.remove([layer]);
-		},
-
-		onLayerCategoryIndexChange: function(layer){
-			layer.set('index', this.computeLayerIndex(layer));
-			this.layers.sort();
-		},
-
-		computeLayerIndex: function(layer){
-			var category_start_index = this.category_configs[layer.get('layer_category')]['start_index'] || 0;
-			var category_index = layer.get('category_index') || 0;
-			return category_start_index + category_index;
 		},
 
 		onReady: function(){
