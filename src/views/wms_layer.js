@@ -99,7 +99,7 @@ function($, Backbone, _, ol, LayerView){
 			this.layer.setOpacity(this.model.get('opacity'));
 		},
 
-		onOpacityChange: function(){
+		onIndexChange: function(){
 			this.layer.setZIndex(this.model.get('index'));
 		},
 
