@@ -32,11 +32,17 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 			$(this.el).addClass('map-editor');
 
-			// Set index namespaces for ordering layer categories.
-			this.category_index_namespaces = {
-				'base': 100,
-				'data': 200,
-				'overlay': 300
+			// Iniitialize configs for layers categories.
+			this.category_configs = {
+				'base': {
+					'start_index': 100
+				},
+				'data': {
+					'start_index': 200
+				},
+				'overlay': {
+					'start_index': 300
+				}
 			};
 
 			this.initialRender();
@@ -53,39 +59,24 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		initialRender: function(){
 			$(this.el).html(_.template(template));
 
+			// Tabify the layers editor.
 			$('.layers-editor > .tabs', this.el).tabs();
 
-			this.setupMap();
-
-			this.setupBaseLayers();
-			
-			this.setupDataLayers();
-
-			this.setupOverlayLayers();
-
-		},
-
-		setupMap: function(){
+			// Setup map.
 			$('.map-container', this.el).append(this.model.get('map').el);
-		},
 
+			// Setup layer categories.
+			_.each(_.keys(this.category_configs), function(category){
+				var category_layers = this.model.get(category + '_layers') || [];
+				_.each(category_layers.models, function(layer){
+					this.addLayer(layer);
+				}, this);
+			}, this);
+
+		},
 
 		setupBaseLayers: function(){
 
-			/*
-			base_layer_editor_m = new Backbone.Model({
-				layers: this.model.get('base_layers')
-			});
-
-			base_layer_editor_m.on('change:selected_layer', this.onSelectedBaseLayerChange, this);
-
-			this.base_layer_editor = new BaseLayerEditorView({
-				el: $('.base-layer-editor', this.el),
-				model: base_layer_editor_m
-			});
-
-			this.base_layer_editor.postInitialize();
-			*/
 			_.each(this.model.get('base_layers').models, function(layer){
 				var layer_view = new LayerEditorView({
 					model: layer
@@ -95,64 +86,6 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 			}, this);
 
 		},
-
-		setupDataLayers: function(){
-
-			data_layer_editor_m = new Backbone.Model({
-				layers: this.model.get('data_layers')
-			});
-
-			data_layer_editor_m.on('change:selected_layer', this.onSelectedDataLayerChange, this);
-
-			this.data_layer_editor = new DataLayerEditorView({
-				el: $('.data-layer-editor', this.el),
-				model: data_layer_editor_m
-			});
-
-			this.data_layer_editor.postInitialize();
-
-		},
-
-		setupOverlayLayers: function(){
-			var overlay_layers = this.model.get('overlay_layers');
-
-			overlay_layer_editor_m = new Backbone.Model({
-				layers: this.model.get('overlay_layers')
-			});
-
-			this.overlay_layer_editor = new OverlayLayerEditorView({
-				el: $('.overlay-layer-editor', this.el),
-				model: overlay_layer_editor_m
-			});
-
-			this.overlay_layer_editor.postInitialize();
-
-			_.each(overlay_layers.models, function(layer){
-				this.addLayer(layer);
-			}, this);
-
-		},
-
-		onSelectedBaseLayerChange: function(){
-			if (this.selected_base_layer){
-				this.removeLayer(this.selected_base_layer);
-			}
-			this.selected_base_layer = this.base_layer_editor.model.get('selected_layer');
-			this.addLayer(this.selected_base_layer);
-		},
-
-		onSelectedDataLayerChange: function(){
-			if (this.selected_data_layer){
-				this.removeLayer(this.selected_data_layer);
-			}
-			this.selected_data_layer = this.data_layer_editor.model.get('selected_layer');
-			this.addLayer(this.selected_data_layer);
-		},
-
-		onOverlayLayersChange: function(){
-			console.log('overlay layers change');
-		},
-
 
 		render: function(){
 		},
@@ -185,6 +118,11 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		},
 
 		addLayer: function(layer){
+			var category = layer.get('layer_category');
+			var layer_view = new LayerEditorView({
+				model: layer
+			});
+			$(_s.sprintf('.%s-layers', category), this.el).append(layer_view.el);
 			layer.set('index', this.computeLayerIndex(layer));
 			this.layers.add(layer);
 		},
@@ -199,9 +137,9 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 		},
 
 		computeLayerIndex: function(layer){
-			var cat_idx_ns = this.category_index_namespaces[layer.get('layer_category')] || 0;
-			var cat_idx = layer.get('category_index') || 0;
-			return cat_idx_ns+ cat_idx;
+			var category_start_index = this.category_configs[layer.get('layer_category')]['start_index'] || 0;
+			var category_index = layer.get('category_index') || 0;
+			return category_start_index + category_index;
 		},
 
 		onReady: function(){
