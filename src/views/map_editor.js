@@ -16,7 +16,6 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 		events: {
 			'click .layers-editor-container > .header': 'toggleLayerEditor',
-			'click .layers-editor > .layers-editor-section > .header': 'toggleAccordion'
 		},
 
 		initialize: function(options){
@@ -54,6 +53,8 @@ function($, Backbone, _, _s, ui, DataLayerEditorView, BaseLayerEditorView, Overl
 
 		initialRender: function(){
 			$(this.el).html(_.template(template));
+
+			$('.layers-editor > .tabs', this.el).tabs();
 
 			this.setupMap();
 
