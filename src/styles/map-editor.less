@@ -121,10 +121,12 @@
 						height: @body_h + 2 * @padding_normal;
 						background: white;
 
-						> .layers-editor-section {
+						.layer-editor{
+							margin-top: @padding_loose;
+							margin-bottom: @padding_loose;
+							border: thin solid @chrome_secondary;
 
-							> .body{
-								display: none;
+							&.disabled {
 							}
 						}
 

@@ -33,94 +33,84 @@
 @tab_bw: 1px;
 @tab_corner_radius: 7px;
 
-.layer-editor{
+.layer-editor > .inner{
+	position: relative;
 
-	> .container{
-		@body_h: 225px;
-		min-height: @tab_h;
-		/*
-		max-height: @tab_h + @tab_corner_radius + @body_h + 2 * @padding_normal;
+	> .overlay{
+		display: none;
+		pointer-events: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: @faint_grey;
+	}
+
+	> .header{
 		height: @tab_h;
-		*/
-		height: @tab_h + @tab_corner_radius + @body_h + 2 * @padding_normal;
-		width: 100%;
-		overflow: hidden;
-		position: relative;
+		.header-table {
+			height: 100%;
+			width: 100%;
 
-		> .header{
-			.rounded_corners(@tab_corner_radius);
-			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			background: @chrome_primary;  
+			.title-container{
+				height: 100%;
 
-			.header-table {
-				height: @tab_h;
-				width: 100%;
+				.title {
+					.button;
+					display: inline-block;
+					font-size: 14px;
+					margin-left: @padding_tight;
+					padding: 1px @padding_looser;
+					vertical-align: middle;
 
-				.title-container{
-					height: 100%;
-
-					.title {
+					button.toggle {
 						.button;
-						display: inline-block;
-						.rounded_corners(@tab_corner_radius);
-						margin: @padding_tight;
-						font-size: 18px;
-						padding: 1px @padding_looser;
-
-						button.toggle {
-							.button;
-						}
 					}
 				}
-
-				.visibility-toggle-container{
-					width: 5em;
-				}
-
-
 			}
-		}
 
-		> .body {
-			display: none;
-			position: absolute;
-			top: @tab_h;
-			left: @tab_bw;
-			right: @tab_bw;
-			bottom: @tab_corner_radius;
-			overflow: hidden;
-			border-width: 0 0;
-			border-color: @chrome_primary;
-			border-style: solid;
-			font-size: 14px;
-
-			> .layer-form{
-				overflow-y: auto;
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				height: @body_h + 2 * @padding_normal;
-				background: white;
-
+			.visibility-toggle-container{
+				width: 5em;
 			}
+
+
 		}
 	}
+
+	> .body {
+		@body_h: 225px;
+		display: none;
+		overflow: auto;
+		max-height: @body_h;
+		font-size: 14px;
+		padding: @padding_normal;
+
+		> .layer-form{
+			background: white;
+
+		}
+	}
+	
 }
 
 
-.layer-editor.disabled{
-	.header {
+.layer-editor.disabled > .inner{
+	.overlay{
+		display: block;
+		opacity: .5;
+	}
+
+	/*
+	> .header {
+		background: @faint_grey;  
 		.title {
-			color: gray;
+			color: grey;
 			button {
-				color: gray;
+				color: grey;
 			}
 		}
 	}
+	*/
 }
 
