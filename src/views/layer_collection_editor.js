@@ -114,6 +114,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, row_template){
 			var $toggle = $(e.currentTarget);
 			var cid = $toggle.data('cid');
 			this.registry[cid].layer.set('disabled', ! $toggle.is(':checked'));
+			console.log("l is", this.registry[cid].layer.toJSON());
 		},
 
 		setLayerToggle: function(layer){

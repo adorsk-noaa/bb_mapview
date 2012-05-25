@@ -92,7 +92,7 @@ function($, Backbone, _, ol, LayerView){
 		},
 
 		onDisabledChange: function(){
-			this.layer.setVisibility(this.model.get('disabled'));
+			this.layer.setVisibility(! this.model.get('disabled'));
 		},
 
 		onOpacityChange: function(){
