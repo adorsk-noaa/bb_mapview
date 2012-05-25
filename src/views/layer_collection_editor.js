@@ -40,29 +40,20 @@ function($, Backbone, _, _s, ui, LayerEditorView, row_template){
 		},
 
 		initialRender: function(){
-			this.$tbody = $('<tbody></tbody>');
-			$(this.el).append($('<table></table>').append(this.$tbody));
+			this.$body = $('<div class="body-table"></div>');
+			$(this.el).append(this.$body);
 
 			// Make table sortable.
 			var _this = this;
-			this.$tbody.sortable({
-				//containment: this.$tbody,
+			this.$body.sortable({
+				//containment: this.$body,
 				handle: '.drag-handle',
 				scroll: false,
 				placeholder: "ui-state-highlight",
-				forcePlaceholderSize: true,
-				forceHelperSize: true,
 				stop: function(e, ui){
 					_this.onSortStop.call(_this, e, ui);
 				},
-				helper: function(e, tr){
-					var $originals = tr.children();
-					var $helper = tr.clone();
-					$helper.children().each(function(index){
-							$(this).width($originals.eq(index).width())
-					});
-					return $helper;
-				}
+				forcePlaceholderSize: true,
 			});
 
 			// Setup layers.
@@ -75,13 +66,12 @@ function($, Backbone, _, _s, ui, LayerEditorView, row_template){
 		onSortStop: function(e, ui){
 			var start_index = this.model.get('start_index') || 0;
 
-			var ordered_cids = this.$tbody.sortable('toArray');
+			var ordered_cids = this.$body.sortable('toArray');
 			_.each(ordered_cids, function(cid, i){
 				var local_index = ordered_cids.length - 1 - i;
 				this.registry[cid].layer.set('index', start_index + local_index);
 			}, this);
 			this.layers.sort();
-			console.log(this.layers.models);
 		},
 
 		computeLayerIndex: function(layer){
@@ -114,10 +104,10 @@ function($, Backbone, _, _s, ui, LayerEditorView, row_template){
 			this.setLayerToggle(layer);
 
 			// Append row to table.
-			this.$tbody.append($row);
+			this.$body.append($row);
 
 			// Refresh table.
-			this.$tbody.sortable('refresh');
+			this.$body.sortable('refresh');
 		},
 
 		onLayerToggleChange: function(e){

@@ -33,13 +33,26 @@
 @tab_bw: 1px;
 @tab_corner_radius: 7px;
 
-.layer-collection-editor > table{
+.layer-collection-editor > .body-table{
 	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
 
-	> tbody{
-		> tr {
+	> .layer-row-container {
+		padding: @padding_loose;
+		margin: @padding_looser/2 @padding_normal @padding_looser/2 @padding_normal;
+		border: thin solid @chrome_secondary;
 
-			td {
+		&:first-child {
+			border-top: thin solid @chrome_secondary;
+		}
+
+		.layer-row{
+			display: table;
+			width: 100%;
+
+			> .cell {
+				display: table-cell;
 				vertical-align: top;
 			}
 
@@ -61,8 +74,8 @@
 			}
 
 		}
-	}
 
+	}
 
 }
 
