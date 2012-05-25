@@ -120,6 +120,54 @@
 						right: 0;
 						height: @body_h + 2 * @padding_normal;
 						background: white;
+
+						> .tabs {
+							padding: 0;
+							border: 0;
+							height: 100%;
+							overflow: hidden;
+
+							.ui-widget-header{
+								background: none repeat scroll 0 0 transparent;
+								border: medium none;
+								color: inherit;
+							}
+
+							.ui-tabs-nav {
+								background-color: @chrome_secondary;
+								height: 27px;
+								padding: 5px 7px 0;
+
+								li {
+									height: 100%;
+								    padding-bottom: 0;
+									top: 0;
+
+									&.ui-tabs-selected {
+										padding-bottom: 0;
+									}
+
+									a {
+										margin-bottom: 0;
+										padding: 4px 10px 0;
+									}
+
+								}
+
+								.ui-state-active{
+									border-color: @chrome_primary;
+									border-style: solid;
+									border-width: thin thin 0 thin;
+								}
+								
+							}
+
+							.ui-tabs-panel {
+								border-width: thin 0 0 0;
+								border-style: solid;
+								border-color: @chrome_primary;
+							}
+						}
 					}
 				}
 				
