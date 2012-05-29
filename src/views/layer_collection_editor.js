@@ -5,9 +5,10 @@ define([
 	"_s",
 	"use!ui",
 	"./layer_editor",
+	"./data_layer_editor",
 	"text!./templates/layer_collection_editor_row.html"
 		],
-function($, Backbone, _, _s, ui, LayerEditorView, row_template){
+function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_template){
 
 	var LayerCollectionEditorView = Backbone.View.extend({
 
@@ -84,10 +85,19 @@ function($, Backbone, _, _s, ui, LayerEditorView, row_template){
 			$row = $(_.template(row_template, {model: layer}));
 			
 			// Create editor for layer.
-			var layer_editor = new LayerEditorView({
-				model: layer,
-				el: $('.layer-editor', $row)
-			});
+			var layer_editor;
+			if (layer.get('layer_category') == 'data'){
+				layer_editor = new DataLayerEditorView({
+					model: layer,
+					el: $('.layer-editor', $row)
+				});
+			}
+			else{
+				layer_editor = new LayerEditorView({
+					model: layer,
+					el: $('.layer-editor', $row)
+				});
+			}
 
 			// Get toggle.
 			var $toggle = $('.layer-toggle-cb', $row);
