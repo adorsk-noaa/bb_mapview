@@ -13,9 +13,9 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleFormView){
 
 		initialize: function(){
 			$(this.el).addClass('data-layer-editor');
-			this.field = this.model.get('field');
-			if (this.field){
-				this.field.on('change', function(){this.model.trigger('change:field')}, this);
+			this.entity = this.model.get('entity');
+			if (this.entity){
+				this.entity.on('change', function(){this.model.trigger('change:entity')}, this);
 			}
 			LayerEditorView.prototype.initialize.call(this);
 		},
@@ -24,7 +24,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleFormView){
 			LayerEditorView.prototype.renderFormElements.call(this);
 
 			var color_scale_form = new ColorScaleFormView({
-				model: this.field
+				model: this.entity
 			});
 
 			this.$layer_form.append(color_scale_form.el);
