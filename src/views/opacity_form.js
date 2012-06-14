@@ -23,10 +23,11 @@ function($, Backbone, _, _s, ui, template){
 			this.$slider = $('.slider', this.el);
 
 			var _this = this;
+			var initial_opacity = (this.model.get('opacity') != null) ? (this.model.get('opacity') + 0) * 100 : 100;
 			this.$slider.slider({
 				min: 10,
 				max: 100,
-				value: (this.model.get('opacity') + 0) * 100 || 10, 
+				value: initial_opacity,
 				slide: function(e, ui){
 					_this.model.set('opacity', ui.value/100);
 				}
