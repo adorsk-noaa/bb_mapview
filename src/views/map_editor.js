@@ -117,6 +117,14 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 			this.map_view.resize();
 		},
 
+		deactivate: function(){
+			this.map_view.deactivate();
+		},
+
+		activate: function(){
+			this.map_view.activate();
+		},
+
 		toggleLayerEditor: function(e){
 			this.toggleAccordion(e);
 

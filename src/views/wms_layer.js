@@ -7,9 +7,11 @@ define([
 		],
 function($, Backbone, _, ol, LayerView){
 
-	var WMSLayerView = Backbone.View.extend({
+	var WMSLayerView = LayerView.extend({
 
 		initialize: function(){
+
+			LayerView.prototype.initialize.apply(this, arguments);
 
 			this.layer = new OpenLayers.Layer.WMS(
 				this.model.get('name'),

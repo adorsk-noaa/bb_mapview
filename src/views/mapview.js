@@ -55,6 +55,17 @@ function($, Backbone, _, ol, template, WMSLayerView){
 
 		},
 
+		deactivate: function(){
+			_.each(this.layer_views, function(layer_view){
+				layer_view.deactivate();
+			});
+		},
+
+		activate: function(){
+			_.each(this.layer_views, function(layer_view){
+				layer_view.activate();
+			});
+		},
 
 		addLayerView: function(layer_view){
 			this.layer_views[layer_view.model.id] = layer_view;
