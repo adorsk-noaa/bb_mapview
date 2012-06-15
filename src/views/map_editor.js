@@ -55,6 +55,7 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 
 		initialRender: function(){
 			$(this.el).html(_.template(template));
+			this.$table = $(this.el).children('table.body');
 
 			// Tabify the layers editor.
 			$('.layers-editor > .tabs', this.el).tabs();
@@ -100,9 +101,16 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 		},
 
 		resize: function(){
+			var $c = this.$table.parent();
+			this.$table.css('width', $c.css('width'));
+			this.$table.css('height', $c.css('height'));
 		},
 
 		resizeStop: function(){
+			this.resizeMap();
+		},
+
+		resizeMap: function(){
 		},
 
 		toggleLayerEditor: function(e){
