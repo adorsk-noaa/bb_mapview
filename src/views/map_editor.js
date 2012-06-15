@@ -16,8 +16,8 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 		},
 
 		initialize: function(options){
-			this.map = this.model.get('map');
-			this.layers = this.map.model.get('layers');
+			this.map_view = this.model.get('map_view');
+			this.layers = this.map_view.model.get('layers');
 
 			// Sort layers by index.
 			this.layers.comparator = function(layer){
@@ -56,12 +56,13 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 		initialRender: function(){
 			$(this.el).html(_.template(template));
 			this.$table = $(this.el).children('table.body');
+			this.$map_container = $('.map-container', this.el);
 
 			// Tabify the layers editor.
 			$('.layers-editor > .tabs', this.el).tabs();
 
 			// Setup map.
-			$('.map-container', this.el).append(this.model.get('map').el);
+			this.$map_container.append(this.map_view.el);
 
 			// Setup layer categories.
 			_.each(_.keys(this.category_configs), function(category){
@@ -107,10 +108,12 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 		},
 
 		resizeStop: function(){
-			this.resizeMap();
-		},
-
-		resizeMap: function(){
+			// Size map view as if layers editor was minimized.
+			var table_height = parseFloat(this.$table.css('height'));
+			var layers_editor_minimized_height = parseFloat($('.layers-editor-row', this.el).css('minHeight'));
+			var new_map_height = table_height - layers_editor_minimized_height;
+			this.$map_container.css('height', new_map_height);
+			this.map_view.resize();
 		},
 
 		toggleLayerEditor: function(e){
@@ -135,7 +138,9 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 		},
 
 		onReady: function(){
-			this.map.trigger('ready');
+			this.resize();
+			this.resizeStop();
+			this.map_view.trigger('ready');
 		}
 	});
 
