@@ -31,6 +31,8 @@ function($, Backbone, _, ol, template, WMSLayerView){
 				this.trigger('ready');
 			}
 
+			this.on('pagePositionChange', this.onPagePositionChange, this);
+
 		},
 
 		render: function(){
@@ -119,6 +121,10 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			this.map.addControl(graticule);
 		},
 
+		// Clear mouse cache when position changes.  Otherwise can get incorrect mouse positions inside the map.
+		onPagePositionChange: function(){
+			this.map.events.clearMouseCache();
+		},
 
 		getLayerView: function(layer_model){
 			var layer_view;

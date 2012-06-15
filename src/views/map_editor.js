@@ -45,6 +45,7 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 			this.initialRender();
 
 			this.on('ready', this.onReady, this);
+			this.on('pagePositionChange', this.onPagePositionChange, this);
 
 			if (options.ready){
 				this.trigger('ready');
@@ -141,6 +142,10 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 			this.resize();
 			this.resizeStop();
 			this.map_view.trigger('ready');
+		},
+
+		onPagePositionChange: function(){
+			this.map_view.trigger('pagePositionChange');
 		}
 	});
 
