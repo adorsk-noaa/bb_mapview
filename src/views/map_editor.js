@@ -4,10 +4,11 @@ define([
 	"use!underscore",
 	"_s",
 	"use!ui",
+	"Util",
 	"./layer_collection_editor",
 	"text!./templates/map_editor.html"
 		],
-function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
+function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 
 	var MapEditorView = Backbone.View.extend({
 
@@ -51,7 +52,6 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 				this.trigger('ready');
 			}
 
-			this.toggleLayerEditor({currentTarget: $('.layers-editor-container > .header', this.el)});
 		},
 
 		initialRender: function(){
@@ -103,17 +103,10 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 		},
 
 		resize: function(){
-			var $c = this.$table.parent();
-			this.$table.css('width', $c.css('width'));
-			this.$table.css('height', $c.css('height'));
+			Util.util.fillParent(this.$table);
 		},
 
 		resizeStop: function(){
-			// Size map view as if layers editor was minimized.
-			var table_height = parseFloat(this.$table.css('height'));
-			var layers_editor_minimized_height = parseFloat($('.layers-editor-row', this.el).css('minHeight'));
-			var new_map_height = table_height - layers_editor_minimized_height;
-			this.$map_container.css('height', new_map_height);
 			this.map_view.resize();
 		},
 
@@ -126,24 +119,60 @@ function($, Backbone, _, _s, ui, LayerCollectionEditorView, template){
 		},
 
 		toggleLayerEditor: function(e){
-			this.toggleAccordion(e);
+			var $header = $(e.currentTarget);
+			var $body = $header.next();
 
-			// Toggle button text.
-			$header = $(e.currentTarget);
-			var $toggle_button = $('button.toggle', $header);
-			var button_text = ($toggle_button.html() == '\u25B2') ? '\u25BC' : '\u25B2';
-			$toggle_button.html(button_text);
-		},
+			var $container = $($header.parent());
 
-		toggleAccordion: function(e){
-			$header = $(e.currentTarget);
-			$body = $header.next();
-			if ($body.is(':hidden')){
-				$body.slideDown('slow');
+			expand = true;
+			if ($container.hasClass('expanded')){
+				expand = false;
 			}
-			else{
-				$body.slideUp('slow');
+			var dim = 'height';
+
+			// Calculate how much to change dimension.
+			var delta = parseInt($container.css('max' + _s.capitalize(dim)), 10) - parseInt($container.css('min' + _s.capitalize(dim)), 10);
+			if (! expand){
+				delta = -1 * delta;
 			}
+
+			// Animate field container dimension.
+			$container.addClass('changing');
+
+			// Toggle button text
+			var button_text = ($('button.toggle', $header).html() == '\u25B2') ? '\u25BC' : '\u25B2';
+			$('button.toggle', $container).html(button_text);
+
+			// Execute the animation.
+			var _this = this;
+			var container_dim_opts = {};
+			container_dim_opts[dim] = parseInt($container.css(dim),10) + delta;
+			$container.animate(
+					container_dim_opts,
+					{
+						complete: function(){
+							$container.removeClass('changing');
+
+							if (expand){
+								$container.addClass('expanded')
+							}
+							else{
+								$container.removeClass('expanded')
+								_this.resize();
+								_this.resizeStop();
+							}
+						}
+					}
+			);
+
+			// Animate container cell dimension.
+			$container.parent().animate(container_dim_opts);
+
+			// Animate container table dimension.
+			var table_dim_opts = {};
+			table_dim_opts[dim] = parseInt(this.$table.css(dim),10) + delta;
+			this.$table.animate(table_dim_opts);
+
 		},
 
 		onReady: function(){

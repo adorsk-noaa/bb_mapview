@@ -72,6 +72,8 @@
 				@body_h: 225px;
 				padding-bottom: @tab_corner_radius;
 				min-height: @tab_h;
+				max-height: @tab_h + @body_h + @tab_bw + 2 * @padding_normal;
+				height: @tab_h;
 				display: block-inline;
 				width: 100%;
 				overflow: hidden;
@@ -103,7 +105,6 @@
 				}
 
 				> .body{
-					display: none;
 					height: @body_h;
 					overflow: hidden;
 					border-width: 0 thin;
