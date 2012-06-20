@@ -36,21 +36,30 @@
 .layer-editor > .inner{
 	position: relative;
 
-	> .overlay{
-		display: none;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: @faint_grey;
-	}
 
 	> .header{
 		width: 100%;
+		display: table;
+
+		.disabled-toggle-container{
+			display: table-cell;
+			width: 16px;
+		}
 		
 		.title-container{
+			display: table-cell;
 			height: 100%;
+			position: relative;
+
+			> .overlay{
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: @faint_grey;
+			}
 
 			.title {
 				.button;
@@ -81,7 +90,7 @@
 
 
 .layer-editor.disabled > .inner{
-	.overlay{
+	> .header > .title-container > .overlay{
 		display: block;
 		opacity: .5;
 	}

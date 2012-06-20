@@ -13,7 +13,6 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 	var LayerCollectionEditorView = Backbone.View.extend({
 
 		events: {
-			'change .layer-toggle-cb': 'onLayerToggleChange'
 		},
 
 		initialize: function(options){
@@ -99,37 +98,20 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 				});
 			}
 
-			// Get toggle.
-			var $toggle = $('.layer-toggle-cb', $row);
-
 			// Add to registry.
 			this.registry[layer.cid] = {
 				'layer': layer,
 				'$row': $row,
 				'editor': layer_editor,
-				'$toggle': $toggle
 			};
-
-			// Set layer toggle.
-			this.setLayerToggle(layer);
 
 			// Append row to table.
 			this.$body.append($row);
 
 			// Refresh table.
 			this.$body.sortable('refresh');
-		},
-
-		onLayerToggleChange: function(e){
-			var $toggle = $(e.currentTarget);
-			var cid = $toggle.data('cid');
-			this.registry[cid].layer.set('disabled', ! $toggle.is(':checked'));
-		},
-
-		setLayerToggle: function(layer){
-			$toggle = this.registry[layer.cid].$toggle;
-			$toggle.attr('checked', ! layer.get('disabled'));
 		}
+
 			
 	});
 

@@ -13,6 +13,7 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 
 		events: {
 			'click .header .title': 'toggleLayerForm',
+			'change .disabled-toggle': 'onDisabledToggleChange'
 		},
 
 		initialize: function(options){
@@ -27,7 +28,7 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 			$(this.el).html(_.template(template, {model: this.model}));
 			this.$body = $('.body', this.el);
 			this.$arrow = $('.header .title .arrow', this.el);
-
+			this.$disabled_toggle = $('.disabled-toggle-cb', this.el);
 			this.$layer_form = $('.layer-form', this.el);
 
 			this.renderFormElements();
@@ -66,8 +67,13 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 			else{
 				$(this.el).removeClass('disabled');
 			}
-		},
 
+			this.$disabled_toggle.attr('checked', ! this.model.get('disabled'));
+		},
+		
+		onDisabledToggleChange: function(e){
+			this.model.set('disabled', ! this.$disabled_toggle.is(':checked'));
+		},
 
 	});
 
