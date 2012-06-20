@@ -46,6 +46,10 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 			this.initialRender();
 
 			this.on('ready', this.onReady, this);
+			this.on('resize', this.resize, this);
+			this.on('resizeStop', this.resizeStop, this);
+			this.on('activate', this.activate, this);
+			this.on('deactivate', this.deactivate, this);
 			this.on('pagePositionChange', this.onPagePositionChange, this);
 
 			if (options.ready){

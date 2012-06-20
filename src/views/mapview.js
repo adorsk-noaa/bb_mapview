@@ -40,7 +40,6 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			$(this.el).html(rendered_html);
 
 			this.map = new OpenLayers.Map(
-				//$('.map', this.el).get(0),
 				this.model.get('options')
 			);
 
