@@ -129,6 +129,14 @@ function($, Backbone, _, ol, template, WMSLayerView){
 				labelFormat: 'dd'
 			});
 			this.map.addControl(graticule);
+
+			// Zoom to initial extent if given, max extent otherwise.
+			if (this.model.get('initial_extent')){
+				this.map.zoomToExtent(this.model.get('initial_extent'));
+			}
+			else{
+				this.map.zoomToMaxExtent();
+			}
 		},
 
 		// Clear mouse cache when position changes.  Otherwise can get incorrect mouse positions inside the map.
