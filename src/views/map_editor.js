@@ -51,6 +51,7 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 			this.on('activate', this.activate, this);
 			this.on('deactivate', this.deactivate, this);
 			this.on('pagePositionChange', this.onPagePositionChange, this);
+			this.on('remove', this.remove, this);
 
 			if (options.ready){
 				this.trigger('ready');
