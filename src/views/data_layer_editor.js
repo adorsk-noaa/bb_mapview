@@ -28,7 +28,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleFormView){
 			LayerEditorView.prototype.renderFormElements.call(this);
 
 			var color_scale_form = new ColorScaleFormView({
-				model: this.data_entity
+				model: this.model.get('data_entity')
 			});
 
 			this.$layer_form.append(color_scale_form.el);
