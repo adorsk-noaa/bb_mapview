@@ -188,7 +188,12 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 
 		onPagePositionChange: function(){
 			this.map_view.trigger('pagePositionChange');
-		}
+		},
+
+        remove: function(){
+            this.map_view.remove();
+	        Backbone.View.prototype.remove.apply(this, arguments);
+        }
 	});
 
 	return MapEditorView;

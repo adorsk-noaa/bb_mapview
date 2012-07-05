@@ -178,7 +178,13 @@ function($, Backbone, _, ol, template, WMSLayerView){
 			this.map.removeLayer(layer.view.layer);
 			layer.view.remove();
 			delete this.layerRegistry[model.cid];
-		}
+		},
+
+        remove: function(){
+            this.map.destroy();
+	        Backbone.View.prototype.remove.apply(this, arguments);
+        }
+
 
 	});
 
