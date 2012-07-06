@@ -93,7 +93,9 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		onRenderEnd: function(){
 			this._rendering_counter -= 1;
 			if (this._rendering_counter == 0){
-				clearTimeout(this.loading_placeholder_timeout);
+                if (this.loading_placeholder_timeout){
+                    clearTimeout(this.loading_placeholder_timeout);
+                }
 				this.hideLoadingPlaceholder();
 			}
 		},
@@ -115,20 +117,27 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		},
 
 		resize: function(){
-			this.map.updateSize();
+            if (this.map){
+                this.map.updateSize();
+            }
+            // Some browsers require the graticule to be refreshed on resize.
+            if (this.graticule){
+                this.graticule.deactivate();
+                this.graticule.activate();
+            }
 		},
 
 		onReady: function(){
 			this.map.render($('.map', this.el).get(0));
 
 			// Add graticule.
-			var graticule = new OpenLayers.Control.Graticule({
+			this.graticule = new OpenLayers.Control.Graticule({
 				intervals: this.model.get('graticule_intervals'),
 				numPoints: 2, 
 				labelled: true,
 				labelFormat: 'dd'
 			});
-			this.map.addControl(graticule);
+			this.map.addControl(this.graticule);
 
 			// Zoom to initial extent if given, max extent otherwise.
 			if (this.model.get('initial_extent')){
