@@ -5,8 +5,9 @@ define([
 	"use!openlayers",
 	"text!./templates/mapview.html",
 	"./wms_layer",
+	"./wmts_layer",
 		],
-function($, Backbone, _, ol, template, WMSLayerView){
+function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 	var MapViewView = Backbone.View.extend({
 
@@ -154,12 +155,16 @@ function($, Backbone, _, ol, template, WMSLayerView){
 		},
 
 		getLayerView: function(layer_model){
-			var layer_view;
 			if (layer_model.get('layer_type') == 'WMS'){
 				layer_view = new WMSLayerView({
 					model: layer_model
 				});
 			}
+            else if (layer_model.get('layer_type') == 'WMTS'){
+				layer_view = new WMTSLayerView({
+					model: layer_model
+				});
+            }
 
 			return layer_view;
 		},
