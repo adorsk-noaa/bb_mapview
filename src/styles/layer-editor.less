@@ -33,70 +33,116 @@
 @tab_bw: 1px;
 @tab_corner_radius: 7px;
 
-.layer-editor > .inner{
-	position: relative;
+.layer-editor {
 
+    > table {
+        width: 100%;
+    }
 
-	> .header{
-		width: 100%;
-		display: table;
+    .layer-editor-header{
+        width: 100%;
+        display: table-row;
 
-		.disabled-toggle-container{
-			display: table-cell;
-			width: 16px;
+        > .cell {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .drag-handle-container{
+            width: 16px;
+
+            &.disabled {
+                width: 0;
+                display: none;
+            }
+
+            > .layer-editor-drag-handle{
+                background-image: url('images/drag_arrow.png');
+                background-size: 100% 100%;
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+            }
+        }
+
+        .disabled-toggle-container{
+            width: 16px;
 
             .disabled-toggle-cb {
                 cursor: pointer;
             }
-		}
-		
-		.title-container{
-			display: table-cell;
-			height: 100%;
-			position: relative;
+        }
 
-			> .overlay{
-				display: none;
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				background-color: @faint_grey;
-			}
+        .title-container{
+            height: 100%;
+            position: relative;
+            padding: 0 @padding_normal;
 
-			.title {
-				.button;
-				display: inline-block;
-				font-size: 14px;
-				margin-left: @padding_tight;
-				padding: 1px @padding_looser;
-				vertical-align: middle;
+            > .inner{
+                position: relative;
+                width: 100%;
 
-				button.toggle {
-					.button;
-				}
-			}
-		}
-	}
+                > .overlay{
+                    display: none;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: @faint_grey;
+                }
 
-	> .body {
-		display: none;
-		font-size: 14px;
-		padding: @padding_normal;
+                .title {
+                    .button;
+                    width: 100%;
 
-		> .layer-form{
-			background: white;
-		}
-	}
-	
-}
+                    .text {
+                        font-size: 14px;
+                        margin-left: @padding_tight;
+                        padding: 1px @padding_looser;
+                        vertical-align: middle;
+                    }
+
+                    .arrow{
+                        width: 20px;
+                    }
+                }
+            }
+        }
+
+        .info-container{
+            height: 100%;
+            width: 32px;
+
+            .info-button{
+                .content {
+                    display: none;
+                }
+
+                &.disabled {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .layer-editor-body {
+        display: none;
+        font-size: 14px;
+        padding: @padding_normal;
+
+        > .layer-form{
+            background: white;
+        }
+    }
 
 
-.layer-editor.disabled > .inner{
-	> .header > .title-container > .overlay{
-		display: block;
-		opacity: .5;
-	}
+    &.disabled {
+        .layer-editor-header > .title-container > .inner > .overlay{
+            display: block;
+            opacity: .5;
+        }
+    }
+
 }
 

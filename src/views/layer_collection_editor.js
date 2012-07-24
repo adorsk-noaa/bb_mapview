@@ -46,8 +46,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 			// Make table sortable.
 			var _this = this;
 			this.$body.sortable({
-				//containment: this.$body,
-				handle: '.drag-handle',
+				handle: '.layer-editor-drag-handle',
 				scroll: false,
 				placeholder: "ui-state-highlight",
 				stop: function(e, ui){

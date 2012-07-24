@@ -12,7 +12,7 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 	var LayerEditorView = Backbone.View.extend({
 
 		events: {
-			'click .header .title': 'toggleLayerForm',
+			'click .layer-editor-header .title': 'toggleLayerForm',
 			'change .disabled-toggle': 'onDisabledToggleChange'
 		},
 
@@ -26,10 +26,24 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 
 		initialRender: function(){
 			$(this.el).html(_.template(template, {model: this.model}));
-			this.$body = $('.body', this.el);
-			this.$arrow = $('.header .title .arrow', this.el);
+			this.$body = $('.layer-editor-body', this.el);
+			this.$arrow = $('.layer-editor-header .title .arrow', this.el);
 			this.$disabled_toggle = $('.disabled-toggle-cb', this.el);
 			this.$layer_form = $('.layer-form', this.el);
+
+            // Add info if model has info.
+            var info = this.model.get('info');
+            if (info){
+                var $info = $('.info-container > .info-button', this.el);
+                $('> .content', $info).html(info);
+                $info.removeClass('disabled');
+            }
+
+            // Add drag handle if layer is reordable.
+            if (this.model.get('reorderable')){
+                var $dh = $('.drag-handle-container > .layer-editor-drag-handle', this.el);
+                $dh.removeClass('disabled');
+            }
 
 			this.renderFormElements();
 		},
