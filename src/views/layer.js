@@ -15,7 +15,6 @@ function($, Backbone, _, ol){
 			this.model.on('change:params', this.updateParams, this);
 			this.model.on('change:disabled', this.onDisabledChange, this);
 			this.model.on('change:opacity', this.onOpacityChange, this);
-			this.model.on('change:index', this.onIndexChange, this);
 		},
 
         createLayer: function(){
@@ -23,7 +22,6 @@ function($, Backbone, _, ol){
         },
 
         postInitialize: function(){
-            this.layer.setZIndex(this.model.get('index'));
 			this.layer.events.register("loadstart", this, this.onLoadStart);
 			this.layer.events.register("loadend", this, this.onLoadEnd);
         },
@@ -68,10 +66,6 @@ function($, Backbone, _, ol){
 
 		onOpacityChange: function(){
 			this.layer.setOpacity(this.model.get('opacity'));
-		},
-
-		onIndexChange: function(){
-			this.layer.setZIndex(this.model.get('index'));
 		},
 
 		deactivate: function(){

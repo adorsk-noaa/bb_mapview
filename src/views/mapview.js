@@ -174,6 +174,15 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 			this.map.addLayer(layer_view.layer);
 
+            if (model.get('index')){
+                this.map.setLayerIndex(layer_view.layer, model.get('index'));
+            }
+
+            var _map = this.map;
+            model.on('change:index', function(){
+                _map.setLayerZIndex(layer_view.layer, model.get('index'));
+            });
+
 			layer_view.on('render:start', this.onRenderStart, this);
 			layer_view.on('render:end', this.onRenderEnd, this);
 			layer_view.on('load:start', this.onLoadStart, this);

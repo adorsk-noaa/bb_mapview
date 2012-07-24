@@ -60,6 +60,9 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 				this.addLayerWidget(layer);
 			}, this);
 
+            // Initialize layer indices.
+            this.onSortStop();
+
 		},
 
 		onSortStop: function(e, ui){
@@ -68,7 +71,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 			var ordered_cids = this.$body.sortable('toArray');
 			_.each(ordered_cids, function(cid, i){
 				var local_index = ordered_cids.length - 1 - i;
-				this.registry[cid].layer.set('index', start_index + local_index);
+				this.registry[cid].model.set('index', start_index + local_index);
 			}, this);
 			this.layers.sort();
 		},
@@ -99,7 +102,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 
 			// Add to registry.
 			this.registry[layer.cid] = {
-				'layer': layer,
+				'model': layer,
 				'$row': $row,
 				'editor': layer_editor,
 			};

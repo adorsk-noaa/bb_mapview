@@ -33,13 +33,13 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 			// Iniitialize configs for layers categories.
 			this.category_configs = {
 				'base': {
-					'start_index': 100
+					'start_index': 1
 				},
 				'data': {
-					'start_index': 200
+					'start_index': 20
 				},
 				'overlay': {
-					'start_index': 300
+					'start_index': 40
 				}
 			};
 

@@ -15,6 +15,7 @@ function($, Backbone, _, ol, LayerView){
 
 			this.model.on('change:service_url', this.onServiceURLChange, this);
 
+            this.postInitialize();
 		},
         
         createLayer: function(){
@@ -27,10 +28,6 @@ function($, Backbone, _, ol, LayerView){
 					opacity: this.model.get('opacity'),
 				})
 			);
-        },
-        
-        postInitialize: function(){
-			LayerView.prototype.postInitialize.apply(this, arguments);
         },
 
 		onServiceURLChange: function(){
