@@ -27,17 +27,17 @@ function($, Backbone, _, ol){
         },
 
 		onLoadStart: function(){
-			this.trigger('load:start');
+			this.model.trigger('load:start');
 		},
 
 		onLoadEnd: function(){
-			this.trigger('load:end');
+			this.model.trigger('load:end');
 		},
 
 		// Update layer parameters.
 		updateParams: function(){
 			var _this = this;
-			this.trigger('load:start');
+			this.model.trigger('load:start');
 	
 
 			$(this.layer.div).animate({
@@ -57,7 +57,7 @@ function($, Backbone, _, ol){
 			_this = this;
 			$(this.layer.div).animate({opacity: 1}, 750); 
 			this.layer.events.unregister("loadend", this, this.mergeParamsEnd);
-			this.trigger('load:end');
+			this.model.trigger('load:end');
 		},
 
 		onVisibleChange: function(){

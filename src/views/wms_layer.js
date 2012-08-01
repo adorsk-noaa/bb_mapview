@@ -24,7 +24,7 @@ function($, Backbone, _, ol, LayerView){
 				this.model.get('service_url'),
 				this.model.get('params'),
 				_.extend({}, this.model.get('options'),{
-					visibility: ! this.model.get('visible'),
+					visibility: this.model.get('visible'),
 					opacity: this.model.get('opacity'),
 				})
 			);
@@ -32,12 +32,15 @@ function($, Backbone, _, ol, LayerView){
 
 		onServiceURLChange: function(){
 			var _this = this;
-            if (_this.model.get('visible')){
+            if (! _this.model.get('visible')){
+                _this.model.trigger('load:start');
                 _this.layer.url = _this.model.get('service_url');	
+                _this.layer.clearGrid();
+                _this.model.trigger('load:end');
             }
             else{
-                this.trigger('load:start');
-                $(this.layer.div).animate({
+                _this.model.trigger('load:start');
+                $(_this.layer.div).animate({
                     opacity: .5
                 },500, function(){
                     _this.layer.clearGrid();
@@ -52,7 +55,7 @@ function($, Backbone, _, ol, LayerView){
 			_this = this;
 			$(this.layer.div).animate({opacity: 1}, 750); 
 			this.layer.events.unregister("loadend", this, this.onServiceURLChangeEnd);
-			this.trigger('load:end');
+			this.model.trigger('load:end');
 		}
 
 	});

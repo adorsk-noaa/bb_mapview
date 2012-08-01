@@ -70,10 +70,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 		addLayerView: function(layer_view){
 			this.layer_views[layer_view.model.id] = layer_view;
 			this.map.addLayer(layer_view.layer);
-			layer_view.on('render:start', this.onRenderStart, this);
-			layer_view.on('render:end', this.onRenderEnd, this);
-			layer_view.on('load:start', this.onLoadStart, this);
-			layer_view.on('load:end', this.onLoadEnd, this);
+			layer_view.model.on('render:start', this.onRenderStart, this);
+			layer_view.model.on('render:end', this.onRenderEnd, this);
+			layer_view.model.on('load:start', this.onLoadStart, this);
+			layer_view.model.on('load:end', this.onLoadEnd, this);
 		},
 
 		onLoadStart: function(){
@@ -183,10 +183,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
                 _map.setLayerZIndex(layer_view.layer, model.get('index'));
             });
 
-			layer_view.on('render:start', this.onRenderStart, this);
-			layer_view.on('render:end', this.onRenderEnd, this);
-			layer_view.on('load:start', this.onLoadStart, this);
-			layer_view.on('load:end', this.onLoadEnd, this);
+			layer_view.model.on('render:start', this.onRenderStart, this);
+			layer_view.model.on('render:end', this.onRenderEnd, this);
+			layer_view.model.on('load:start', this.onLoadStart, this);
+			layer_view.model.on('load:end', this.onLoadEnd, this);
 
 
 			this.layerRegistry[model.cid] = {
