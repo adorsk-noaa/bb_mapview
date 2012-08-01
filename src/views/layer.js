@@ -26,12 +26,31 @@ function($, Backbone, _, ol){
 			this.layer.events.register("loadend", this, this.onLoadEnd);
         },
 
+        // These functions trigger a fade animation,
+        // and return a promise object that will resolve
+        // when the animation completes.
+        fadeOut: function(){
+            var anim = $(this.layer.div).animate({opacity: .5},500);
+            return anim.promise();
+        },
+
+        fadeIn: function(){
+            var anim = $(this.layer.div).animate({opacity: 1}, 500);
+            return anim.promise();
+        },
+
 		onLoadStart: function(){
-			this.model.trigger('load:start');
+            var _this = this;
+            this.fadeOut().then(function(){
+                _this.model.trigger('load:start');
+            });
 		},
 
 		onLoadEnd: function(){
-			this.model.trigger('load:end');
+            var _this = this;
+            this.fadeIn().then(function(){
+                _this.model.trigger('load:end');
+            });
 		},
 
 		// Update layer parameters.

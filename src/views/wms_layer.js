@@ -39,25 +39,16 @@ function($, Backbone, _, ol, LayerView){
                 _this.model.trigger('load:end');
             }
             else{
-                _this.model.trigger('load:start');
-                $(_this.layer.div).animate({
-                    opacity: .5
-                },500, function(){
+                // Start with a fade.
+                var promise = _this.fadeOut();
+                // When the fade completes...
+                promise.then(function(){
                     _this.layer.clearGrid();
-                    _this.layer.events.register("loadend", _this, _this.onServiceURLChangeEnd);
                     _this.layer.url = _this.model.get('service_url');	
                     _this.layer.redraw();
                 });
             }
 	    },
-
-		onServiceURLChangeEnd: function(){
-			_this = this;
-			$(this.layer.div).animate({opacity: 1}, 750); 
-			this.layer.events.unregister("loadend", this, this.onServiceURLChangeEnd);
-			this.model.trigger('load:end');
-		}
-
 	});
 
 	return WMSLayerView;
