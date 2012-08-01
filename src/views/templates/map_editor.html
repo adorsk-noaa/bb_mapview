@@ -25,22 +25,22 @@
 					<div class="layers-editor">
 						<div class="tabs">
 							<ul>
-								<li><a href="#data-layers-panel">Data</a></li>
-								<li><a href="#base-layers-panel">Basemap</a></li>
-								<li><a href="#overlay-layers-panel">Overlays</a></li>
+                                <li><a href="#<%= view.cid %>-data-layers-panel">Data</a></li>
+								<li><a href="#<%= view.cid %>-base-layers-panel">Basemap</a></li>
+								<li><a href="#<%= view.cid %>-overlay-layers-panel">Overlays</a></li>
 							</ul>
 
-							<div id="data-layers-panel">
+                            <div id="<%= view.cid %>-data-layers-panel">
 								<div class="data-layers">
 								</div>
 							</div>
 
-							<div id="base-layers-panel">
+                            <div id="<%= view.cid %>-base-layers-panel">
 								<div class="base-layers">
 								</div>
 							</div>
 
-							<div id="overlay-layers-panel">
+                            <div id="<%= view.cid %>-overlay-layers-panel">
 								<div class="overlay-layers">
 								</div>
 							</div>

@@ -15,6 +15,7 @@ function($, Backbone, _, ol){
 			this.model.on('change:params', this.updateParams, this);
 			this.model.on('change:visible', this.onVisibleChange, this);
 			this.model.on('change:opacity', this.onOpacityChange, this);
+			this.on('remove', this.remove, this);
 		},
 
         createLayer: function(){
@@ -94,6 +95,14 @@ function($, Backbone, _, ol){
 		activate: function(){
 			this.layer.setVisibility(! this.model.get('visible'));
 		},
+
+        remove: function(){
+            Backbone.View.prototype.remove.call(this, arguments);
+            this.layer.destroy();
+            this.model.trigger('remove');
+            this.model.off();
+            this.off();
+        }
 				
 	});
 

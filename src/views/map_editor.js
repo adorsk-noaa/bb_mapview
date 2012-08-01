@@ -60,7 +60,7 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 		},
 
 		initialRender: function(){
-			$(this.el).html(_.template(template));
+			$(this.el).html(_.template(template, {view: this}));
 			this.$table = $(this.el).children('table.body');
 			this.$map_container = $('.map-container', this.el);
 
@@ -70,36 +70,27 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 			// Setup map.
 			this.$map_container.append(this.map_view.el);
 
-			// Setup layer categories.
+			// Setup layer categories and editors.
+            this.layerCollectionEditors = {};
 			_.each(_.keys(this.category_configs), function(category){
 				var category_layers = this.model.get(category + '_layers') || [];
 
 				// Create layer collection editor.
-				new LayerCollectionEditorView({
+				var layerCollectionEditor = new LayerCollectionEditorView({
 					model: new Backbone.Model({
 						layers: category_layers,
 						start_index: this.category_configs[category]['start_index']
 					}),
 					el: $(_s.sprintf('.%s-layers', category), this.el)
 				});
+
+                this.layerCollectionEditors[category] = layerCollectionEditor;
 				
 				// Add layers to overall map layer collection.
 				_.each(category_layers.models, function(layer){
 					this.layers.add(layer);
 				}, this);
 
-			}, this);
-
-		},
-
-		setupBaseLayers: function(){
-
-			_.each(this.model.get('base_layers').models, function(layer){
-				var layer_view = new LayerEditorView({
-					model: layer
-				});
-				$('.base-layers', this.el).append(layer_view.el);
-				this.addLayer(layer);
 			}, this);
 
 		},
@@ -191,8 +182,13 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 		},
 
         remove: function(){
-            this.map_view.remove();
 	        Backbone.View.prototype.remove.apply(this, arguments);
+            this.map_view.trigger('remove');
+            _.each(this.layerCollectionEditors, function(layerCollectionEditor){
+                layerCollectionEditor.trigger("remove");
+            });
+            this.model.off();
+            this.off();
         }
 	});
 

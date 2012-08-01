@@ -27,13 +27,18 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleFormView){
 		renderFormElements: function(){
 			LayerEditorView.prototype.renderFormElements.call(this);
 
-			var color_scale_form = new ColorScaleFormView({
+			this.color_scale_form = new ColorScaleFormView({
 				model: this.model.get('data_entity')
 			});
 
-			this.$layer_form.append(color_scale_form.el);
+			this.$layer_form.append(this.color_scale_form.el);
 
-		}
+		},
+
+        remove: function(){
+            this.color_scale_form.trigger('remove'); 
+            LayerEditorView.prototype.remove.call(this, arguments);
+        }
 	});
 
 	return DataLayerEditorView;

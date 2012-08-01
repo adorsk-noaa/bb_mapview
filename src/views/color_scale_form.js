@@ -17,6 +17,8 @@ function($, Backbone, _, _s, ui, template){
 		initialize: function(options){
 			$(this.el).addClass('color-scale-form');
 			this.initialRender();
+
+            this.on('remove', this.remove, this);
 		},
 
 		initialRender: function(){
@@ -36,7 +38,14 @@ function($, Backbone, _, _s, ui, template){
 		setMinMax: function(minmax){
 			var $input = $(_s.sprintf('input.%s', minmax), this.el);
 			$input.val(this.model.get(minmax));
-		}
+		},
+
+        remove: function(){
+            Backbone.View.prototype.remove.call(this, arguments);
+            this.model.trigger('remove');
+            this.model.off();
+            this.off();
+        }
 
 	});
 

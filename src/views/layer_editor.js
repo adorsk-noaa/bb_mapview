@@ -22,6 +22,7 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 			this.setDisabled();
 
 			this.model.on('change:disabled', this.setDisabled, this);
+            this.on('remove', this.remove, this);
 		},
 
 		initialRender: function(){
@@ -49,11 +50,11 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 		},
 
 		renderFormElements: function(){
-			opacity_form = new OpacityFormView({
+			this.opacity_form = new OpacityFormView({
 				model: this.model
 			});
 
-			this.$layer_form.append(opacity_form.el);
+			this.$layer_form.append(this.opacity_form.el);
 
 		},
 
@@ -88,6 +89,14 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 		onDisabledToggleChange: function(e){
 			this.model.set('disabled', ! this.$disabled_toggle.is(':checked'));
 		},
+
+        remove: function(){
+	        Backbone.View.prototype.remove.apply(this, arguments);
+            this.opacity_form.trigger('remove');
+            this.model.trigger('remove');
+            this.model.off();
+            this.off();
+        }
 
 	});
 

@@ -37,6 +37,8 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 
 			this.registry = {};
 			this.initialRender();
+
+            this.on('remove', this.remove, this);
 		},
 
 		initialRender: function(){
@@ -112,7 +114,18 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 
 			// Refresh table.
 			this.$body.sortable('refresh');
-		}
+		},
+
+        remove: function(){
+	        Backbone.View.prototype.remove.apply(this, arguments);
+            _.each(this.registry, function(item, id){
+                item.editor.trigger("remove");
+                delete this.registry[id];
+            }, this);
+            this.model.trigger('remove');
+            this.model.off();
+            this.off();
+        }
 
 			
 	});

@@ -16,6 +16,7 @@ function($, Backbone, _, _s, ui, template){
 		initialize: function(options){
 			$(this.el).addClass('opacity-form');
 			this.initialRender();
+            this.on('remove', this.remove, this);
 		},
 
 		initialRender: function(){
@@ -32,7 +33,14 @@ function($, Backbone, _, _s, ui, template){
 					_this.model.set('opacity', ui.value/100);
 				}
 			});
-		}
+		},
+
+        remove: function(){
+            Backbone.View.prototype.remove.call(this, arguments);
+            this.model.trigger('remove');
+            this.model.off();
+            this.off();
+        }
 
 	});
 

@@ -22,8 +22,9 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 			this.layers = this.model.get('layers');
 
-			this.layers.on('add', this.onAddLayer, this);
-			this.layers.on('remove', this.onRemoveLayer, this);
+			this.layers.on('add', this.addLayer, this);
+			this.layers.on('remove', this.removeLayer, this);
+			this.on('remove', this.remove, this);
 
 			this.on('resizeView', this.resize, this);
 
@@ -169,7 +170,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			return layer_view;
 		},
 
-		onAddLayer: function(model, layers, options){
+		addLayer: function(model, layers, options){
 			var layer_view = this.getLayerView(model);
 
 			this.map.addLayer(layer_view.layer);
@@ -196,16 +197,23 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 		},
 
-		onRemoveLayer: function(model, layers, options){
-			var layer = this.layerRegistry[model.cid];
-			this.map.removeLayer(layer.view.layer);
-			layer.view.remove();
-			delete this.layerRegistry[model.cid];
+		removeLayer: function(layerModel, layers, options){
+			var layer = this.layerRegistry[layerModel.cid];
+            if (layer.view.layer){
+                this.map.removeLayer(layer.view.layer);
+                layer.view.trigger('remove');
+            }
+            delete this.layerRegistry[layerModel.cid];
 		},
 
         remove: function(){
+            _.each(this.layers.models, function(layerModel){
+                this.removeLayer(layerModel);
+            }, this);
             this.map.destroy();
 	        Backbone.View.prototype.remove.apply(this, arguments);
+            this.model.off();
+            this.off();
         }
 
 
