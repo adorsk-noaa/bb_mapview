@@ -13,7 +13,7 @@ function($, Backbone, _, ol){
 
 			this.model.on('change:params', this.updateParams, this);
 			this.model.on('change:params', this.updateParams, this);
-			this.model.on('change:disabled', this.onDisabledChange, this);
+			this.model.on('change:visible', this.onVisibleChange, this);
 			this.model.on('change:opacity', this.onOpacityChange, this);
 		},
 
@@ -60,8 +60,8 @@ function($, Backbone, _, ol){
 			this.trigger('load:end');
 		},
 
-		onDisabledChange: function(){
-			this.layer.setVisibility(! this.model.get('disabled'));
+		onVisibleChange: function(){
+			this.layer.setVisibility(this.model.get('visible'));
 		},
 
 		onOpacityChange: function(){
@@ -73,7 +73,7 @@ function($, Backbone, _, ol){
 		},
 
 		activate: function(){
-			this.layer.setVisibility(! this.model.get('disabled'));
+			this.layer.setVisibility(! this.model.get('visible'));
 		},
 				
 	});

@@ -24,7 +24,7 @@ function($, Backbone, _, ol, LayerView){
 				this.model.get('service_url'),
 				this.model.get('params'),
 				_.extend({}, this.model.get('options'),{
-					visibility: ! this.model.get('disabled'),
+					visibility: ! this.model.get('visible'),
 					opacity: this.model.get('opacity'),
 				})
 			);
@@ -32,7 +32,7 @@ function($, Backbone, _, ol, LayerView){
 
 		onServiceURLChange: function(){
 			var _this = this;
-            if (_this.model.get('disabled')){
+            if (_this.model.get('visible')){
                 _this.layer.url = _this.model.get('service_url');	
             }
             else{
