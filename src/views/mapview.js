@@ -18,7 +18,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			this.layer_views = {};
 			this.render();
 			this._rendering_counter = 0;
-			this._loading_placeholder = $('<div></div>').addClass("loading-placeholder");
+			this._loading_placeholder = $('<div class="loading-placeholder"><div class="img"></div></div>');
 
 			this.layers = this.model.get('layers');
 
@@ -87,7 +87,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 		onRenderStart: function(){
 			if (this._rendering_counter == 0){
 				var _this = this;
-				this.loading_placeholder_timeout = setTimeout(function(){_this.showLoadingPlaceholder()}, 600);
+				this.loading_placeholder_timeout = setTimeout(function(){_this.showLoadingPlaceholder()}, 500);
 			}
 			this._rendering_counter += 1;
 		},
