@@ -113,18 +113,19 @@
 					position: relative;
 
 					> .layers-editor{
-						overflow-y: auto;
 						position: absolute;
 						top: 0;
 						left: 0;
 						right: 0;
-						height: @body_h + 2 * @padding_normal;
+                        bottom: 0;
 						background: white;
 
 						> .tabs {
 							padding: 0;
 							border: 0;
 							height: 100%;
+                            width: 100%;
+                            position: relative;
 
 							.ui-widget-header{
 								background: none repeat scroll 0 0 transparent;
@@ -132,10 +133,16 @@
 								color: inherit;
 							}
 
+                            @tab_h: 27px;
 							.ui-tabs-nav {
 								background-color: @chrome_secondary;
-								height: 27px;
-								padding: 5px 7px 0;
+                                position: absolute;
+                                top: @padding_tight;
+                                bottom: @tab_h;
+                                height: @tab_h;
+                                left: @padding_normal;
+                                right: @padding_normal;
+                                padding: @padding_tight @padding_normal 0 @padding_normal;
 
 								li {
 									height: 100%;
@@ -162,9 +169,23 @@
 							}
 
 							.ui-tabs-panel {
-								border-width: thin 0 0 0;
-								border-style: solid;
-								border-color: @chrome_primary;
+                                position: absolute;
+                                top: @tab_h + 2 * @padding_tight;
+                                bottom: 0;
+                                left: @padding_tight;
+                                right: @padding_tight;
+
+                                .layer-collection-editor {
+                                    position: absolute;
+                                    top: 0;
+                                    bottom: 0;
+                                    left: @padding_tight;
+                                    right: @padding_tight;
+                                    overflow-y: scroll;
+                                    border-width: 0;
+                                    border-style: solid;
+                                    border-color: @chrome_primary;
+                                }
 							}
 						}
 					}
