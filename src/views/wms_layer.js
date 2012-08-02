@@ -39,6 +39,13 @@ function($, Backbone, _, ol, LayerView){
                 _this.model.trigger('load:end');
             }
             else{
+                // Register a temporary callback for when load end finishes.
+                var tmpOnLoadEnd = function(){
+                    _this.model.off('load:end', tmpOnLoadEnd);
+                    _this.fadeIn();
+                };
+                _this.model.on('load:end', tmpOnLoadEnd);
+
                 // Start with a fade.
                 var promise = _this.fadeOut();
                 // When the fade completes...
