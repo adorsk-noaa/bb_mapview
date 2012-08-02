@@ -42,16 +42,31 @@ function($, Backbone, _, ol){
 
 		onLoadStart: function(){
             var _this = this;
-            this.fadeOut().then(function(){
-                _this.model.trigger('load:start');
-            });
+            _this.loadTimeout = setTimeout(function(){
+                _this.loadTimeout = null;
+                _this.fadeOut().then(function(){
+                    _this.model.trigger('load:start');
+                });
+            }, 1000);
 		},
 
 		onLoadEnd: function(){
             var _this = this;
-            this.fadeIn().then(function(){
+            if (_this.loadTimeout){
+                clearTimeout(_this.loadTimeout);
+                _this.loadTimeout = null;
+                _this.model.trigger('load:start');
                 _this.model.trigger('load:end');
-            });
+            }
+            else{
+                var tmpOnLoadStart = function(){
+                    _this.model.off(null, tmpOnLoadStart);
+                    _this.fadeIn().then(function(){
+                        _this.model.trigger('load:end');
+                    });
+                };
+                _this.model.on('load:start', tmpOnLoadStart);
+            }
 		},
 
 		// Update layer parameters.
