@@ -15,7 +15,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			$(this.el).addClass('mapview');
 
 			this.layerRegistry = {};
-			this.layer_views = {};
 			this.render();
 			this._rendering_counter = 0;
 			this._loading_placeholder = $('<div class="loading-placeholder"><div class="img"></div></div>');
@@ -57,24 +56,27 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 		},
 
 		deactivate: function(){
-			_.each(this.layer_views, function(layer_view){
-				layer_view.deactivate();
+			_.each(this.layerRegistry, function(layer){
+				layer.deactivate();
 			});
 		},
 
 		activate: function(){
-			_.each(this.layer_views, function(layer_view){
-				layer_view.activate();
+			_.each(this.layerRegistry, function(layer){
+				layer.activate();
 			});
 		},
 
-		addLayerView: function(layer_view){
-			this.layer_views[layer_view.model.id] = layer_view;
-			this.map.addLayer(layer_view.layer);
-			layer_view.model.on('render:start', this.onRenderStart, this);
-			layer_view.model.on('render:end', this.onRenderEnd, this);
-			layer_view.model.on('load:start', this.onLoadStart, this);
-			layer_view.model.on('load:end', this.onLoadEnd, this);
+		addLayerView: function(layerView){
+			this.layerRegistry[layerView.model.id] = layerView;
+			this.map.addLayer(layerView.layer);
+			layerView.model.on('render:start', this.onRenderStart, this);
+			layerView.model.on('render:end', this.onRenderEnd, this);
+			layerView.model.on('load:start', this.onLoadStart, this);
+			layerView.model.on('load:end', this.onLoadEnd, this);
+
+            // Trigger layer add event.
+            this.trigger("addLayerView");
 		},
 
 		onLoadStart: function(){
@@ -157,43 +159,39 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 		getLayerView: function(layer_model){
 			if (layer_model.get('layer_type') == 'WMS'){
-				layer_view = new WMSLayerView({
+				layerView = new WMSLayerView({
 					model: layer_model
 				});
 			}
             else if (layer_model.get('layer_type') == 'WMTS'){
-				layer_view = new WMTSLayerView({
+				layerView = new WMTSLayerView({
 					model: layer_model
 				});
             }
 
-			return layer_view;
+			return layerView;
 		},
 
 		addLayer: function(model, layers, options){
-			var layer_view = this.getLayerView(model);
+			var layerView = this.getLayerView(model);
 
-			this.map.addLayer(layer_view.layer);
+			this.map.addLayer(layerView.layer);
 
             if (model.get('index')){
-                this.map.setLayerIndex(layer_view.layer, model.get('index'));
+                this.map.setLayerIndex(layerView.layer, model.get('index'));
             }
 
             var _map = this.map;
             model.on('change:index', function(){
-                _map.setLayerZIndex(layer_view.layer, model.get('index'));
+                _map.setLayerZIndex(layerView.layer, model.get('index'));
             });
 
-			layer_view.model.on('render:start', this.onRenderStart, this);
-			layer_view.model.on('render:end', this.onRenderEnd, this);
-			layer_view.model.on('load:start', this.onLoadStart, this);
-			layer_view.model.on('load:end', this.onLoadEnd, this);
+			layerView.model.on('render:start', this.onRenderStart, this);
+			layerView.model.on('render:end', this.onRenderEnd, this);
+			layerView.model.on('load:start', this.onLoadStart, this);
+			layerView.model.on('load:end', this.onLoadEnd, this);
 
-
-			this.layerRegistry[model.cid] = {
-				model: model,
-				view: layer_view,
-			};
+			this.layerRegistry[model.cid] = layerView;
 
 		},
 
@@ -204,6 +202,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
                 layer.view.trigger('remove');
             }
             delete this.layerRegistry[layerModel.cid];
+            this.trigger("removeLayerView");
 		},
 
         remove: function(){
