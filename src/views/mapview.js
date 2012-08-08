@@ -191,17 +191,17 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			layerView.model.on('load:start', this.onLoadStart, this);
 			layerView.model.on('load:end', this.onLoadEnd, this);
 
-			this.layerRegistry[model.cid] = layerView;
+			this.layerRegistry[model.id] = layerView;
 
 		},
 
 		removeLayer: function(layerModel, layers, options){
-			var layer = this.layerRegistry[layerModel.cid];
+			var layer = this.layerRegistry[layerModel.id];
             if (layer.view.layer){
                 this.map.removeLayer(layer.view.layer);
                 layer.view.trigger('remove');
             }
-            delete this.layerRegistry[layerModel.cid];
+            delete this.layerRegistry[layerModel.id];
             this.trigger("removeLayerView");
 		},
 
