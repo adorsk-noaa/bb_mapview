@@ -5,10 +5,11 @@ define([
 	"_s",
 	"use!ui",
 	"Util",
+	"./mapview",
 	"./layer_collection_editor",
 	"text!./templates/map_editor.html"
 		],
-function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
+function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template){
 
 	var MapEditorView = Backbone.View.extend({
 
@@ -17,8 +18,12 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 		},
 
 		initialize: function(options){
-			this.map_view = this.model.get('map_view');
-			this.layers = this.map_view.model.get('layers');
+
+            // Create the map view.
+			this.mapView = new MapViewView({
+                model: this.model.get('map')
+            });
+			this.layers = this.mapView.model.get('layers');
 
 			// Sort layers by index.
 			this.layers.comparator = function(layer){
@@ -68,7 +73,7 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 			$('.layers-editor > .tabs', this.el).tabs();
 
 			// Setup map.
-			this.$map_container.append(this.map_view.el);
+			this.$map_container.append(this.mapView.el);
 
 			// Setup layer categories and editors.
             this.layerCollectionEditors = {};
@@ -103,15 +108,15 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 		},
 
 		resizeStop: function(){
-			this.map_view.resize();
+			this.mapView.resize();
 		},
 
 		deactivate: function(){
-			this.map_view.deactivate();
+			this.mapView.deactivate();
 		},
 
 		activate: function(){
-			this.map_view.activate();
+			this.mapView.activate();
 		},
 
 		toggleLayerEditor: function(e){
@@ -174,16 +179,16 @@ function($, Backbone, _, _s, ui, Util, LayerCollectionEditorView, template){
 		onReady: function(){
 			this.resize();
 			this.resizeStop();
-			this.map_view.trigger('ready');
+			this.mapView.trigger('ready');
 		},
 
 		onPagePositionChange: function(){
-			this.map_view.trigger('pagePositionChange');
+			this.mapView.trigger('pagePositionChange');
 		},
 
         remove: function(){
 	        Backbone.View.prototype.remove.apply(this, arguments);
-            this.map_view.trigger('remove');
+            this.mapView.trigger('remove');
             _.each(this.layerCollectionEditors, function(layerCollectionEditor){
                 layerCollectionEditor.trigger("remove");
             });
