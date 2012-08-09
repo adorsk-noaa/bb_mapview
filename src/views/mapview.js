@@ -197,9 +197,9 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 		removeLayer: function(layerModel, layers, options){
 			var layer = this.layerRegistry[layerModel.id];
-            if (layer.view.layer){
-                this.map.removeLayer(layer.view.layer);
-                layer.view.trigger('remove');
+            if (layer.layer){
+                this.map.removeLayer(layer.layer);
+                layer.trigger('remove');
             }
             delete this.layerRegistry[layerModel.id];
             this.trigger("removeLayerView");
