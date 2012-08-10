@@ -15,7 +15,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			$(this.el).addClass('mapview');
 
 			this.layerRegistry = {};
-			this.render();
+			this.initialRender();
 			this._rendering_counter = 0;
 			this._loading_placeholder = $('<div class="loading-placeholder"><div class="img"></div></div>');
 
@@ -36,13 +36,19 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 		},
 
-		render: function(){
+		initialRender: function(){
 			rendered_html = _.template(template);
 			$(this.el).html(rendered_html);
 
-			this.map = new OpenLayers.Map(
-				this.model.get('options')
-			);
+            // Clean up theme option.
+            // Should be null, rather than empty object.
+            // This can get bargled by OpenLayers.
+            var mapOptions = this.model.get('options');
+            if (mapOptions.theme && $.isEmptyObject(mapOptions.theme)){
+                mapOptions.theme = null;
+            }
+
+			this.map = new OpenLayers.Map(mapOptions);
 
 			// Disable mouse wheel zoom.
 			var nav_control = this.map.getControlsByClass('OpenLayers.Control.Navigation')[0];
