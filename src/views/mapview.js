@@ -15,11 +15,11 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			$(this.el).addClass('mapview');
 
 			this.layerRegistry = {};
-			this.initialRender();
 			this._rendering_counter = 0;
 			this._loading_placeholder = $('<div class="loading-placeholder"><div class="img"></div></div>');
-
 			this.layers = this.model.get('layers');
+
+			this.initialRender();
 
 			this.layers.on('add', this.addLayer, this);
 			this.layers.on('remove', this.removeLayer, this);
@@ -49,6 +49,11 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
             }
 
 			this.map = new OpenLayers.Map(mapOptions);
+
+            // Add initial layers.
+            _.each(this.layers.models, function(layerModel){
+                this.addLayer(layerModel, this.layers);
+            }, this);
 
 			// Disable mouse wheel zoom.
 			var nav_control = this.map.getControlsByClass('OpenLayers.Control.Navigation')[0];
