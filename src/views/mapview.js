@@ -21,6 +21,9 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 
 			this.initialRender();
 
+            // Listen for map move events.
+            this.map.events.register('moveend', this, this.onMapMoveEnd);
+
 			this.layers.on('add', this.addLayer, this);
 			this.layers.on('remove', this.removeLayer, this);
 			this.on('remove', this.remove, this);
@@ -40,10 +43,19 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			rendered_html = _.template(template);
 			$(this.el).html(rendered_html);
 
+            var mapOptions = JSON.parse(JSON.stringify(this.model.get('options')));
+
+            // Merge in other options stored in model attributes.
+            _.each(['resolution', 'extent'], function(attr){
+                var value = this.model.get(attr);
+                if (typeof value != 'undefined'){
+                    mapOptions[attr] = value;
+                }
+            }, this);
+
             // Clean up theme option.
             // Should be null, rather than empty object.
             // This can get bargled by OpenLayers.
-            var mapOptions = this.model.get('options');
             if (mapOptions.theme && $.isEmptyObject(mapOptions.theme)){
                 mapOptions.theme = null;
             }
@@ -154,9 +166,9 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
 			});
 			this.map.addControl(this.graticule);
 
-			// Zoom to initial extent if given, max extent otherwise.
-			if (this.model.get('initial_extent')){
-				this.map.zoomToExtent(this.model.get('initial_extent'));
+			// Zoom to extent if given, max extent otherwise.
+			if (this.model.get('extent')){
+				this.map.zoomToExtent(this.model.get('extent'));
 			}
 			else{
 				this.map.zoomToMaxExtent();
@@ -215,6 +227,14 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
             delete this.layerRegistry[layerModel.id];
             this.trigger("removeLayerView");
 		},
+
+        onMapMoveEnd: function(){
+            // Update model extend and resolution after moves.
+            this.model.set({
+                extent: this.map.getExtent().toArray(),
+                resolution: this.map.getResolution(),
+            });
+        },
 
         remove: function(){
             _.each(this.layers.models, function(layerModel){
