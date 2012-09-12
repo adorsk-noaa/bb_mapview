@@ -20,7 +20,7 @@ function($, Backbone, _, ol, LayerView){
         
         createLayer: function(){
 		    return new OpenLayers.Layer.WMS(
-				this.model.get('name'),
+				this.model.get('label'),
 				this.model.get('service_url'),
 				this.model.get('params'),
 				_.extend({}, this.model.get('options'),{
