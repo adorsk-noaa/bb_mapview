@@ -81,7 +81,8 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
 				var category_layers = this.model.get(category + '_layers') || [];
 
 				// Create layer collection editor.
-				var layerCollectionEditor = new LayerCollectionEditorView({
+                var LayerCollectionEditorClass = this.getLayerCollectionEditorClass();
+				var layerCollectionEditor = new LayerCollectionEditorClass({
 					model: new Backbone.Model({
 						layers: category_layers,
 						start_index: this.category_configs[category]['start_index']
@@ -99,6 +100,10 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
 			}, this);
 
 		},
+
+        getLayerCollectionEditorClass: function(){
+            return LayerCollectionEditorView;
+        },
 
 		render: function(){
 		},

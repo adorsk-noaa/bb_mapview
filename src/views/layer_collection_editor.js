@@ -83,24 +83,26 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_templ
 			return category_start_index + category_index;
 		},
 
+        getLayerEditorClass: function(layer){
+			if (layer.get('layer_category') == 'data'){
+				return DataLayerEditorView;
+            }
+			else{
+                return LayerEditorView;
+            }
+        },
+
 		addLayerWidget: function(layer){
 			// Create row for layer widget.
 			$row = $(_.template(row_template, {model: layer}));
 			
 			// Create editor for layer.
 			var layer_editor;
-			if (layer.get('layer_category') == 'data'){
-				layer_editor = new DataLayerEditorView({
-					model: layer,
-					el: $('.layer-editor', $row)
-				});
-			}
-			else{
-				layer_editor = new LayerEditorView({
-					model: layer,
-					el: $('.layer-editor', $row)
-				});
-			}
+            EditorClass = this.getLayerEditorClass(layer);
+            layer_editor = new EditorClass({
+                model: layer,
+                         el: $('.layer-editor', $row)
+            });
 
 			// Add to registry.
 			this.registry[layer.cid] = {

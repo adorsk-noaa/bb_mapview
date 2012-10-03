@@ -33,7 +33,7 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 			this.$layer_form = $('.layer-form', this.el);
 
             // Add info if model has info.
-            var info = this.model.get('info');
+            var info = this.formatter(this.model.get('info'));
             if (info){
                 var $info = $('.info-container > .info-button', this.el);
                 $('> .content', $info).html(info);
@@ -48,6 +48,10 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 
 			this.renderFormElements();
 		},
+
+        formatter: function(s){
+            return s;
+        },
 
 		renderFormElements: function(){
 			this.opacity_form = new OpacityFormView({
