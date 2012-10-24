@@ -22,6 +22,13 @@ function($, Backbone, _, ol){
             return {};
         },
 
+        sanitizeOptions: function(){
+            var options = this.model.get('options');
+            if (options.tileSize){
+                options.tileSize = new OpenLayers.Size(options.tileSize.w, options.tileSize.h)
+            }
+        },
+
         postInitialize: function(){
 			this.layer.events.register("loadstart", this, this.onLoadStart);
 			this.layer.events.register("loadend", this, this.onLoadEnd);

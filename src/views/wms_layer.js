@@ -19,6 +19,7 @@ function($, Backbone, _, ol, LayerView){
 		},
         
         createLayer: function(){
+            this.sanitizeOptions();
 		    return new OpenLayers.Layer.WMS(
 				this.model.get('label'),
 				this.model.get('service_url'),
