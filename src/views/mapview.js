@@ -1,8 +1,8 @@
 define([
 	"jquery",
-	"use!backbone",
-	"use!underscore",
-	"use!openlayers",
+	"backbone",
+	"underscore",
+	"openlayers",
 	"text!./templates/mapview.html",
 	"./wms_layer",
 	"./wmts_layer",

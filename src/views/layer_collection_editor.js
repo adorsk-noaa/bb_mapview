@@ -1,9 +1,9 @@
 define([
 	"jquery",
-	"use!backbone",
-	"use!underscore",
+	"backbone",
+	"underscore",
 	"_s",
-	"use!ui",
+	"ui",
 	"./layer_editor",
 	"./data_layer_editor",
 	"text!./templates/layer_collection_editor_row.html"

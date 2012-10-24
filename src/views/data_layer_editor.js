@@ -1,9 +1,9 @@
 define([
 	"jquery",
-	"use!backbone",
-	"use!underscore",
+	"backbone",
+	"underscore",
 	"_s",
-	"use!ui",
+	"ui",
 	"./layer_editor",
 	"./color_scale_form"
 		],

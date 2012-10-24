@@ -1,9 +1,9 @@
 define([
 	"jquery",
-	"use!backbone",
-	"use!underscore",
+	"backbone",
+	"underscore",
 	"_s",
-	"use!ui",
+	"ui",
 	"./opacity_form", 
 	"text!./templates/layer_editor.html"
 		],

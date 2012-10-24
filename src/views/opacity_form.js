@@ -1,9 +1,9 @@
 define([
 	"jquery",
-	"use!backbone",
-	"use!underscore",
+	"backbone",
+	"underscore",
 	"_s",
-	"use!ui",
+	"ui",
 	"text!./templates/opacity_form.html"
 		],
 function($, Backbone, _, _s, ui, template){

@@ -1,8 +1,8 @@
 define([
 	"jquery",
-	"use!backbone",
-	"use!underscore",
-	"use!openlayers",
+	"backbone",
+	"underscore",
+	"openlayers",
 	"./layer",
 		],
 function($, Backbone, _, ol, LayerView){
