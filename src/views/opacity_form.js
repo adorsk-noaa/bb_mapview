@@ -4,27 +4,21 @@ define([
     "underscore",
     "_s",
     "ui",
-    "text!./templates/opacity_form.html"
+    "./layer_option_form"
     ],
-    function($, Backbone, _, _s, ui, template){
-      // @TODO: should make a base class for option forms,
-      // but not right now...
+    function($, Backbone, _, _s, ui, LayerOptionFormView){
 
-      var OpacityFormView = Backbone.View.extend({
-
-        events: {
+      var OpacityFormView = LayerOptionFormView.extend({
+        initialize: function(options){
+          options.label = 'Opacity';
+          LayerOptionFormView.prototype.initialize.apply(this, arguments);
+          $(this.el).addClass('opacity-form');
+          this.initialRender();
         },
 
-      initialize: function(options){
-        $(this.el).addClass('layer-option-form opacity-form');
-        this.initialRender();
-        this.on('remove', this.remove, this);
-      },
-
       initialRender: function(){
-        $(this.el).html(_.template(template, {model: this.model}));
-        this.$slider = $('.slider', this.el);
-
+        LayerOptionFormView.prototype.initialRender.apply(this, arguments);
+        this.$slider = $('<div class="slider"></div>').appendTo(this.$body);
         var _this = this;
         var initial_opacity = (this.model.get('opacity') != null) ? (this.model.get('opacity') + 0) * 100 : 100;
         this.$slider.slider({
@@ -36,14 +30,6 @@ define([
           }
         });
       },
-
-      remove: function(){
-        Backbone.View.prototype.remove.call(this, arguments);
-        this.model.trigger('remove');
-        this.model.off();
-        this.off();
-      }
-
       });
 
       return OpacityFormView;
