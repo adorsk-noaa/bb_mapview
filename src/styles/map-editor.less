@@ -1,6 +1,7 @@
 @import url("require:CommonStyles/styles/variables.less");
 @import url("require:CommonStyles/styles/rounded-corners.less");
 @import url("require:CommonStyles/styles/button.less");
+@import url("require:tabble/jquery.ui.tabble.less");
 
 @tab_h: 40px;
 @tab_bw: 1px;
@@ -8,161 +9,97 @@
 
 .map-editor{
 
-	display: inline-block;
-	position: relative;
-	
-	> .body{
-		border-collapse: collapse;
-		border-spacing: 0;
+  display: inline-block;
+  position: relative;
 
+  > .body{
     height: 100%;
     width: 100%;
+  }
 
-		.map-row{
+  .map-container{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 
-			.map-cell{
-				position: relative;
-				overflow: hidden;
+  .layers-editor{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
 
-				.map-container{
-					position: absolute;
-					top: 0;
-					bottom: 0;
-					left: 0;
-					right: 0;
-				}
-			}
-		}
+    > .tabs {
+      padding: 0;
+      border: 0;
+      height: 100%;
+      width: 100%;
+      position: relative;
 
-		.layers-editor-row{
-			min-height: @tab_h;
-			height: @tab_h;			
+      .ui-widget-header{
+        background: none repeat scroll 0 0 transparent;
+        border: medium none;
+        color: inherit;
+      }
 
-			.layers-editor-container{
-				@body_h: 225px;
-				min-height: @tab_h;
-				max-height: @tab_h + @body_h + @tab_bw + 2 * @padding_normal;
-				height: @tab_h;
-				display: block-inline;
-				width: 100%;
-				overflow: hidden;
-				position: relative;
+      @tab_h: 27px;
+      .ui-tabs-nav {
+        background-color: @chrome_secondary;
+        position: absolute;
+        top: @padding_tight;
+        bottom: @tab_h;
+        height: @tab_h;
+        left: @padding_normal;
+        right: @padding_normal;
+        padding: @padding_tight @padding_normal 0 @padding_normal;
 
-				.rounded_corners_bottom(@tab_corner_radius);
-				background: @chrome_primary;  
+        li {
+          height: 100%;
+          padding-bottom: 0;
+          top: 0;
 
-				> .header{
-					height: @tab_h;
+          &.ui-tabs-selected {
+            padding-bottom: 0;
+          }
 
-					> .title-container{
-						text-align: center;
-						height: 100%;
+          a {
+            margin-bottom: 0;
+            padding: 4px 10px 0;
+          }
 
-						.title {
-							.button;
-							display: inline-block;
-							.rounded_corners(@tab_corner_radius);
-							margin: @padding_tight;
-							font-size: 18px;
-							padding: 1px @padding_looser;
+        }
 
-							button.toggle {
-								.button;
-							}
-						}
-					}
-				}
+        .ui-state-active{
+          border-color: @chrome_primary;
+          border-style: solid;
+          border-width: thin thin 0 thin;
+        }
 
-				> .body{
-					height: @body_h;
-					overflow: hidden;
-					border-width: 0 thin;
-					border-color: @chrome_primary;
-					border-style: solid;
-					font-size: 14px;
-					position: relative;
+      }
 
-					> .layers-editor{
-						position: absolute;
-						top: 0;
-						left: 0;
-						right: 0;
-                        bottom: 0;
-						background: white;
+      .ui-tabs-panel {
+        position: absolute;
+        top: @tab_h + 2 * @padding_tight;
+        bottom: 0;
+        left: @padding_tight;
+        right: @padding_tight;
 
-						> .tabs {
-							padding: 0;
-							border: 0;
-							height: 100%;
-                            width: 100%;
-                            position: relative;
-
-							.ui-widget-header{
-								background: none repeat scroll 0 0 transparent;
-								border: medium none;
-								color: inherit;
-							}
-
-                            @tab_h: 27px;
-							.ui-tabs-nav {
-								background-color: @chrome_secondary;
-                                position: absolute;
-                                top: @padding_tight;
-                                bottom: @tab_h;
-                                height: @tab_h;
-                                left: @padding_normal;
-                                right: @padding_normal;
-                                padding: @padding_tight @padding_normal 0 @padding_normal;
-
-								li {
-									height: 100%;
-								    padding-bottom: 0;
-									top: 0;
-
-									&.ui-tabs-selected {
-										padding-bottom: 0;
-									}
-
-									a {
-										margin-bottom: 0;
-										padding: 4px 10px 0;
-									}
-
-								}
-
-								.ui-state-active{
-									border-color: @chrome_primary;
-									border-style: solid;
-									border-width: thin thin 0 thin;
-								}
-								
-							}
-
-							.ui-tabs-panel {
-                                position: absolute;
-                                top: @tab_h + 2 * @padding_tight;
-                                bottom: 0;
-                                left: @padding_tight;
-                                right: @padding_tight;
-
-                                .layer-collection-editor {
-                                    position: absolute;
-                                    top: 0;
-                                    bottom: 0;
-                                    left: @padding_tight;
-                                    right: @padding_tight;
-                                    overflow-y: scroll;
-                                    border-width: 0;
-                                    border-style: solid;
-                                    border-color: @chrome_primary;
-                                }
-							}
-						}
-					}
-				}
-				
-			}
-
-		}
-	}
+        .layer-collection-editor {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: @padding_tight;
+          right: @padding_tight;
+          overflow-y: scroll;
+          border-width: 0;
+          border-style: solid;
+          border-color: @chrome_primary;
+        }
+      }
+    }
+  }
 }

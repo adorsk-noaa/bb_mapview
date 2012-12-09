@@ -17,7 +17,7 @@ var config= {
     jquery: ASSETS_PATH + "/js/jquery",
     underscore: ASSETS_PATH + "/js/underscore.js/underscore",
     backbone: ASSETS_PATH + "/js/backbone",
-    _s: ASSETS_PATH + "/js/underscore.string",
+    _s: ASSETS_PATH + "/js/underscore.string"
   },
 
   shim: {
@@ -37,7 +37,11 @@ var config= {
     openlayers: {},
 
     uiExtras: {
-      deps: ["jquery", "ui"]
+      deps: ["ui"]
+    },
+
+    tabble: {
+      deps: ["ui"]
     },
   },
 
@@ -71,6 +75,12 @@ var config= {
   {
     "name": "uiExtras",
     "location": ASSETS_PATH + "/js/jquery.ui.extras"
+  },
+
+  {
+    "name": "tabble",
+    "location": ASSETS_PATH + "/js/jquery.ui.tabble",
+    "main": "jquery.ui.tabble"
   }
 
   ]

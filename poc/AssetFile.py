@@ -65,4 +65,8 @@ assets = {
         'type': 'git',
         'source': 'https://github.com/adorsk-noaa/georefine_util.git'
     },
+    'jquery.ui.tabble': {
+        'type': 'git',
+        'source': 'https://github.com/adorsk/jquery.ui.tabble.git'
+    },
 }

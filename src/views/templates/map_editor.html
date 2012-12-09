@@ -1,58 +1,56 @@
 <table class="body">
-	<tr class="row map-row">
-		<td class="cell map-cell">
-			<div class="map-container">
-			</div>
-		</td>
-	</tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
 
-	<tr class="row layers-editor-row">
-		<td class="cell layers-editor-cell">
-
-			<div class="layers-editor-container">
-
-				<div class="header">
-					<div class="title-container">
-						<div class="title">
-							Configure Map
-							<button class="toggle">&#x25BC;</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="body">
-
-					<div class="layers-editor">
-						<div class="tabs">
-							<ul>
+    <tr>
+        <td>
+            <div>
+                <h3>Configure Map</h3>
+                <div>
+                    <div class="layers-editor">
+                        <div class="tabs">
+                            <ul>
                                 <li><a href="#<%= view.cid %>-data-layers-panel">Data</a></li>
-								<li><a href="#<%= view.cid %>-base-layers-panel">Basemap</a></li>
-								<li><a href="#<%= view.cid %>-overlay-layers-panel">Overlays</a></li>
-							</ul>
+                                <li><a href="#<%= view.cid %>-base-layers-panel">Basemap</a></li>
+                                <li><a href="#<%= view.cid %>-overlay-layers-panel">Overlays</a></li>
+                            </ul>
 
                             <div id="<%= view.cid %>-data-layers-panel">
-								<div class="data-layers">
-								</div>
-							</div>
+                                <div class="data-layers">
+                                </div>
+                            </div>
 
                             <div id="<%= view.cid %>-base-layers-panel">
-								<div class="base-layers">
-								</div>
-							</div>
+                                <div class="base-layers">
+                                </div>
+                            </div>
 
                             <div id="<%= view.cid %>-overlay-layers-panel">
-								<div class="overlay-layers">
-								</div>
-							</div>
+                                <div class="overlay-layers">
+                                </div>
+                            </div>
 
-						</div>
+                        </div>
 
-					</div>
+                    </div>
 
-				</div>
+                </div>
+            </div>
+        </td>
+        <td class="cell map-cell">
+            <div class="map-container">
+            </div>
+        </td>
+        <td>
+        </td>
+    </tr>
 
-			</div>
-		</td>
-	</tr>
-
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
 </table>

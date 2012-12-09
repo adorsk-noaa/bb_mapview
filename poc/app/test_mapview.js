@@ -2,7 +2,8 @@ require(
   [
     "jquery",
     "rless!MapView/styles/mapview.less",
-    "MapView"
+    "MapView",
+    "tabble"
   ],
   function($, MapViewCSS, MapView){
     $(document).ready(function(){
