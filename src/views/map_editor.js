@@ -75,8 +75,13 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
         stretchTable: true
       }); 
 
-      // Tabify the layers editor.
-      $('.layers-editor > .tabs', this.el).tabs();
+      // Accordionize the layer editor sections
+      $('.layers-editor > .accordions > .accordion', this.el).each(function(i, el){
+        $(el).accordion({
+          collapsible: true,
+          heightStyle: 'content'
+        });
+      });
 
       // Setup map.
       this.$map_container.append(this.mapView.el);

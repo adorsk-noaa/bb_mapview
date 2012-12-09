@@ -25,6 +25,11 @@
     right: 0;
   }
 
+  div.layers-editor-container {
+    width: 400px;
+    height: 100%;
+  }
+
   .layers-editor{
     position: absolute;
     top: 0;
@@ -32,74 +37,7 @@
     right: 0;
     bottom: 0;
     background: white;
-
-    > .tabs {
-      padding: 0;
-      border: 0;
-      height: 100%;
-      width: 100%;
-      position: relative;
-
-      .ui-widget-header{
-        background: none repeat scroll 0 0 transparent;
-        border: medium none;
-        color: inherit;
-      }
-
-      @tab_h: 27px;
-      .ui-tabs-nav {
-        background-color: @chrome_secondary;
-        position: absolute;
-        top: @padding_tight;
-        bottom: @tab_h;
-        height: @tab_h;
-        left: @padding_normal;
-        right: @padding_normal;
-        padding: @padding_tight @padding_normal 0 @padding_normal;
-
-        li {
-          height: 100%;
-          padding-bottom: 0;
-          top: 0;
-
-          &.ui-tabs-selected {
-            padding-bottom: 0;
-          }
-
-          a {
-            margin-bottom: 0;
-            padding: 4px 10px 0;
-          }
-
-        }
-
-        .ui-state-active{
-          border-color: @chrome_primary;
-          border-style: solid;
-          border-width: thin thin 0 thin;
-        }
-
-      }
-
-      .ui-tabs-panel {
-        position: absolute;
-        top: @tab_h + 2 * @padding_tight;
-        bottom: 0;
-        left: @padding_tight;
-        right: @padding_tight;
-
-        .layer-collection-editor {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: @padding_tight;
-          right: @padding_tight;
-          overflow-y: scroll;
-          border-width: 0;
-          border-style: solid;
-          border-color: @chrome_primary;
-        }
-      }
-    }
+    overflow-y: scroll;
   }
+
 }

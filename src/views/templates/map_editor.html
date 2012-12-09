@@ -9,37 +9,32 @@
         <td>
             <div>
                 <h3>Configure Map</h3>
-                <div>
+                <div class="layers-editor-container">
                     <div class="layers-editor">
-                        <div class="tabs">
-                            <ul>
-                                <li><a href="#<%= view.cid %>-data-layers-panel">Data</a></li>
-                                <li><a href="#<%= view.cid %>-base-layers-panel">Basemap</a></li>
-                                <li><a href="#<%= view.cid %>-overlay-layers-panel">Overlays</a></li>
-                            </ul>
-
-                            <div id="<%= view.cid %>-data-layers-panel">
+                        <div class="accordions">
+                            <div class="accordion data-layers-accordion">
+                                <h3>Data</h3>
                                 <div class="data-layers">
                                 </div>
                             </div>
 
-                            <div id="<%= view.cid %>-base-layers-panel">
+                            <div class="accordion base-layers-accordion">
+                                <h3>Basemap</h3>
                                 <div class="base-layers">
                                 </div>
                             </div>
 
-                            <div id="<%= view.cid %>-overlay-layers-panel">
+                            <div class="accordion base-layers-accordion">
+                                <h3>Overlays</h3>
                                 <div class="overlay-layers">
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </td>
+
         <td class="cell map-cell">
             <div class="map-container">
             </div>

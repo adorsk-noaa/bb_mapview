@@ -35,6 +35,17 @@ require(
 
       cssDeferred.done(function(){
         var editor_m = new Backbone.Model();
+        _.each(['data', 'base', 'overlay'], function(category){
+          var layer_set = new Backbone.Collection();
+          for (var i=0; i < 3; i++){
+            layer_set.add(new Backbone.Model({
+              label: category + "_" + i,
+              layer_type: 'WMS'
+            }));
+          }
+          editor_m.set(category + '_layers', layer_set);
+        });
+
         var editor = new MapView.views.MapEditorView({
           model: editor_m,
           el: $('#main')
