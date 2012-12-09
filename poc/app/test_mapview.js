@@ -2,16 +2,17 @@ require(
   [
     "jquery",
     "rless!MapView/styles/mapview.less",
+    "rless!ui/css/smoothness/jquery-ui-1.9.1.custom.css",
     "MapView",
     "tabble"
   ],
-  function($, MapViewCSS, MapView){
+  function($, MapViewCSS, uiCSS, MapView){
     $(document).ready(function(){
       $(document.body).append('<p id="stylesLoaded" style="display: none;"></p>');
       cssEl = document.createElement('style');
       cssEl.id = 'rless';
       cssEl.type = 'text/css';
-      cssText = MapViewCSS + "\n#stylesLoaded {position: fixed;}\n";
+      cssText = uiCSS + MapViewCSS + "\n#stylesLoaded {position: fixed;}\n";
       if (cssEl.styleSheet){
         cssEl.styleSheet.cssText = cssText;
       }
