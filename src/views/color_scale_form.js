@@ -8,6 +8,9 @@ define([
 		],
 function($, Backbone, _, _s, ui, template){
 
+  // @TODO: make a base class for layer option forms,
+  // to share logic w/ opacity-form,
+  // but not right now.
 	var ColorScaleFormView = Backbone.View.extend({
 
 		events: {
@@ -15,7 +18,7 @@ function($, Backbone, _, _s, ui, template){
 		},
 
 		initialize: function(options){
-			$(this.el).addClass('color-scale-form');
+			$(this.el).addClass('layer-option-form color-scale-form');
 			this.initialRender();
 
             this.on('remove', this.remove, this);

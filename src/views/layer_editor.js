@@ -57,9 +57,7 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
 			this.opacity_form = new OpacityFormView({
 				model: this.model
 			});
-
 			this.$layer_form.append(this.opacity_form.el);
-
 		},
 
 		toggleLayerForm: function(e){

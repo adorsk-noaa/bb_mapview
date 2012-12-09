@@ -39,10 +39,14 @@ require(
         _.each(['data', 'base', 'overlay'], function(category){
           var layer_set = new Backbone.Collection();
           for (var i=0; i < 3; i++){
-            layer_set.add(new Backbone.Model({
+            var layer_model = new Backbone.Model({
               label: category + "_" + i,
               layer_type: 'WMS'
-            }));
+            })
+            if (category == 'data'){
+              layer_model.set('layer_category', 'data');
+            }
+            layer_set.add(layer_model);
           }
           editor_m.set(category + '_layers', layer_set);
         });
