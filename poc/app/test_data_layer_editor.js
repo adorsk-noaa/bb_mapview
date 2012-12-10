@@ -36,15 +36,25 @@ require(
 
       cssDeferred.done(function(){
 
+        var data_entity = new Backbone.Model({
+          colorbar_url: 'colorbar.png'
+        });
+
         var layer_model = new Backbone.Model({
           label: 'test data layer',
-          layer_category: 'data'
-        })
+          layer_category: 'data',
+          data_entity: data_entity
+        });
+
 
         var editor = new DataLayerEditor({
           model: layer_model,
           el: $('#main')
         });
+
+        window.doIt = function(){
+          data_entity.set('colorbar_url', 'colorbar2.gif');
+        }
 
       });
     });
