@@ -124,6 +124,7 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
     },
 
     resizeStop: function(){
+      this.$table.tabble('resize');
       this.mapView.resize();
     },
 
