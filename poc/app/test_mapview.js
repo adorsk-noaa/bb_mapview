@@ -45,6 +45,13 @@ require(
             })
             if (category == 'data'){
               layer_model.set('layer_category', 'data');
+              if (i % 2){
+                layer_model.set('data_entity', new Backbone.Model({
+                  'color_scale_type': 'bi',
+                  'center': 0,
+                  'radius': 1
+                }));
+              }
             }
             layer_set.add(layer_model);
           }

@@ -4,17 +4,26 @@
 		background-size: 100% 100%;
 	}
 
-    .inputs{
-        .min-input{
-            float: left;
-        }
+  .inputs{
+      input{
+          width: 50px;
+      }
+  }
 
-        .max-input{
-            float: right;
-        }
-
-        input{
-            width: 50px;
-        }
+  &.mono {
+    .inputs {
+      .min-input{
+        float: left;
+      }
+      .max-input{
+        float: right;
+      }
     }
+  }
+
+  &.bi {
+    .inputs {
+      text-align: center;
+    }
+  }
 }

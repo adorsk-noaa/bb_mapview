@@ -7,7 +7,7 @@ define([
     "./layer_editor",
     "./color_scale_form"
     ],
-    function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleFormView){
+    function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms){
 
       var DataLayerEditorView = LayerEditorView.extend({
 
@@ -29,8 +29,17 @@ define([
       renderFormElements: function(){
         LayerEditorView.prototype.renderFormElements.call(this);
 
-        this.color_scale_form = new ColorScaleFormView({
-          model: this.model.get('data_entity')
+        var data_entity = this.model.get('data_entity');
+        var scale_type = data_entity.get('color_scale_type') || 'mono';
+        var scale_class;
+        if (scale_type == 'mono'){
+          scale_class = ColorScaleForms.Mono;
+        }
+        else if (scale_type == 'bi'){
+          scale_class = ColorScaleForms.Bi;
+        }
+        this.color_scale_form = new scale_class({
+          model: data_entity
         });
 
         this.$layer_form.append(this.color_scale_form.el);

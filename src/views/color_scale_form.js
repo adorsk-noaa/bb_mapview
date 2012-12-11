@@ -4,69 +4,64 @@ define([
   "underscore",
   "_s",
   "ui",
-  "text!./templates/color_scale_form.html"
+  "./layer_option_form",
+  "text!./templates/mono_color_scale_form.html",
+  "text!./templates/bi_color_scale_form.html"
 ],
-function($, Backbone, _, _s, ui, template){
+function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template){
+  var label = 'Color Scale';
+  var css_class = 'color-scale-form';
 
-  // @TODO: make a base class for layer option forms,
-  // to share logic w/ opacity-form,
-  // but not right now.
-  var ColorScaleFormView = Backbone.View.extend({
-
+  var ColorScaleFormView = LayerOptionFormView.extend({
     events: {
-      'change input.minmax': 'onMinMaxChange'
+      'change input': 'onInputChange'
     },
-
     initialize: function(options){
-      $(this.el).addClass('layer-option-form color-scale-form');
+      options.label = 'Color Scale';
+      LayerOptionFormView.prototype.initialize.apply(this, arguments);
+      $(this.el).addClass([css_class].concat(this.css_classes).join(' '));
       this.initialRender();
-
-      this.on('remove', this.remove, this);
-      this.model.on('change:colorbar_url', this.setColorbarUrl, this);
-
-      if (this.model.get('colorbar_url')){
-        this.setColorbarUrl();
-      }
-
-
     },
 
     initialRender: function(){
-      $(this.el).html(_.template(template, {model: this.model}));
-      _.each(['min', 'max'], function(minmax){
-        this.setMinMax(minmax);
+      LayerOptionFormView.prototype.initialRender.apply(this, arguments);
+      this.$body.html(this.renderBody());
+      _.each(this.input_attrs, function(attr){
+        this.setInput(attr);
       }, this);
     },
-
-    onMinMaxChange: function(e){
+    onInputChange: function(e){
       var $input = $(e.currentTarget);
-      var minmax = $input.data('minmax');
+      var attr = $input.data('attr');
       var value = parseFloat($input.val());
-      this.model.set(minmax, value);
+      this.model.set(attr, value);
     },
 
-    setMinMax: function(minmax){
-      var $input = $(_s.sprintf('input.%s', minmax), this.el);
-      $input.val(this.model.get(minmax));
-    },
-
-    setColorbarUrl: function(){
-      console.log('here');
-      $('.slider', this.el).css(
-        'background-image',
-        'url(' + this.model.get('colorbar_url') + ')'
-      );
-    },
-
-    remove: function(){
-      Backbone.View.prototype.remove.call(this, arguments);
-      this.model.trigger('remove');
-      this.model.off();
-      this.off();
+    setInput: function(attr){
+      var $input = $(_s.sprintf('input.%s', attr), this.el);
+      $input.val(this.model.get(attr));
     }
-
   });
 
-  return ColorScaleFormView;
+  var MonoColorScaleFormView = ColorScaleFormView.extend({
+    input_attrs: ['min', 'max'],
+    css_classes: ['mono'],
+    renderBody: function(){
+      return (_.template(mono_template, {model: this.model}));
+    }
+  });
+
+  var BiColorScaleFormView = ColorScaleFormView.extend({
+    input_attrs: ['center', 'radius'],
+    css_classes: ['bi'],
+    renderBody: function(){
+      return (_.template(bi_template, {model: this.model}));
+    }
+  });
+
+  return {
+    Mono: MonoColorScaleFormView,
+    Bi: BiColorScaleFormView
+  }
 });
 
