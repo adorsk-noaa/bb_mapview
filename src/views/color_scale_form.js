@@ -21,6 +21,7 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template
       LayerOptionFormView.prototype.initialize.apply(this, arguments);
       $(this.el).addClass([css_class].concat(this.css_classes).join(' '));
       this.initialRender();
+      this.postInitialize();
     },
 
     initialRender: function(){
@@ -29,7 +30,15 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template
       _.each(this.input_attrs, function(attr){
         this.setInput(attr);
       }, this);
+      if (this.model.get('colorbar_url')){
+        this.setColorbarUrl();
+      }
     },
+
+    postInitialize: function(){
+      this.model.on('change:colorbar_url', this.setColorbarUrl, this);
+    },
+
     onInputChange: function(e){
       var $input = $(e.currentTarget);
       var attr = $input.data('attr');
@@ -40,6 +49,13 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template
     setInput: function(attr){
       var $input = $(_s.sprintf('input.%s', attr), this.el);
       $input.val(this.model.get(attr));
+    },
+
+    setColorbarUrl: function(attr){
+      $('.slider', this.el).css(
+        'background-image', 
+        'url(' + this.model.get('colorbar_url') + ')'
+      );
     }
   });
 
