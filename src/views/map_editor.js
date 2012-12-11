@@ -73,7 +73,7 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
       // Setup tabble.
       this.$table.tabble({
         stretchTable: true
-      }); 
+      });
 
       // Accordionize the layer editor sections
       $('.layers-editor > .accordions > .accordion', this.el).each(function(i, el){
