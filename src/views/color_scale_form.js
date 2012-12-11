@@ -60,7 +60,7 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template
   });
 
   var MonoColorScaleFormView = ColorScaleFormView.extend({
-    input_attrs: ['min', 'max'],
+    input_attrs: ['vmin', 'vmax'],
     css_classes: ['mono'],
     renderBody: function(){
       return (_.template(mono_template, {model: this.model}));
@@ -68,10 +68,24 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template
   });
 
   var BiColorScaleFormView = ColorScaleFormView.extend({
-    input_attrs: ['center', 'radius'],
+    input_attrs: ['vmiddle', 'vradius'],
     css_classes: ['bi'],
     renderBody: function(){
       return (_.template(bi_template, {model: this.model}));
+    },
+    postInitialize: function(){
+      ColorScaleFormView.prototype.postInitialize.apply(this, arguments);
+      this.model.on('change:vmiddle', this.setVminVmax, this);
+    },
+    setVminVmax: function(){
+      var vmiddle = this.model.get('vmiddle');
+      var vradius = this.model.get('vradius');
+      if (vmiddle != null && vradius != null){
+        this.model.set({
+          vmin: vmiddle - vradius,
+          vmax: vmiddle + vradius
+        });
+      }
     }
   });
 
