@@ -77,9 +77,6 @@ function($, Backbone, _, _s, ui, OpacityFormView, template){
     setDisabled: function(){
       if (this.model.get('disabled')){
         $(this.el).addClass('disabled');
-        if (! this.$body.is(':hidden')){
-          this.toggleLayerForm();
-        }
       }
       else{
         $(this.el).removeClass('disabled');

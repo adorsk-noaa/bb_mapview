@@ -56,16 +56,6 @@
                 position: relative;
                 width: 100%;
 
-                > .overlay{
-                    display: none;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: @faint_grey;
-                }
-
                 .title {
                     .button;
                     width: 100%;
@@ -83,27 +73,24 @@
                 }
             }
         }
-
-        .info-container{
-            height: 100%;
-            width: 32px;
-
-            .info-button{
-                .content {
-                    display: none;
-                }
-
-                &.disabled {
-                    display: none;
-                }
-            }
-        }
     }
 
     .layer-editor-body {
         display: none;
         font-size: 14px;
         padding: @padding_normal;
+        position: relative;
+
+        > .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: @faint_grey;
+            z-index: 5;
+        }
 
         > .layer-form{
           background: white;
@@ -122,7 +109,10 @@
 
 
     &.disabled {
-        .layer-editor-header > .title-container > .inner > .overlay{
+        .layer-editor-header {
+          color: #777;
+        }
+        .layer-editor-body > .overlay{
             display: block;
             opacity: .5;
         }
