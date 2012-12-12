@@ -30,13 +30,13 @@ define([
         LayerEditorView.prototype.renderFormElements.call(this);
 
         var data_entity = this.model.get('data_entity');
-        var scale_type = data_entity.get('color_scale_type') || 'mono';
+        var scale_type = data_entity.get('color_scale_type') || 'sequential';
         var scale_class;
-        if (scale_type == 'mono'){
-          scale_class = ColorScaleForms.Mono;
+        if (scale_type == 'sequential'){
+          scale_class = ColorScaleForms.Sequential;
         }
-        else if (scale_type == 'bi'){
-          scale_class = ColorScaleForms.Bi;
+        else if (scale_type == 'diverging'){
+          scale_class = ColorScaleForms.Diverging;
         }
         this.color_scale_form = new scale_class({
           model: data_entity

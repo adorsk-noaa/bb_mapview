@@ -5,10 +5,10 @@ define([
   "_s",
   "ui",
   "./layer_option_form",
-  "text!./templates/mono_color_scale_form.html",
-  "text!./templates/bi_color_scale_form.html"
+  "text!./templates/sequential_color_scale_form.html",
+  "text!./templates/diverging_color_scale_form.html"
 ],
-function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template){
+function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diverging_template){
   var label = 'Color Scale';
   var css_class = 'color-scale-form';
 
@@ -59,19 +59,19 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template
     }
   });
 
-  var MonoColorScaleFormView = ColorScaleFormView.extend({
+  var SequentialColorScaleFormView = ColorScaleFormView.extend({
     input_attrs: ['vmin', 'vmax'],
-    css_classes: ['mono'],
+    css_classes: ['sequential'],
     renderBody: function(){
-      return (_.template(mono_template, {model: this.model}));
+      return (_.template(sequential_template, {model: this.model}));
     }
   });
 
-  var BiColorScaleFormView = ColorScaleFormView.extend({
+  var DivergingColorScaleFormView = ColorScaleFormView.extend({
     input_attrs: ['vmiddle', 'vradius'],
-    css_classes: ['bi'],
+    css_classes: ['diverging'],
     renderBody: function(){
-      return (_.template(bi_template, {model: this.model}));
+      return (_.template(diverging_template, {model: this.model}));
     },
     postInitialize: function(){
       ColorScaleFormView.prototype.postInitialize.apply(this, arguments);
@@ -90,8 +90,8 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, mono_template, bi_template
   });
 
   return {
-    Mono: MonoColorScaleFormView,
-    Bi: BiColorScaleFormView
+    Sequential: SequentialColorScaleFormView,
+    Diverging: DivergingColorScaleFormView
   }
 });
 
