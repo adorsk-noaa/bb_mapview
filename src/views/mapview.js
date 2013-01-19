@@ -6,13 +6,20 @@ define([
   "text!./templates/mapview.html",
   "./wms_layer",
   "./wmts_layer",
+  "./vector_layer",
 ],
-function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
+function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerView){
 
   var MapViewView = Backbone.View.extend({
 
     initialize: function(options){
       $(this.el).addClass('mapview');
+
+      this.layerViewClasses = {
+        WMS: WMSLayerView,
+        WMTS: WMTSLayerView,
+        Vector: VectorLayerView
+      };
 
       this.layerRegistry = {};
       this._rendering_counter = 0;
@@ -186,17 +193,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView){
     },
 
     getLayerView: function(layer_model){
-      if (layer_model.get('layer_type') == 'WMS'){
-        layerView = new WMSLayerView({
-          model: layer_model
-        });
-      }
-      else if (layer_model.get('layer_type') == 'WMTS'){
-        layerView = new WMTSLayerView({
-          model: layer_model
-        });
-      }
-
+      var layerViewClass = this.layerViewClasses[layer_model.get('layer_type')];
+      layerView = new layerViewClass({
+        model: layer_model
+      });
       return layerView;
     },
 
