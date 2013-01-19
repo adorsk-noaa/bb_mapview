@@ -43,9 +43,41 @@ function($, MapViewCSS, uiCSS, MapView){
       });
       editor_m.set('base_layers', new Backbone.Collection([base_layer]));
 
+      var createGrid = function(xMin, xMax, yMin, yMax, dx, dy){
+        var features = [];
+        var featureCounter = 0;
+        for (var x=xMin; x < xMax; x += dx){
+          for (var y=yMin; y < yMax; y += dy){
+            featureCounter += 1;
+            var coords = [[x, y],[x,y+dy],[x+dx,y+dy],[x+dx,y],[x,y]];
+            var hex = (featureCounter % 255).toString(16);
+            var color = '#' + hex + hex + hex;
+            features.push({
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [coords]
+              },
+              "properties": {
+                "fid": featureCounter,
+                "color": color
+              }
+            });
+          }
+        }
+        return features;
+      };
+
+      var xMin = -30;
+      var xMax = 30;
+      var dx = 1;
+      var yMin = -30;
+      var yMax = 30;
+      var dy = 1;
       var vector_data_layer = new Backbone.Model({
         label: 'Test Vector Layer',
         layer_type: 'Vector',
+        features: createGrid(xMin, xMax, yMin, yMax, dx, dy)
       });
       editor_m.set('data_layers', new Backbone.Collection([vector_data_layer]));
 
@@ -55,7 +87,7 @@ function($, MapViewCSS, uiCSS, MapView){
       });
       window.e = editor;
       editor.trigger('ready');
-      editor.mapView.map.zoomToExtent([-45, -45, 45, 45]);
+      editor.mapView.map.zoomToExtent([xMin, yMin, xMax, yMax]);
     });
   });
 }
