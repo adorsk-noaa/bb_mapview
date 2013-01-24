@@ -54,8 +54,8 @@ function($, MapViewCSS, uiCSS, MapView, FeatureModel){
             var hex = (featureCounter % 255).toString(16);
             var color = '#' + hex + hex + hex;
             geoms[featureCounter] = {
-                "type": "Polygon",
-                "coordinates": [coords]
+              "type": "Polygon",
+              "coordinates": [coords]
             };
           }
         }
@@ -73,9 +73,11 @@ function($, MapViewCSS, uiCSS, MapView, FeatureModel){
       var features = new Backbone.Collection();
       for (var i in geoms){
         var feature = new FeatureModel({
-          id: i,
+          id: parseInt(i),
           geometry: geoms[i],
-          properties: {}
+          properties: {
+            p1: parseInt(i)
+          }
         });
         features.add(feature);
       }
@@ -84,8 +86,24 @@ function($, MapViewCSS, uiCSS, MapView, FeatureModel){
         label: 'Test Vector Layer',
         layer_type: 'Vector',
         features: features,
-        style: new Backbone.Model()
+        styleMap: new Backbone.Collection(
+          [
+            new Backbone.Model({
+          id: 'default', 
+          strokeColor: 'blue', 
+          rules: [
+            {
+            filter: 'p1 > 2 AND p1 < 4',
+            symbolizer: {fillColor: 'green'}
+          },
+          {
+            filter: 'p1 >= 4',
+            symbolizer: {fillColor: 'red'}
+          }
+          ]})
+        ])
       });
+
       window.vm = vector_model;
       editor_m.set('data_layers', new Backbone.Collection([vector_model]));
 

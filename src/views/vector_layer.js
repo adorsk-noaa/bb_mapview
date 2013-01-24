@@ -7,13 +7,17 @@ define([
 ],
 function($, Backbone, _, ol, LayerView){
 
-  var geoJSON = new OpenLayers.Format.GeoJSON();
+  var GeoJSON = new OpenLayers.Format.GeoJSON();
+  var CQL = new OpenLayers.Format.CQL();
 
   var VectorLayerView = LayerView.extend({
     initialize: function(){
       LayerView.prototype.initialize.apply(this, arguments);
       if (! this.model.get('features')){
         this.model.set('features', new Backbone.Collection());
+      }
+      if (! this.model.get('styleMap')){
+        this.model.set('styleMap', new Backbone.Collection());
       }
       this.postInitialize();
     },
@@ -24,11 +28,17 @@ function($, Backbone, _, ol, LayerView){
       this.model.get('features').on('add', this.addFeature, this);
       this.model.get('features').on('remove', this.removeFeature, this);
       this.model.get('features').on('change', this.updateFeature, this);
+      this.model.get('styleMap').on('change', this.updateStyleMap, this);
+      this.on('redraw', this.redraw, this);
 
       if (this.model.get('features')){
         _.each(this.model.get('features').models, function(featureModel){
           this.addFeature(featureModel);
         },this);
+      }
+
+      if (this.model.get('styleMap').length){
+        this.updateStyleMap({silent: true});
       }
     },
 
@@ -53,6 +63,9 @@ function($, Backbone, _, ol, LayerView){
         var extent = this.map.getExtent().scale(this.ratio);
         coordSysUnchanged = this.renderer.setExtent(extent, false);
       };
+
+
+      window.vl = layer;
       return layer;
     },
 
@@ -63,7 +76,7 @@ function($, Backbone, _, ol, LayerView){
         properties: featureModel.get('properties').toJSON(),
         geometry: featureModel.get('geometry')
       };
-      olFeature = geoJSON.parseFeature(gjFeature);
+      olFeature = GeoJSON.parseFeature(gjFeature);
       var styleModel = featureModel.get('style');
       if (styleModel){
         var style = styleModel.toJSON();
@@ -72,6 +85,41 @@ function($, Backbone, _, ol, LayerView){
         }
       }
       return olFeature;
+    },
+
+    updateStyleMap: function(opts){
+      opts = opts || {};
+      this.layer.styleMap = this.parseStyleMap(this.model.get('styleMap'));
+      if (! opts.silent){
+        this.trigger('redraw');
+      }
+    },
+
+    parseStyleMap: function(styleMapModel){
+      var _this = this;
+      var olStyleMap = {};
+      _.each(styleMapModel.models, function(styleModel){
+        var styleObj = styleModel.toJSON();
+        var olStyle = new OpenLayers.Style(styleObj);
+        if (styleObj.rules){
+          var olRules = _this.parseStyleRules(styleObj.rules);
+          olStyle.addRules(olRules);
+        }
+        olStyleMap[styleModel.id] = olStyle;
+      });
+      return new OpenLayers.StyleMap(olStyleMap);
+    },
+
+    parseStyleRules: function(rules){
+      var olRules = [];
+      _.each(rules, function(rule){
+        var olRule = new OpenLayers.Rule({
+          filter: CQL.read(rule.filter),
+          symbolizer: rule.symbolizer
+        });
+        olRules.push(olRule);
+      });
+      return olRules;
     },
 
     addFeature: function(featureModel){
@@ -108,6 +156,10 @@ function($, Backbone, _, ol, LayerView){
       else{
         this.layer.drawFeature(olFeature);
       }
+    },
+
+    redraw: function(){
+      this.layer.redraw();
     }
   });
 
