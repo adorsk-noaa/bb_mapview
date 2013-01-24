@@ -8,60 +8,107 @@ define([
 function($, Backbone, _, ol, LayerView){
 
   var geoJSON = new OpenLayers.Format.GeoJSON();
-  var VectorLayerView = LayerView.extend({
 
+  var VectorLayerView = LayerView.extend({
     initialize: function(){
       LayerView.prototype.initialize.apply(this, arguments);
+      if (! this.model.get('features')){
+        this.model.set('features', new Backbone.Collection());
+      }
       this.postInitialize();
     },
 
     postInitialize: function(){
       LayerView.prototype.postInitialize.apply(this, arguments);
-      if (this.model.get('features')){
-        this.setFeatures();
-      }
 
-      // TEST STYLE.
-      window.gc = function(feature){
-        console.log(feature.attributes);
-        var hex = (feature.data.fid % 255).toString(16);
-        var color = '#' + hex + hex + hex;
-        return color;
-      };
-      var context = {
-        getColor: function(feature){return window.gc(feature)}
-      };
-      var template = {
-        //fillColor: '${getColor}'
-        fillColor: '${color}'
-      };
-      //var style = new OpenLayers.Style(template, {context: context});
-      var style = new OpenLayers.Style(template);
-      this.layer.styleMap = new OpenLayers.StyleMap(style);
-      window.l = this.layer;
+      this.model.get('features').on('add', this.addFeature, this);
+      this.model.get('features').on('remove', this.removeFeature, this);
+      this.model.get('features').on('change', this.updateFeature, this);
+
+      if (this.model.get('features')){
+        _.each(this.model.get('features').models, function(featureModel){
+          this.addFeature(featureModel);
+        },this);
+      }
     },
 
     createLayer: function(){
-      console.log("creating vector");
       this.sanitizeOptions();
-      return new OpenLayers.Layer.Vector(
+      var layer = new OpenLayers.Layer.Vector(
         this.model.get('label'),
         _.extend({}, this.model.get('options'),{
           visibility: this.model.get('visible'),
           opacity: this.model.get('opacity'),
         })
       );
-
+      // Customize moveByPx for smoother panning.
+      layer.moveByPx = function(dx, dy){
+        var ps = ['left', 'top'];
+        for (var i in ps){
+          var p = ps[i];
+          var oldPos = parseFloat(this.div.style[p]);
+          var newPos = oldPos + arguments[i];
+          this.div.style[p] = newPos + 'px';
+        }
+        var extent = this.map.getExtent().scale(this.ratio);
+        coordSysUnchanged = this.renderer.setExtent(extent, false);
+      };
+      return layer;
     },
 
-    setFeatures: function(){
-      var olFeatures = geoJSON.read({
-        type: "FeatureCollection",
-        features: this.model.get('features')
+    parseFeatureModel: function(featureModel){
+      var gjFeature = {
+        type: 'Feature',
+        id: featureModel.id,
+        properties: featureModel.get('properties').toJSON(),
+        geometry: featureModel.get('geometry')
+      };
+      olFeature = geoJSON.parseFeature(gjFeature);
+      var styleModel = featureModel.get('style');
+      if (styleModel){
+        var style = styleModel.toJSON();
+        if (! $.isEmptyObject(style)){
+          olFeature.style = styleModel.toJSON();
+        }
+      }
+      return olFeature;
+    },
+
+    addFeature: function(featureModel){
+      var olFeature = this.parseFeatureModel(featureModel);
+      this.layer.addFeatures([olFeature]);
+    },
+
+    removeFeature: function(featureModelOrId){
+      var featureModel = featureModelOrId;
+      if (! typeof(featureModelOrId) == 'object'){
+        featureModel = this.model.get('features').get(featureModelOrId);
+        if (! featureModel){
+          return;
+        }
+      }
+      var olFeature = this.layer.getFeatureByFid(featureModel.id);
+      if (! olFeature){
+        return;
+      }
+      this.layer.removeFeatures([olFeature]);
+    },
+
+    updateFeature: function(featureModel, changeAttr){
+      var olFeature = this.layer.getFeatureByFid(featureModel.id);
+      var updatedOlFeature = this.parseFeatureModel(featureModel);
+      _.each(['data', 'style'], function(attr){
+        olFeature[attr] = updatedOlFeature[attr];
       });
-      this.layer.removeAllFeatures();
-      this.layer.addFeatures(olFeatures);
-    },
+      if (changeAttr == 'geometry'){
+        this.layer.removeFeatures(olFeature);
+        olFeature['geometry'] = updatedOlFeature['geometry'];
+        this.layer.addFeature(olFeature);
+      }
+      else{
+        this.layer.drawFeature(olFeature);
+      }
+    }
   });
 
   return VectorLayerView;

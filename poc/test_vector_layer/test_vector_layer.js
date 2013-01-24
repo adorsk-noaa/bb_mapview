@@ -4,8 +4,9 @@ require(
     "rless!MapView/styles/mapview.less",
     "rless!ui/css/smoothness/jquery-ui-1.9.1.custom.css",
     "MapView",
+    "MapView/models/Feature",
 ],
-function($, MapViewCSS, uiCSS, MapView){
+function($, MapViewCSS, uiCSS, MapView, FeatureModel){
   $(document).ready(function(){
     $(document.body).append('<p id="stylesLoaded" style="display: none;"></p>');
     cssEl = document.createElement('style');
@@ -44,7 +45,7 @@ function($, MapViewCSS, uiCSS, MapView){
       editor_m.set('base_layers', new Backbone.Collection([base_layer]));
 
       var createGrid = function(xMin, xMax, yMin, yMax, dx, dy){
-        var features = [];
+        var geoms = {};
         var featureCounter = 0;
         for (var x=xMin; x < xMax; x += dx){
           for (var y=yMin; y < yMax; y += dy){
@@ -52,34 +53,41 @@ function($, MapViewCSS, uiCSS, MapView){
             var coords = [[x, y],[x,y+dy],[x+dx,y+dy],[x+dx,y],[x,y]];
             var hex = (featureCounter % 255).toString(16);
             var color = '#' + hex + hex + hex;
-            features.push({
-              "type": "Feature",
-              "geometry": {
+            geoms[featureCounter] = {
                 "type": "Polygon",
                 "coordinates": [coords]
-              },
-              "properties": {
-                "fid": featureCounter,
-                "color": color
-              }
-            });
+            };
           }
         }
-        return features;
+        return geoms;
       };
 
-      var xMin = -30;
-      var xMax = 30;
-      var dx = 1;
-      var yMin = -30;
-      var yMax = 30;
-      var dy = 1;
-      var vector_data_layer = new Backbone.Model({
+      var xMin = -40;
+      var xMax = 40;
+      var dx = 20;
+      var yMin = -40;
+      var yMax = 40;
+      var dy = 20;
+      var geoms = createGrid(xMin, xMax, yMin, yMax, dx, dy);
+
+      var features = new Backbone.Collection();
+      for (var i in geoms){
+        var feature = new FeatureModel({
+          id: i,
+          geometry: geoms[i],
+          properties: {}
+        });
+        features.add(feature);
+      }
+
+      var vector_model = new Backbone.Model({
         label: 'Test Vector Layer',
         layer_type: 'Vector',
-        features: createGrid(xMin, xMax, yMin, yMax, dx, dy)
+        features: features,
+        style: new Backbone.Model()
       });
-      editor_m.set('data_layers', new Backbone.Collection([vector_data_layer]));
+      window.vm = vector_model;
+      editor_m.set('data_layers', new Backbone.Collection([vector_model]));
 
       var editor = new MapView.views.MapEditorView({
         model: editor_m,

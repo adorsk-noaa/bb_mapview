@@ -1,2 +1,0 @@
-BASE_URL = '/grc2/cache/mapview/poc';
-ASSETS_PATH = BASE_URL + 'assets';
