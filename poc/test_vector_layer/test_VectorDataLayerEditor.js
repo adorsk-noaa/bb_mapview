@@ -5,8 +5,9 @@ require(
     "rless!ui/css/smoothness/jquery-ui-1.9.1.custom.css",
     "MapView/models/Feature",
     "MapView/views/VectorDataLayerEditor",
+    "MapView/util/Colormap"
 ],
-function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView){
+function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap){
   $(document).ready(function(){
     $(document.body).append('<p id="stylesLoaded" style="display: none;"></p>');
     cssEl = document.createElement('style');
@@ -88,6 +89,7 @@ function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView){
         el: $('#main')
       });
       window.e = editor;
+
     });
   });
 }

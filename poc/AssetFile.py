@@ -69,4 +69,10 @@ assets = {
         'type': 'git',
         'source': 'https://github.com/adorsk/jquery.ui.tabble.git'
     },
+    'tinycolor.js': {
+        'type': 'url', 
+        'source': 'https://raw.github.com/bgrins/TinyColor/master/dist/tinycolor-min.js'
+    }
+
+
 }

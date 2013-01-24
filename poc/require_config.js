@@ -17,10 +17,12 @@ var config= {
     jquery: ASSETS_PATH + "/js/jquery",
     underscore: ASSETS_PATH + "/js/underscore.js/underscore",
     backbone: ASSETS_PATH + "/js/backbone",
-    _s: ASSETS_PATH + "/js/underscore.string"
+    _s: ASSETS_PATH + "/js/underscore.string",
+    tinycolor: ASSETS_PATH + "/js/tinycolor"
   },
 
   shim: {
+    tinycolor: {},
     underscore: {
       exports: "_"
     },

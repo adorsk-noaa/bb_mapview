@@ -16,6 +16,7 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
     events: {
       'change input': 'onInputChange'
     },
+
     initialize: function(options){
       options.label = 'Color Scale';
       LayerOptionFormView.prototype.initialize.apply(this, arguments);
@@ -30,13 +31,9 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       _.each(this.input_attrs, function(attr){
         this.setInput(attr);
       }, this);
-      if (this.model.get('colorbar_url')){
-        this.setColorbarUrl();
-      }
     },
 
     postInitialize: function(){
-      this.model.on('change:colorbar_url', this.setColorbarUrl, this);
     },
 
     onInputChange: function(e){
@@ -50,13 +47,6 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       var $input = $(_s.sprintf('input.%s', attr), this.el);
       $input.val(this.model.get(attr));
     },
-
-    setColorbarUrl: function(attr){
-      $('.slider', this.el).css(
-        'background-image', 
-        'url(' + this.model.get('colorbar_url') + ')'
-      );
-    }
   });
 
   var SequentialColorScaleFormView = ColorScaleFormView.extend({
