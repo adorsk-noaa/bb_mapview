@@ -19,7 +19,7 @@ function(_){
       hi = a.length;
     }
     while (lo < hi){
-      var mid = (lo+hi)/2;
+      var mid = Math.floor((lo+hi)/2);
       if (x < a[mid]){
         hi = mid;
       }
@@ -55,7 +55,7 @@ function(_){
         }
       }
 
-      xMinIdx = Math.min(bisect(sortedXs, x) - 1, sortedXs.length - 1);
+      xMinIdx = Math.min(bisect({a: sortedXs, x: x}) - 1, sortedXs.length - 1);
       xMin = sortedXs[xMinIdx];
 
       if (x == xMin){
@@ -63,7 +63,7 @@ function(_){
         return;
       }
 
-      xMaxIdx = Math.min(bisect(sortedXs, x), sortedXs.length - 1);
+      xMaxIdx = Math.min(bisect({a: sortedXs, x: x}), sortedXs.length - 1);
       xMax = sortedXs[xMaxIdx];
       if (x == xMax){
         interpolatedPoints.push(sortedCurve[xMaxIdx]);

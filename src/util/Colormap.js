@@ -1,11 +1,11 @@
 define(
   [
+    "jquery",
     "underscore",
     "tinycolor",
-    "underscore",
     "./Interpolate",
 ],
-function(_, tinycolor, Interpolate){
+function($, _, Tinycolor, Interpolate){
 
   var getMappedColor = function(opts){
     opts = _.extend({
@@ -15,17 +15,17 @@ function(_, tinycolor, Interpolate){
       cast: null
     }, opts);
 
-    colorAttrs = colormap.keys()
+    colorAttrs = _.keys(opts.colormap);
     mappedColor = {}
-    _.each(colorAttr, function(attr){
+    _.each(colorAttrs, function(attr){
       mappedColor[attr] = Interpolate.lerp({
-        xs: [normalized_value], 
-        curve: colormap[attr], 
-        clip: clip
+        xs: [opts.normalizedValue], 
+        curve: opts.colormap[attr], 
+        clip: opts.clip
       })[0][1];
     });
-    if (cast){
-      mappedColor[attr] = cast(mappedColor[attr]);
+    if (opts.cast){
+      mappedColor[attr] = opts.cast(mappedColor[attr]);
     }
     return mappedColor;
   };
@@ -76,7 +76,7 @@ function(_, tinycolor, Interpolate){
       toSchema: 'rgb'
     }, opts);
     var tcolor = tinycolor(opts.c);
-    var capSchema = opts.toSchema.toSchema.charAt(0).toUpperCase() + toSchema.slice(1);
+    var capSchema = opts.toSchema.charAt(0).toUpperCase() + opts.toSchema.slice(1);
     return tcolor['to' + capSchema]();
   };
 
@@ -204,19 +204,19 @@ function(_, tinycolor, Interpolate){
 
     var coloredBins = [];
     var bins = generateBins(opts);
-    vRange = vMax - vMin;
+    var vRange = opts.vMax - opts.vMin;
     _.each(bins, function(bin){
       var binMid = bin[0] + (bin[1] - bin[0])/2.0;
-      var normalizedMid = (binMid - vMin)/vRange;
+      var normalizedMid = (binMid - opts.vMin)/vRange;
       var binColor = getMappedColor({
         normalizedValue: normalizedMid,
-        colormap: colormap,
+        colormap: opts.colormap,
         clip: true
       });
-      if (schema){
+      if (opts.schema){
         binColor = convertColor({
-          c: binolor,
-          toSchema: schema
+          c: binColor,
+          toSchema: opts.schema
         });
       }
       coloredBins.push([bin, binColor]);
@@ -224,137 +224,108 @@ function(_, tinycolor, Interpolate){
     return coloredBins;
   }
 
-  var testColormap = function(){
-    var vMin = 0;
-    var vMax = 4;
-    var numBins = 4;
+  var COLORMAPS = {};
 
-    var testName, actual, expected;
-    var reportResult = function(){
-      jsonA = JSON.stringify(actual);
-      jsonE = JSON.stringify(expected);
-      if (jsonA == jsonE){
-        console.log(testName, 'passes');
-      }
-      else{
-        console.log(testName, 'failed');
-        console.log('actual', jsonA);
-        console.log('expected', jsonE);
-      }
+  //
+  // Generate colormaps, based on ColorBrewer.
+  //
+  var generateColorBrewerColormaps = function(){
+    var CB_PREFIX = 'ColorBrewer';
+    var MIN_V = .97;
+    var MAX_V = .94;
+    var MIN_S = 0;
+    var MAX_S = .6;
+
+    var CB_HUES = {
+      BG: 176,
+      Br: 39,
+      Bu: 198,
+      G: 90,
+      Gn: 115,
+      Or: 32,
+      PR: 277,
+      Pi: 324,
+      Pu: 252,
+      Rd: 18,
     };
 
-    testName = 'simple';
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins
+    // Sequential.
+    _.each(CB_HUES, function(hue, hue_id){
+      var cmapId = CB_PREFIX + ':' + hue_id;
+      COLORMAPS[cmapId] = {
+        'h': [[0, hue],[1, hue]],
+        's': [[0, MIN_S], [1, MAX_S]],
+        'v': [[0, MIN_V], [1, MAX_V]]
+      };
     });
-    expected = [[0,1], [1,2], [2,3],[3,4]];
-    reportResult();
 
-    testName = 'includeBins';
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[1.5,2.5]]
-    });
-    expected = [[0,1], [1,1.5], [1.5, 2.5], [2.5,3],[3,4]];
-    reportResult();
+    // Diverging.
+    var diverging_hue_pairs = [
+      ['Rd', 'Bu'],
+      ['Br', 'BG'],
+      ['Pi', 'G'],
+      ['PR', 'Gn'],
+      ['Or', 'Pu']
+    ];
 
-    testName = 'leftEdge';
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[-2, -1]]
+    _.each(diverging_hue_pairs, function(orig_pair, i){
+      var reversed_pair = [orig_pair[1], orig_pair[0]];
+      _.each([orig_pair, reversed_pair], function(pair, j){
+        var cmapId = CB_PREFIX + ':' + pair.join('');
+        var h1 = CB_HUES[pair[0]];
+        var h2 = CB_HUES[pair[1]];
+        COLORMAPS[cmapId] = {
+          'h': [[0, h1],[.5, h1],[.5, h2],[1, h2]],
+          's': [[0, MAX_S], [.5, MIN_S], [.5, MIN_S], [1, MAX_S]],
+          'v': [[0, MAX_V], [.5, MIN_V], [.5, MIN_V], [1, MAX_V]]
+        };
+      });
     });
-    expected = [[-2,-1], [0,1], [1,2], [2,3], [3,4]];
-    reportResult();
+  };
+  generateColorBrewerColormaps();
 
-    testName = 'rightEdge';
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[5, 6]]
-    });
-    expected = [[0,1], [1,2], [2,3], [3,4], [5,6]];
-    reportResult();
 
-    testName = 'span left edge';
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[-.5, .5]]
-    });
-    expected = [[-.5, .5],[.5,1], [1,2], [2,3], [3,4]];
-    reportResult();
+  var generateColorBarDiv = function(opts){
+    opts = _.extend({
+      colormap: generateRGB_BW_Colormap(opts),
+    }, opts);
 
-    testName = 'span right edge';
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[3.5, 4.5]]
-    });
-    expected = [[0, 1], [1,2], [2,3], [3,3.5], [3.5, 4.5]];
-    reportResult();
+    // Initialize colorbar.
+    var $cb = $('<div class="colorbar"></div>');
+    var $cbInner = $('<div class="inner" style="height: 100%; width: 100%; position: relative;"></div>');
+    $cb.append($cbInner);
 
-    testName = 'Spanning both edges'
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[-.5, 4.5]]
-    });
-    expected = [[-.5, 4.5,]];
-    reportResult();
+    var coloredBins = generateColoredBins(_.extend({
+      schema: 'rgb',
+    }, opts));
 
-    testName = 'Multiple'
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[.5, 1.5], [2.5, 3.5]]
+    var leftBin = coloredBins[0][0];
+    var rightBin = coloredBins[coloredBins.length - 1][0];
+    var xMin = leftBin[0];
+    var xMax = rightBin[1];
+    var xRange = xMax - xMin;
+    _.each(coloredBins, function(bin){
+      var leftPct = 100 * (bin[0][0] - xMin)/xRange;
+      var rightPct = 100 * (bin[0][1] - xMin)/xRange;
+      var widthPct = rightPct - leftPct;
+      var fillColor = tinycolor(bin[1]).toHex();
+      var $region = $('<div style="position: absolute; top: 0; bottom: 0; left: ' + leftPct + '%; width: ' + widthPct + '%; background-color: #' + fillColor +'"></div>');
+      $cbInner.append($region);
     });
-    expected = [[0,.5], [.5,1.5], [1.5, 2], [2, 2.5],[2.5, 3.5], [3.5,4]];
-    reportResult();
-
-    testName = 'Include values'
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeValues: [2],
-      valueBinPctWidth: .2,
-    });
-    expected = [[0,1], [1,1.9], [1.9, 2.1], [2.1,3], [3,4]];
-    reportResult();
-
-    testName = 'Include bins and values'
-    actual = generateBins({
-      vMin: vMin,
-      vMax: vMax,
-      numBins: numBins,
-      includeBins: [[1.5, 2.5]],
-      includeValues: [2],
-      valueBinPctWidth: .2,
-    });
-    expected = [[0,1], [1,1.5], [1.5, 1.9], [1.9, 2.1], [2.1, 2.5], [2.5, 3], [3,4]];
-    reportResult();
+    return $cb;
   };
 
   var exports = {
+    COLORMAPS: COLORMAPS,
     getMappedColor: getMappedColor,
     generateHSV_BW_Colormap: generateHSV_BW_Colormap,
     generateRGB_BW_Colormap: generateRGB_BW_Colormap,
     convertColor: convertColor,
     generateBins: generateBins,
     generateColoredBins: generateColoredBins,
-    testColormap: testColormap
+    generateColorBarDiv: generateColorBarDiv
   };
 
   return exports;
 });
+

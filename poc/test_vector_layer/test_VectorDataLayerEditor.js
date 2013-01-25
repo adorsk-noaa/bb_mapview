@@ -90,6 +90,16 @@ function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap
       });
       window.e = editor;
 
+      window.cm = Colormap;
+
+      $cbd = Colormap.generateColorBarDiv({
+        colormap: Colormap.COLORMAPS['ColorBrewer:RdBu'],
+        vMin: -1,
+        vMax: 1
+      });
+      $('body').append($cbd);
+      $cbd.attr('style', 'width: 400px; height: 200px; border: thin solid black;');
+
     });
   });
 }
