@@ -5,9 +5,10 @@ require(
     "rless!ui/css/smoothness/jquery-ui-1.9.1.custom.css",
     "MapView/models/Feature",
     "MapView/views/VectorDataLayerEditor",
-    "MapView/util/Colormap"
+    "MapView/util/Colormap",
+    "MapView",
 ],
-function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap){
+function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap, MapView){
   $(document).ready(function(){
     $(document.body).append('<p id="stylesLoaded" style="display: none;"></p>');
     cssEl = document.createElement('style');
@@ -58,10 +59,10 @@ function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap
 
       var xMin = -40;
       var xMax = 40;
-      var dx = 20;
+      var dx = 1;
       var yMin = -40;
       var yMax = 40;
-      var dy = 20;
+      var dy = 1;
       var geoms = createGrid(xMin, xMax, yMin, yMax, dx, dy);
 
       var features = new Backbone.Collection();
@@ -78,27 +79,47 @@ function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap
 
       var vectorModel = new Backbone.Model({
         label: 'Test Vector Layer',
+        layer_category: 'data',
         layer_type: 'Vector',
         features: features,
-        styleMap: new Backbone.Collection()
+        styleMap: new Backbone.Collection(),
+        dataProp: 'p1',
+        vmin: 0,
+        vmax: features.length,
+        colormap: Colormap.COLORMAPS['ColorBrewer:RdBu'],
       });
       window.vm = vectorModel;
 
+      /*
       var editor = new VectorDataLayerEditorView({
         model: vectorModel,
         el: $('#main')
       });
       window.e = editor;
+      */
 
       window.cm = Colormap;
 
-      $cbd = Colormap.generateColorBarDiv({
-        colormap: Colormap.COLORMAPS['ColorBrewer:RdBu'],
-        vMin: -1,
-        vMax: 1
+      window.vm.set({vmin: -1});
+
+      var editor_m = new Backbone.Model();
+      var base_layer = new Backbone.Model({
+        label: 'Base Layer',
+        layer_type: 'WMS',
+        service_url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
+        params: {layers: 'basic'}
       });
-      $('body').append($cbd);
-      $cbd.attr('style', 'width: 400px; height: 200px; border: thin solid black;');
+      editor_m.set('base_layers', new Backbone.Collection([base_layer]));
+
+
+      editor_m.set('data_layers', new Backbone.Collection([vectorModel]));
+      var editor = new MapView.views.MapEditorView({
+        model: editor_m,
+        el: $('#main')
+      });
+      window.e = editor;
+      editor.trigger('ready');
+      editor.mapView.map.zoomToExtent([xMin, yMin, xMax, yMax]);
 
     });
   });

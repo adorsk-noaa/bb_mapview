@@ -113,6 +113,7 @@ function($, Backbone, _, ol, LayerView){
     parseStyleRules: function(rules){
       var olRules = [];
       _.each(rules, function(rule){
+        console.log(rule);
         var olRule = new OpenLayers.Rule({
           filter: CQL.read(rule.filter),
           symbolizer: rule.symbolizer

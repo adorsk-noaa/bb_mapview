@@ -6,9 +6,10 @@ define([
   "ui",
   "./layer_option_form",
   "text!./templates/sequential_color_scale_form.html",
-  "text!./templates/diverging_color_scale_form.html"
+  "text!./templates/diverging_color_scale_form.html",
+  "../util/Colormap"
 ],
-function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diverging_template){
+function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diverging_template, Colormap){
   var label = 'Color Scale';
   var css_class = 'color-scale-form';
 
@@ -28,12 +29,24 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
     initialRender: function(){
       LayerOptionFormView.prototype.initialRender.apply(this, arguments);
       this.$body.html(this.renderBody());
+      this.$cbContainer = $('.slider', this.el);
       _.each(this.input_attrs, function(attr){
         this.setInput(attr);
       }, this);
     },
 
     postInitialize: function(){
+      this.model.on('change:colormap', this.updateColorBar, this);
+      this.updateColorBar();
+    },
+
+    updateColorBar: function(){
+      var colormap = this.model.get('colormap');
+      var $cb = Colormap.generateColorBarDiv({
+        colormap: colormap
+      });
+      this.$cbContainer.empty();
+      this.$cbContainer.append($cb);
     },
 
     onInputChange: function(e){

@@ -19,8 +19,8 @@ function($, _, Tinycolor, Interpolate){
     mappedColor = {}
     _.each(colorAttrs, function(attr){
       mappedColor[attr] = Interpolate.lerp({
-        xs: [opts.normalizedValue], 
-        curve: opts.colormap[attr], 
+        xs: [opts.normalizedValue],
+        curve: opts.colormap[attr],
         clip: opts.clip
       })[0][1];
     });
@@ -32,36 +32,36 @@ function($, _, Tinycolor, Interpolate){
 
   var generateHSV_BW_Colormap = function(opts){
     opts = _.extend({
-      vMin: 0,
-      vMax: 1,
+      vmin: 0,
+      vmax: 1,
       w2b: true
     }, opts);
     var v;
     if (opts.w2b){
-      v = [[opts.vMin, 0.0] [opts.vMax, 1.0]];
+      v = [[opts.vmin, 0.0] [opts.vmax, 1.0]];
     }
     else{
-      v = [[opts.vMin, 1.0], [opts.vMax, 0.0]];
+      v = [[opts.vmin, 1.0], [opts.vmax, 0.0]];
     }
     return {
-      'h': [[opts.vMin, 0]],
-      's': [[opts.vMin, 0]],
+      'h': [[opts.vmin, 0]],
+      's': [[opts.vmin, 0]],
       'v': v,
     };
   };
 
   var generateRGB_BW_Colormap = function(opts){
     opts = _.extend({
-      vMin: 0,
-      vMax: 1,
+      vmin: 0,
+      vmax: 1,
       w2b: true
     }, opts);
     var points;
     if (opts.w2b){
-      points = [[opts.vMin, 0.0], [opts.vMax, 255]];
+      points = [[opts.vmin, 0.0], [opts.vmax, 255]];
     }
     else {
-      points = [[opts.vMin, 255], [opts.vMax, 0.0]];
+      points = [[opts.vmin, 255], [opts.vmax, 0.0]];
     }
     return {
       'r': points,
@@ -80,7 +80,7 @@ function($, _, Tinycolor, Interpolate){
     return tcolor['to' + capSchema]();
   };
 
-  /** 
+  /**
     Generate a set of (v0, v1) bins from the given parameters.
     If 'include_bins' is specified, those bins are merged (see below) into the list
     of generated bins.
@@ -100,15 +100,15 @@ function($, _, Tinycolor, Interpolate){
    **/
   var generateBins = function(opts){
     opts = _.extend({
-      vMin: 0,
-      vMax: 1,
+      vmin: 0,
+      vmax: 1,
       numBins: 10,
       includeValues: [],
       includeBins: [],
       valueBinPctWidth: .2,
     }, opts);
-    var vMin = opts.vMin;
-    var vMax = opts.vMax;
+    var vmin = opts.vmin;
+    var vmax = opts.vmax;
     var numBins = opts.numBins;
     var includeValues = opts.includeValues;
     var includeBins = opts.includeBins;
@@ -116,13 +116,13 @@ function($, _, Tinycolor, Interpolate){
 
     // Generate the initial bin list.
     var bins = [];
-    var vRange = vMax - vMin;
+    var vRange = vmax - vmin;
     var binWidth = 0;
     if (numBins > 0){
       binWidth = 1.0 * vRange/numBins;
     }
     for (var i = 0; i < numBins; i++){
-      bins.push([vMin + i*binWidth, vMin + (i+1)*binWidth]);
+      bins.push([vmin + i*binWidth, vmin + (i+1)*binWidth]);
     }
     // Generate bins for include_values.
     var includeValuesBins = [];
@@ -196,18 +196,18 @@ function($, _, Tinycolor, Interpolate){
 
   var generateColoredBins = function(opts){
     opts = _.extend({
-      vMin: 0,
-      vMax: 1,
+      vmin: 0,
+      vmax: 1,
       colormap: null,
       schema: null
     }, opts);
 
     var coloredBins = [];
     var bins = generateBins(opts);
-    var vRange = opts.vMax - opts.vMin;
+    var vRange = opts.vmax - opts.vmin;
     _.each(bins, function(bin){
       var binMid = bin[0] + (bin[1] - bin[0])/2.0;
-      var normalizedMid = (binMid - opts.vMin)/vRange;
+      var normalizedMid = (binMid - opts.vmin)/vRange;
       var binColor = getMappedColor({
         normalizedValue: normalizedMid,
         colormap: opts.colormap,
@@ -296,19 +296,19 @@ function($, _, Tinycolor, Interpolate){
     $cb.append($cbInner);
 
     var coloredBins = generateColoredBins(_.extend({
-      schema: 'rgb',
+      schema: 'hex',
     }, opts));
 
-    var leftBin = coloredBins[0][0];
-    var rightBin = coloredBins[coloredBins.length - 1][0];
-    var xMin = leftBin[0];
-    var xMax = rightBin[1];
+    var minBin = coloredBins[0][0];
+    var maxBin = coloredBins[coloredBins.length - 1][0];
+    var xMin = minBin[0];
+    var xMax = maxBin[1];
     var xRange = xMax - xMin;
     _.each(coloredBins, function(bin){
       var leftPct = 100 * (bin[0][0] - xMin)/xRange;
       var rightPct = 100 * (bin[0][1] - xMin)/xRange;
       var widthPct = rightPct - leftPct;
-      var fillColor = tinycolor(bin[1]).toHex();
+      var fillColor = bin[1];
       var $region = $('<div style="position: absolute; top: 0; bottom: 0; left: ' + leftPct + '%; width: ' + widthPct + '%; background-color: #' + fillColor +'"></div>');
       $cbInner.append($region);
     });

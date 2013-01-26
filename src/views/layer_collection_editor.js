@@ -6,9 +6,10 @@ define([
     "ui",
     "./layer_editor",
     "./data_layer_editor",
+    "./VectorDataLayerEditor",
     "text!./templates/layer_collection_editor_row.html"
     ],
-    function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, row_template){
+    function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDataLayerEditorView, row_template){
 
       var LayerCollectionEditorView = Backbone.View.extend({
 
@@ -85,7 +86,12 @@ define([
 
       getLayerEditorClass: function(layer){
         if (layer.get('layer_category') == 'data'){
-          return DataLayerEditorView;
+          if (layer.get('layer_type') == 'Vector'){
+            return VectorDataLayerEditorView;
+          }
+          else{
+            return DataLayerEditorView;
+          }
         }
         else{
           return LayerEditorView;
