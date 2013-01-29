@@ -7,17 +7,14 @@ define([
   "./layer_option_form",
   "text!./templates/sequential_color_scale_form.html",
   "text!./templates/diverging_color_scale_form.html",
-  "../util/Colormap"
+  "../util/Colormap",
+  "Util/views/MinMaxForm"
 ],
-function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diverging_template, Colormap){
+function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diverging_template, Colormap, MinMaxFormView){
   var label = 'Color Scale';
   var css_class = 'color-scale-form';
 
   var ColorScaleFormView = LayerOptionFormView.extend({
-    events: {
-      'change input': 'onInputChange'
-    },
-
     initialize: function(options){
       options.label = 'Color Scale';
       LayerOptionFormView.prototype.initialize.apply(this, arguments);
@@ -30,9 +27,6 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       LayerOptionFormView.prototype.initialRender.apply(this, arguments);
       this.$body.html(this.renderBody());
       this.$cbContainer = $('.slider', this.el);
-      _.each(this.input_attrs, function(attr){
-        this.setInput(attr);
-      }, this);
     },
 
     postInitialize: function(){
@@ -48,18 +42,6 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       this.$cbContainer.empty();
       this.$cbContainer.append($cb);
     },
-
-    onInputChange: function(e){
-      var $input = $(e.currentTarget);
-      var attr = $input.data('attr');
-      var value = parseFloat($input.val());
-      this.model.set(attr, value);
-    },
-
-    setInput: function(attr){
-      var $input = $(_s.sprintf('input.%s', attr), this.el);
-      $input.val(this.model.get(attr));
-    },
   });
 
   var SequentialColorScaleFormView = ColorScaleFormView.extend({
@@ -67,7 +49,26 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
     css_classes: ['sequential'],
     renderBody: function(){
       return (_.template(sequential_template, {model: this.model}));
-    }
+    },
+    postInitialize: function(){
+      ColorScaleFormView.prototype.postInitialize.apply(this, arguments);
+      this.minMaxForm = new MinMaxFormView({
+        el: this.el,
+        model: this.model,
+        attrs: {
+          min: 'vmin',
+          max: 'vmax',
+          minAuto: 'vminAuto',
+          maxAuto: 'vmaxAuto',
+        },
+        selectors:{
+          min: '.vmin input[type="text"]',
+          minAuto: '.vmin input[type="checkbox"]',
+          max: '.vmax input[type="text"]',
+          maxAuto: '.vmax input[type="checkbox"]',
+        }
+      });
+    },
   });
 
   var DivergingColorScaleFormView = ColorScaleFormView.extend({

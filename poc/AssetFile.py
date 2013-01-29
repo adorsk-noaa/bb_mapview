@@ -65,6 +65,11 @@ assets = {
         'type': 'git',
         'source': 'https://github.com/adorsk-noaa/georefine_util.git'
     },
+    'jquery.qtip': {
+        'type': 'git',
+        'source': 'https://github.com/Craga89/qTip2.git',
+        'path': 'dist'
+    },
     'jquery.ui.tabble': {
         'type': 'git',
         'source': 'https://github.com/adorsk/jquery.ui.tabble.git'

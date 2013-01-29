@@ -2,26 +2,25 @@ require(
   [
     "jquery",
     "rless!MapView/styles/mapview.less",
-    "rless!ui/css/smoothness/jquery-ui-1.9.1.custom.css",
     "MapView/models/Feature",
     "MapView/views/VectorDataLayerEditor",
     "MapView/util/Colormap",
     "MapView",
 ],
-function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap, MapView){
+function($, MapViewCSS, FeatureModel, VectorDataLayerEditorView, Colormap, MapView){
   $(document).ready(function(){
     $(document.body).append('<p id="stylesLoaded" style="display: none;"></p>');
     cssEl = document.createElement('style');
     cssEl.id = 'rless';
     cssEl.type = 'text/css';
-    cssText = uiCSS + MapViewCSS + "\n#stylesLoaded {position: fixed;}\n";
+    cssText = MapViewCSS + "\n#stylesLoaded {position: fixed;}\n";
+    document.getElementsByTagName("head")[0].appendChild(cssEl);
     if (cssEl.styleSheet){
       cssEl.styleSheet.cssText = cssText;
     }
     else{
       cssEl.appendChild(document.createTextNode(cssText));
     }
-    document.getElementsByTagName("head")[0].appendChild(cssEl);
 
     var cssDeferred = $.Deferred();
     var cssInterval = setInterval(function(){

@@ -45,6 +45,10 @@ var config= {
     tabble: {
       deps: ["ui"]
     },
+
+    qtip: {
+      deps: ["jquery"]
+    },
   },
 
   packages: [
@@ -83,7 +87,13 @@ var config= {
     "name": "tabble",
     "location": ASSETS_PATH + "/js/jquery.ui.tabble",
     "main": "jquery.ui.tabble"
-  }
+  },
+
+  {
+    "name": "qtip",
+    "location": ASSETS_PATH + "/js/jquery.qtip",
+    "main": "jquery.qtip",
+  },
 
   ]
 

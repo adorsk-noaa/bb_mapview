@@ -32,7 +32,75 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
     },
 
     postInitialize: function(){
-      this.model.on('change', this.updateStyleRules, this);
+      // Listen for style changes.
+      this.model.on('change', function(){
+        var attrs = ['dataProp', 'colormap', 'vmin', 'vmax'];
+        var changed = false;
+        for (var i = 0; i < attrs.length; i++){
+          var attr = attrs[i];
+          var attrChanged = this.model.changed[attr];
+          if (typeof attrChanged != 'undefined'){
+            changed = true;
+          }
+        }
+        if (changed){
+          this.updateStyleRules();
+        }
+      }, this);
+
+      // Listen for min/max auto changes.
+      _.each(['min', 'max'], function(minmax){
+        this.model.on('change:v' + minmax+ 'Auto', function(model, value){
+          if (value){
+            this.updateVMinMax(minmax);
+          }
+        }, this);
+      }, this);
+
+      // Listen for property changes, and throttle changes.
+      // Otherwise mass updates of features will trigger a lot of
+      // unecessary computation.
+      this._onPropertiesChange = _.bind(function(){
+        this.onPropertiesChange();
+        this.onPropertiesChangeTimer = null;
+      }, this);
+      this.model.get('features').on('change:properties', function(){
+        var _this = this;
+        if (this._onPropertiesChangeTimer){
+          clearTimeout(this._onPropertiesChangeTimer);
+        }
+        this._onPropertiesChangeTimer = setTimeout(
+          this._onPropertiesChange, 50);
+      }, this);
+
+      this.updateStyleRules();
+    },
+
+    updateVMinMax: function(minmax){
+      var minmaxValue = this.getVMinMax(minmax);
+      this.model.set('v' + minmax, minmaxValue);
+    },
+
+    getVMinMax: function(minmax){
+      var features = this.model.get('features');
+      if (! features || ! features.length ){
+        return;
+      }
+      var dataProp = this.model.get('dataProp');
+      if (typeof dataProp == 'undefined'){
+        return;
+      }
+      var minmaxFunc = _[minmax];
+      var extremeModel = minmaxFunc(features.models, function(featureModel){
+        var properties = featureModel.get('properties');
+        if (! properties){
+          return;
+        }
+        return properties.get(dataProp);
+      });
+      if (extremeModel && extremeModel.get('properties')){
+        return extremeModel.get('properties').get(dataProp);
+      }
     },
 
     updateStyleRules: function(){
@@ -71,14 +139,12 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
       // Update model's default styleMap.
       var defaultStyleMap = this.model.get('styleMap').get('default');
       if (! defaultStyleMap){
-        this.model.get('styleMap').add(new Backbone.Model({
-          id: 'default',
-          rules: rules
-        }));
+        defaultStyleMap = new Backbone.Model({
+          id: 'default'
+        });
+        this.model.get('styleMap').add(defaultStyleMap, {silent: true});
       }
-      else{
-        defaultStyleMap.set('rules', rules);
-      }
+      defaultStyleMap.set('rules', rules);
     },
 
     colorBinsToRules: function(opts){
@@ -114,8 +180,15 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
       return rules;
     },
 
-    onDataChange: function(){
-      // Set color scale min/max if auto.
+    onPropertiesChange: function(){
+      // Update min/max.
+      var setObj = {};
+      _.each(['min', 'max'], function(minmax){
+        if (this.model.get('v' + minmax + 'Auto')){
+          setObj['v' + minmax] = this.getVMinMax(minmax);
+        }
+      }, this);
+      this.model.set(setObj);
     },
 
     renderFormElements: function(){
@@ -142,11 +215,3 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
 
   return VectorDataLayerEditorView;
 });
-
-
-
-
-
-
-
-

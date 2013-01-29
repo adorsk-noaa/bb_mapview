@@ -145,7 +145,7 @@ function($, Backbone, _, ol, LayerView){
     updateFeature: function(featureModel, changeAttr){
       var olFeature = this.layer.getFeatureByFid(featureModel.id);
       var updatedOlFeature = this.parseFeatureModel(featureModel);
-      _.each(['data', 'style'], function(attr){
+      _.each(['attributes', 'style'], function(attr){
         olFeature[attr] = updatedOlFeature[attr];
       });
       if (changeAttr == 'geometry'){
