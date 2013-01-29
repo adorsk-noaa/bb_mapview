@@ -15,6 +15,10 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
     initialize: function(){
       $(this.el).addClass('vector-data-layer-editor');
 
+      if (! this.model.get('features')){
+        this.model.set('features', new Backbone.Collection());
+      }
+
       if (! this.model.get('colormap')){
         var colormapId = this.model.get('colormapId');
         if (! colormapId){
