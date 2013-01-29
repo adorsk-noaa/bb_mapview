@@ -15,6 +15,18 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
     initialize: function(){
       $(this.el).addClass('vector-data-layer-editor');
 
+      if (! this.model.get('colormap')){
+        var colormapId = this.model.get('colormapId');
+        if (! colormapId){
+          colormapId = 'ColorBrewer:PiG';
+        }
+        this.model.set('colormap', Colormap.COLORMAPS[colormapId]);
+      }
+
+      if (! this.model.get('styleMap')){
+        this.model.set('styleMap', new Backbone.Collection());
+      }
+
       LayerEditorView.prototype.initialize.call(this);
       this.postInitialize();
     },
@@ -24,16 +36,22 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
     },
 
     updateStyleRules: function(){
-      var dataProp = this.model.get('dataProp');
-      var colormap = this.model.get('colormap');
-      var vmin = this.model.get('vmin') || -1;
-      var vmax = this.model.get('vmax') || 1;
+      var attrs = ['dataProp', 'colormap', 'vmin', 'vmax'];
+      var attrValues = {};
+      for (var i = 0; i < attrs.length; i++){
+        var attr = attrs[i];
+        var value = this.model.get(attr);
+        if (typeof value == 'undefined'){
+          return;
+        }
+        attrValues[attr] = value;
+      }
 
       // Generate color bins.
       var colorBins = Colormap.generateColoredBins({
-        vmin: vmin,
-        vmax: vmax,
-        colormap: colormap,
+        vmin: attrValues.vmin,
+        vmax: attrValues.vmax,
+        colormap: attrValues.colormap,
         schema: 'hex'
       });
 
@@ -47,7 +65,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
       // Generate rules from color classes.
       var rules = this.colorBinsToRules({
         colorBins: colorBins,
-        prop: dataProp
+        prop: attrValues.dataProp
       });
 
       // Update model's default styleMap.

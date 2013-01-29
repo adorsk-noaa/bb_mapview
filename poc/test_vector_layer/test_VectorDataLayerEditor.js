@@ -82,7 +82,10 @@ function($, MapViewCSS, uiCSS, FeatureModel, VectorDataLayerEditorView, Colormap
         layer_category: 'data',
         layer_type: 'Vector',
         features: features,
-        styleMap: new Backbone.Collection(),
+        styleMap: new Backbone.Collection([new Backbone.Model({
+          id: 'default',
+          strokeWidth: 0
+        })]),
         dataProp: 'p1',
         vmin: 0,
         vmax: features.length,
