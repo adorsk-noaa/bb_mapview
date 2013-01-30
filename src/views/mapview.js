@@ -182,9 +182,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       if (this.model.get('extent')){
         this.map.zoomToExtent(this.model.get('extent'));
       }
-      else{
-        this.map.zoomToMaxExtent();
-      }
     },
 
     // Clear mouse cache when position changes.  Otherwise can get incorrect mouse positions inside the map.
