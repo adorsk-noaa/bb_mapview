@@ -77,6 +77,9 @@ function($, Backbone, _, ol, LayerView){
         geometry: featureModel.get('geometry')
       };
       olFeature = GeoJSON.parseFeature(gjFeature);
+      if (featureModel.id == 0){
+        olFeature.fid = 0;
+      }
       var styleModel = featureModel.get('style');
       if (styleModel){
         var style = styleModel.toJSON();
