@@ -36,7 +36,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       // Listen for map move events.
       this.map.events.register('moveend', this, this.onMapMoveEnd);
 
-      this.model.on('change:extent', this.setExtent, this);
+      this.model.on('change:extent', this.onChangeExtent, this);
 
       this.layers.on('add', this.addLayer, this);
       this.layers.on('remove', this.removeLayer, this);
@@ -187,7 +187,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       }
     },
 
-    setExtent: function(){
+    onChangeExtent: function(){
       if (this.mapRendered){
         this.map.zoomToExtent(this.model.get('extent'));
       }
