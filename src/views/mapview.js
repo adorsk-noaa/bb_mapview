@@ -36,6 +36,8 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       // Listen for map move events.
       this.map.events.register('moveend', this, this.onMapMoveEnd);
 
+      this.model.on('change:extent', this.setExtent, this);
+
       this.layers.on('add', this.addLayer, this);
       this.layers.on('remove', this.removeLayer, this);
       this.on('remove', this.remove, this);
@@ -168,6 +170,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
 
     onReady: function(){
       this.map.render($('.map', this.el).get(0));
+      this.mapRendered = true;
 
       // Add graticule.
       this.graticule = new OpenLayers.Control.Graticule({
@@ -180,6 +183,12 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
 
       // Zoom to extent if given, max extent otherwise.
       if (this.model.get('extent')){
+        this.map.zoomToExtent(this.model.get('extent'));
+      }
+    },
+
+    setExtent: function(){
+      if (this.mapRendered){
         this.map.zoomToExtent(this.model.get('extent'));
       }
     },
