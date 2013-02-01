@@ -117,6 +117,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       var $row = $(_.template(row_template, {rowId: rowId}));
       var $rowHeader = $('.layer-editor-header-row', $row);
       var $rowBody = $('.layer-editor-body-row', $row);
+      var $bodyCell = $('.body-cell', $rowBody);
       var $titleButton = $('.title-button', $rowHeader);
       var $toggleIcon = $('.toggle-icon', $titleButton)
       var $titleContainer = $('.title-container', $titleButton);
@@ -125,12 +126,9 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
 
       // Setup title.
       $titleContainer.append(layerEditor.$title);
-
       $titleButton.on('click', function(){
         var toggleText;
-        console.log('hdn: ', layerEditor.$body.is(':hidden'));
         if (layerEditor.$body.is(':hidden')){
-          console.log(layerEditor.$body);
           layerEditor.$body.slideDown();
           toggleText = '-';
         }
@@ -141,8 +139,10 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
         $toggleIcon.html(toggleText);
       });
 
+      // Setup body.
       $bodyContainer.append(layerEditor.$body);
 
+      // Setup controls.
       if (this.sortable){
         numCols++;
         var $dragHandle = $('<td class="drag-handle-container"><div class="layer-editor-drag-handle"></div></td>');
@@ -167,7 +167,17 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
         $rowHeader.append($optionContainer);
       }
 
-      $bodyContainer.attr('colspan', numCols);
+      $bodyCell.attr('colspan', numCols);
+
+      // Set disabled state.
+      if (layerModel.get('disabled')){
+        $row.addClass('disabled');
+      }
+      layerModel.on('change:disabled', function(){
+        $row.toggleClass('disabled', layerModel.get('disabled'))
+      });
+
+      // Set expanded state.
 
       // Add to registry.
       this.registry[rowId] = {

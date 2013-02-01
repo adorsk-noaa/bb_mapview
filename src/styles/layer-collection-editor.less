@@ -19,6 +19,28 @@
       width: 100%;
     }
 
+    .title-cell, .body-cell{
+      position: relative;
+    }
+
+    .overlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: @faint_grey;
+      opacity: .5;
+      z-index: 5;
+    }
+
+    &.disabled {
+      .overlay {
+        display: block;
+      }
+    }
+
 	}
 
   .layer-editor-header-row {
@@ -54,17 +76,6 @@
     display: none;
     padding: @padding_normal;
     position: relative;
-
-    > .overlay {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: @faint_grey;
-      z-index: 5;
-    }
 
     > .layer-form{
       background: white;
