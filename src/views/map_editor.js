@@ -85,7 +85,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       _.each(_.keys(this.category_configs), function(category){
         var category_layers = this.model.get(category + '_layers') || [];
 
-        /*
         // Create layer collection editor.
         var LayerCollectionEditorClass = this.getLayerCollectionEditorClass();
         var layerCollectionEditor = new LayerCollectionEditorClass({
@@ -93,11 +92,10 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
             layers: category_layers,
             start_index: this.category_configs[category]['start_index']
           }),
-          el: $(_s.sprintf('.%s-layers', category), this.el)
+          el: $(_s.sprintf('.%s-layers-editor', category), this.el)
         });
 
         this.layerCollectionEditors[category] = layerCollectionEditor;
-        */
 
         // Add layers to overall map layer collection.
         _.each(category_layers.models, function(layer){

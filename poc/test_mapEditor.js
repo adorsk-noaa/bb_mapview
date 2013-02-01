@@ -42,7 +42,6 @@ require(
           service_url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
           params: {"layers": 'basic'},
           options: {isBaseLayer: true},
-          id:"worldId",
         });
 
         var overlayLayerModel = new Backbone.Model({
@@ -51,7 +50,6 @@ require(
           disabled:false,
           service_url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
           params: {"layers": 'basic'},
-          id:"overlayId",
         });
 
         var defaultMap = new Backbone.Model({
@@ -69,8 +67,12 @@ require(
 
         mapEditorModel = new Backbone.Model({
           map: defaultMap.clone(),
-          base_layers: new Backbone.Collection([baseLayerModel]) ,
-          overlay_layers: new Backbone.Collection([overlayLayerModel])
+          base_layers: new Backbone.Collection(
+            [baseLayerModel.clone(), baseLayerModel.clone()]
+          ) ,
+          overlay_layers: new Backbone.Collection(
+            [overlayLayerModel.clone(), overlayLayerModel.clone()]
+          )
         });
 
         mapEditor = new MapEditorView({
