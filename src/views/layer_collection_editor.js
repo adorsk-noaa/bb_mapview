@@ -126,21 +126,29 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
 
       // Setup title.
       $titleContainer.append(layerEditor.$title);
-      $titleButton.on('click', function(){
+      var toggleFunc = function(){
         var toggleText;
         if (layerEditor.$body.is(':hidden')){
           layerEditor.$body.slideDown();
           toggleText = '-';
+          layerModel.set('expanded', true);
         }
         else{
           layerEditor.$body.slideUp();
           toggleText = '+';
+          layerModel.set('expanded', false);
         }
         $toggleIcon.html(toggleText);
-      });
+      };
+      $titleButton.on('click', toggleFunc);
 
       // Setup body.
       $bodyContainer.append(layerEditor.$body);
+
+      // Set expanded state.
+      if (layerModel.get('expanded')){
+        toggleFunc();
+      };
 
       // Setup controls.
       if (this.sortable){

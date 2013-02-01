@@ -50,6 +50,7 @@ require(
           disabled:false,
           service_url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
           params: {"layers": 'basic'},
+          expanded: true
         });
 
         var defaultMap = new Backbone.Model({
