@@ -4,10 +4,6 @@
 
 @import "VectorDataLayerEditor.less";
 
-@tab_h: 40px;
-@tab_bw: 1px;
-@tab_corner_radius: 7px;
-
 .layer-collection-editor > .body-table{
 	width: 100%;
 	border-spacing: 0;
@@ -74,17 +70,13 @@
 
   .layer-editor-body {
     display: none;
-    padding: @padding_normal;
     position: relative;
 
     > .layer-form{
       background: white;
 
-      .layer-option-form {
-        margin: @padding_normal 0;
-      }
-
       fieldset {
+        border: 0;
         legend {
           font-family: sans-serif;
         }

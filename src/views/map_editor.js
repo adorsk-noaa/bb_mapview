@@ -116,6 +116,7 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
           my: 'top right',
           at: 'bottom right',
           adjust: {
+            x: parseInt($('> .launcher', $layersControl).css('paddingRight')),
             y: -1 * parseInt($('> .launcher', $layersControl).css('paddingBottom'))
           },
           container: $('> .inner', this.el)
