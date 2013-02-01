@@ -76,14 +76,15 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
     },
 
     setLayerIndices: function(){
-      if (this.sortable){
-        var rowIds = this.$body.sortable('toArray');
-        _.each(rowIds, function(rowId, i){
-          var localIndex = rowIds.length - 1 - i;
-          this.registry[rowId].model.set('index', this.startIndex + localIndex);
-        }, this);
-        this.layers.sort();
-      }
+      var rowIds = [];
+      $('.layer-editor-row', this.$body).each(function(i, el){
+        rowIds.push($(el).prop('id'));
+      });
+      _.each(rowIds, function(rowId, i){
+        var localIndex = rowIds.length - 1 - i;
+        this.registry[rowId].model.set('index', this.startIndex + localIndex);
+      }, this);
+      this.layers.sort();
     },
 
     getLayerEditorClass: function(layer){
@@ -101,6 +102,8 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
     },
 
     addLayerWidget: function(layerModel){
+
+      var _this = this;
 
       // Create editor for layer.
       var layer_editor;
@@ -142,6 +145,13 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       // Setup body.
       $bodyContainer.append(layerEditor.$body);
 
+      // Add to registry.
+      this.registry[rowId] = {
+        model: layerModel,
+        $row: $row,
+        editor: layerEditor,
+      };
+
       // Set expanded state.
       if (layerModel.get('expanded')){
         toggleFunc();
@@ -157,17 +167,45 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       if (this.selectable){
         numCols++;
         var $optionContainer = $('<td class="option-container"></td>');
+
         var $optionWidget;
+
+        // Checkboxes.
         if (this.selectable == 'multiple'){
           $optionWidget = $('<input type="checkbox">');
+          this.registry[rowId].$optionWidget = $optionWidget;
+
+          $optionWidget.prop('checked', ! layerModel.get('disabled'));
+          $optionWidget.on('change', function(){
+            layerModel.set('disabled', ! $optionWidget.prop('checked'));
+          });
         }
+
+        // Radio buttons.
         else if (this.selectable == 'single'){
+          console.log('doing ', rowId);
           $optionWidget = $('<input type="radio" name="' + this.cid + '-select">');
+          this.registry[rowId].$optionWidget = $optionWidget;
+
+          $optionWidget.on('change', function(){
+            var selected = $optionWidget.prop('checked');
+            layerModel.set('disabled', ! selected);
+
+            // Disable other layers in the set.
+            if (selected){
+              _.each(_this.registry, function(item, itemRowId){
+                if (itemRowId != rowId){
+                  console.log("i is: ", item.model.get('label'), item.editor);
+                  item.model.set('disabled', true);
+                  item.$optionWidget.prop('checked', false);
+                }
+              }, _this);
+            }
+          });
+
+          $optionWidget.prop('checked', ! layerModel.get('disabled'));
+          $optionWidget.trigger('change');
         }
-        $optionWidget.prop('checked', ! layerModel.get('disabled'));
-        $optionWidget.on('change', function(){
-          layerModel.set('disabled', ! $optionWidget.prop('checked'));
-        });
         $optionContainer.append($optionWidget);
         $rowHeader.append($optionContainer);
       }
@@ -179,17 +217,13 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
         $row.addClass('disabled');
       }
       layerModel.on('change:disabled', function(){
-        $row.toggleClass('disabled', layerModel.get('disabled'))
+        var disabled = layerModel.get('disabled');
+        $row.toggleClass('disabled', disabled);
+        $optionWidget.prop('checked', ! disabled);
       });
 
       // Set expanded state.
 
-      // Add to registry.
-      this.registry[rowId] = {
-        'model': layerModel,
-        '$row': $row,
-        'editor': layerEditor,
-      };
 
       // Add to body.
       this.$body.append($row);

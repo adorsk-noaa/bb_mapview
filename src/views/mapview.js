@@ -102,18 +102,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       });
     },
 
-    addLayerView: function(layerView){
-      this.layerRegistry[layerView.model.id] = layerView;
-      this.map.addLayer(layerView.layer);
-      layerView.model.on('render:start', this.onRenderStart, this);
-      layerView.model.on('render:end', this.onRenderEnd, this);
-      layerView.model.on('load:start', this.onLoadStart, this);
-      layerView.model.on('load:end', this.onLoadEnd, this);
-
-      // Trigger layer add event.
-      this.trigger("addLayerView");
-    },
-
     onLoadStart: function(){
       this.onRenderStart();
     },
@@ -198,7 +186,9 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
         this.map.addControl(layerView.graticuleControl);
       }
 
+      console.log(model.get('label'), model.get('visible'), layerView.layer.getVisibility());
       this.map.addLayer(layerView.layer);
+      console.log(model.get('label'), model.get('visible'), layerView.layer.getVisibility());
 
       if (model.get('index')){
         this.map.setLayerIndex(layerView.layer, model.get('index'));

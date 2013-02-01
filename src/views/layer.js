@@ -14,10 +14,14 @@ define([
             this.model.set('options', {});
           }
 
+          if (typeof this.model.get('opacity') == 'undefined'){
+            this.model.set('opacity', 1);
+          }
+
           this.layer = this.createLayer();
           this.model.on('change:params', this.updateParams, this);
-          this.model.on('change:params', this.updateParams, this);
           this.model.on('change:visible', this.onVisibleChange, this);
+          this.model.on('change:disabled', this.onDisabledChange, this);
           this.model.on('change:opacity', this.onOpacityChange, this);
           this.on('remove', this.remove, this);
         },
@@ -36,6 +40,8 @@ define([
       postInitialize: function(){
         this.layer.events.register("loadstart", this, this.onLoadStart);
         this.layer.events.register("loadend", this, this.onLoadEnd);
+        this.onDisabledChange();
+        this.onVisibleChange();
       },
 
       // These functions trigger a fade animation,
@@ -75,16 +81,20 @@ define([
 
           // Clear grid and merge params, this will trigger a redraw and load.
           _this.layer.clearGrid();
-          _this.layer.mergeNewParams(_this.model.get('params'));	
+          _this.layer.mergeNewParams(_this.model.get('params'));
         });
       },
 
       onVisibleChange: function(){
-        this.layer.setVisibility(this.model.get('visible'));
+        this.layer.setVisibility(this.model.get('visibile'));
       },
 
       onOpacityChange: function(){
         this.layer.setOpacity(this.model.get('opacity'));
+      },
+
+      onDisabledChange: function(){
+        this.model.set('visible', ! this.model.get('disabled'));
       },
 
       deactivate: function(){

@@ -35,14 +35,16 @@ require(
       cssDeferred.done(function(){
         console.log('styles loaded');
 
-        var baseLayerModel = new Backbone.Model({
+        baseLayerModel = new Backbone.Model({
           layer_type:"WMS",
           label:"Base label",
           disabled: false,
           service_url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
           params: {"layers": 'basic'},
-          options: {isBaseLayer: true},
+          options: {},
         });
+        var bm2 = baseLayerModel.clone();
+        bm2.set('label', 'bm2');
 
         var overlayLayerModel = new Backbone.Model({
           layer_type:"WMS",
@@ -60,6 +62,7 @@ require(
         });
 
         var defaultMap = new Backbone.Model({
+          maxExtent: [-180, -90, 180, 90],
           extent: [-70, 30, -65, 50],
           default_layer_options: {
             transitionEffect:"resize",
@@ -69,15 +72,20 @@ require(
             reorderable: true
           },
           resolutions:[0.025,0.0125,0.00625,0.003125,0.0015625,0.00078125],
+          options: {
+            allOverlays: true
+          }
         });
 
         mapEditorModel = new Backbone.Model({
           map: defaultMap.clone(),
           base_layers: new Backbone.Collection(
-            [baseLayerModel.clone(), baseLayerModel.clone()]
+            //[baseLayerModel.clone(), bm2]
+            [bm2]
           ) ,
           overlay_layers: new Backbone.Collection(
-            [overlayLayerModel.clone(), graticuleLayerModel]
+            //[overlayLayerModel.clone(), graticuleLayerModel]
+            [graticuleLayerModel]
           )
         });
 
