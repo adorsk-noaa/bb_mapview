@@ -2,47 +2,75 @@
 @import url("require:CommonStyles/styles/rounded-corners.less");
 @import url("require:CommonStyles/styles/button.less");
 @import url("require:ui/css/smoothness/jquery-ui-1.9.1.custom.min.css");
-@import url("require:tabble/jquery.ui.tabble.less");
 
-@tab_h: 40px;
-@tab_bw: 1px;
-@tab_corner_radius: 7px;
+@controlPadding: 8px;
+@controlBgColor: rgba(0, 60, 136, 1);
 
 .map-editor{
 
   display: inline-block;
   position: relative;
 
-  > .body{
+  > .inner {
     height: 100%;
     width: 100%;
-  }
+    position: relative;
 
-  .map-container{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
-
-  div.layers-editor-container {
-    width: 300px;
-    height: 100%;
-  }
-
-  .layers-editor{
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: white;
-    overflow-y: scroll;
-
-    .ui-accordion-content {
-      padding: 0;
+    > .map-container{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 0;
     }
+
+    > .control {
+      position: absolute;
+      z-index: 1;
+      > .launcher {
+        .rounded_corners(3px);
+        display: inline-block;
+        background-color: @controlBgColor;
+        padding: 3px;
+        margin: 1px;
+        color: white;
+        text-decoration: none;
+        font-family: sans;
+
+        > .toggleIcon {
+          font-family: mono;
+        }
+      }
+
+      .control-body{
+        &.uninitialized {
+          display: none;
+        }
+      }
+
+    }
+
+    > .control-body-qtip {
+      .rounded_corners(3px);
+      border-width: 3px;
+      border-style: solid;
+      border-color: @controlBgColor;
+      background-color: white;
+
+      > .qtip-content {
+      }
+    }
+
   }
 
+  .layers-control {
+    top: @controlPadding;
+    right: 40px;
+  }
+
+  .legend-control{
+    left: @controlPadding;
+    bottom: 20px;
+  }
 }

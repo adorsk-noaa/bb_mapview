@@ -4,18 +4,17 @@ define([
   "underscore",
   "_s",
   "ui",
-  "tabble",
   "Util",
   "./mapview",
   "./layer_collection_editor",
-  "text!./templates/map_editor.html"
+  "text!./templates/map_editor.html",
+  "qtip",
 ],
-function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEditorView, template){
+function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template, qtip){
 
   var MapEditorView = Backbone.View.extend({
 
-    events: {
-    },
+    events: {},
 
     initialize: function(options){
 
@@ -70,11 +69,6 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
       this.$table = $(this.el).children('table.body');
       this.$map_container = $('.map-container', this.el);
 
-      // Setup tabble.
-      this.$table.tabble({
-        stretchTable: true
-      });
-
       // Accordionize the layer editor sections
       $('.layers-editor > .accordions > .accordion', this.el).each(function(i, el){
         $(el).accordion({
@@ -91,6 +85,7 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
       _.each(_.keys(this.category_configs), function(category){
         var category_layers = this.model.get(category + '_layers') || [];
 
+        /*
         // Create layer collection editor.
         var LayerCollectionEditorClass = this.getLayerCollectionEditorClass();
         var layerCollectionEditor = new LayerCollectionEditorClass({
@@ -102,6 +97,7 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
         });
 
         this.layerCollectionEditors[category] = layerCollectionEditor;
+        */
 
         // Add layers to overall map layer collection.
         _.each(category_layers.models, function(layer){
@@ -109,6 +105,53 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
         }, this);
 
       }, this);
+
+      var $layersControl = $('.layers-control', this.el);
+      var $layersControlBody = $('> .control-body', $layersControl);
+      var $layersControlLauncher = $('> .launcher', $layersControl);
+      var $toggleIcon = $('> .toggleIcon', $layersControlLauncher);
+      $layersControl.qtip({
+        content: {
+          text: $layersControlBody,
+        },
+        position: {
+          my: 'top right',
+          at: 'bottom right',
+          adjust: {
+            y: -1 * parseInt($('> .launcher', $layersControl).css('paddingBottom'))
+          },
+          container: $('> .inner', this.el)
+        },
+        show: {
+          event: 'click'
+        },
+        hide: {
+          fixed: true,
+          event: null,
+        },
+        style: {
+          classes: 'control-body-qtip',
+          tip: false
+        },
+        events: {
+          render: function(event, api){
+            $layersControlBody.css('min-width', $layersControl.outerWidth());
+            $layersControlBody.removeClass('uninitialized');
+            // Toggle when target is clicked.
+            $(api.elements.target).on('click', function(clickEvent){
+              clickEvent.preventDefault();
+              api.toggle();
+            });
+          },
+          show: function(event, api){
+            if ($toggleIcon){$toggleIcon.html('-');}
+          },
+          hide: function(event, api){
+            if ($toggleIcon){$toggleIcon.html('+');}
+          },
+        }
+      });
+
 
     },
 
@@ -124,7 +167,6 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
     },
 
     resizeStop: function(){
-      this.$table.tabble('resize');
       this.mapView.resize();
     },
 
@@ -154,7 +196,12 @@ function($, Backbone, _, _s, ui, Tabble, Util, MapViewView, LayerCollectionEdito
       });
       this.model.off();
       this.off();
+    },
+
+    togglerLayersControl: {
+
     }
+
   });
 
   return MapEditorView;
