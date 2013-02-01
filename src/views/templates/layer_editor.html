@@ -1,33 +1,12 @@
-<table>
-    <tr class="layer-editor-header">
-
-        <td class="drag-handle-container cell">
-            <div class="layer-editor-drag-handle disabled">
-            </div>
-        </td>
-
-        <td class="disabled-toggle-container cell">
-            <div class="disabled-toggle">
-                <input class="disabled-toggle-cb" type="checkbox"/>
-            </div>
-        </td>
-
-        <td class="title-container cell">
-            <div class="inner">
-                <table class="title">
-                    <tr>
-                        <td class="text"><%= model.get('label') %></td>
-                        <td class="arrow">
-                            &#x25BC
-                        </td>
-                    </tr>
-                </table>
+<tbody>
+    <tr>
+        <td>
+            <div class="layer-editor-title">
+                <span class="text"><%= model.get('label') %></span>
             </div>
         </td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
         <td>
             <div class="layer-editor-body">
                 <div class="overlay"></div>
@@ -36,5 +15,4 @@
             </div>
         </td>
     </tr>
-</table>
-
+</tbody>

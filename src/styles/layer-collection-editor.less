@@ -13,20 +13,73 @@
 	border-spacing: 0;
 	border-collapse: collapse;
 
-	> .layer-row-container {
+	> .layer-editor-row {
 
-		.layer-row{
-			display: table;
-			width: 100%;
-
-			> .cell {
-				display: table-cell;
-				vertical-align: middle;
-			}
-
-		}
+    > table {
+      width: 100%;
+    }
 
 	}
+
+  .layer-editor-header-row {
+
+    .option-container, .drag-handle-container{
+      width: 16px;
+    }
+
+    .layer-editor-drag-handle {
+      background-image: url('images/drag_arrow.png');
+      background-size: 100% 100%;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .title-button{
+      .button;
+    }
+
+    .title-table{
+      width: 100%;
+
+      .toggle-icon{
+        margin: 0 2px;
+        font-family: mono;
+      }
+    }
+  }
+
+
+  .layer-editor-body {
+    display: none;
+    padding: @padding_normal;
+    position: relative;
+
+    > .overlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: @faint_grey;
+      z-index: 5;
+    }
+
+    > .layer-form{
+      background: white;
+
+      .layer-option-form {
+        margin: @padding_normal 0;
+      }
+
+      fieldset {
+        legend {
+          font-family: sans-serif;
+        }
+      }
+    }
+  }
 
 }
 

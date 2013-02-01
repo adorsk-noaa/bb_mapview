@@ -1,8 +1,24 @@
-<div class="layer-row-container" id="<%= model.cid %>" >
-	<div class="layer-row">
-		<div class="layer-editor-container cell">
-			<div class="layer-editor">
-			</div>
-		</div>
-	</div>
+<div class="layer-editor-row" id="<%= rowId %>" >
+    <table>
+        <tbody>
+            <tr class="layer-editor-header-row">
+                <td class="title-cell">
+                    <div class="title-button">
+                        <table class="title-table">
+                            <tbody>
+                                <tr>
+                                    <td class="title-container"></td>
+                                    <td class="toggle-icon">+</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr class="layer-editor-body-row">
+                <td class="body-container">
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>

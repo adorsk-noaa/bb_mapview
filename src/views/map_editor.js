@@ -35,15 +35,16 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       $(this.el).addClass('map-editor');
 
       // Iniitialize configs for layers categories.
-      this.category_configs = {
-        'base': {
-          'start_index': 1
+      this.categoryConfigs = {
+        base: {
+          startIndex: 100,
+          selectable: 'single',
+          sortable: false,
         },
-        'data': {
-          'start_index': 20
-        },
-        'overlay': {
-          'start_index': 40
+        overlay: {
+          startIndex: 200,
+          selectable: 'multiple',
+          sortable: true,
         }
       };
 
@@ -82,23 +83,22 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
 
       // Setup layer categories and editors.
       this.layerCollectionEditors = {};
-      _.each(_.keys(this.category_configs), function(category){
-        var category_layers = this.model.get(category + '_layers') || [];
+      _.each(this.categoryConfigs, function(config, category){
+        var layers = this.model.get(category + '_layers') || [];
 
         // Create layer collection editor.
         var LayerCollectionEditorClass = this.getLayerCollectionEditorClass();
-        var layerCollectionEditor = new LayerCollectionEditorClass({
+        var layerCollectionEditor = new LayerCollectionEditorClass(_.extend({
           model: new Backbone.Model({
-            layers: category_layers,
-            start_index: this.category_configs[category]['start_index']
+            layers: layers,
           }),
           el: $(_s.sprintf('.%s-layers-editor', category), this.el)
-        });
+        }, config));
 
         this.layerCollectionEditors[category] = layerCollectionEditor;
 
         // Add layers to overall map layer collection.
-        _.each(category_layers.models, function(layer){
+        _.each(layers.models, function(layer){
           this.layers.add(layer);
         }, this);
 
