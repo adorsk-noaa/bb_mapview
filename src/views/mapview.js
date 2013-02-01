@@ -7,8 +7,9 @@ define([
   "./wms_layer",
   "./wmts_layer",
   "./vector_layer",
+  "./graticule_layer",
 ],
-function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerView){
+function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerView, GraticuleLayerView){
 
   var MapViewView = Backbone.View.extend({
 
@@ -18,9 +19,11 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       this.layerViewClasses = {
         WMS: WMSLayerView,
         WMTS: WMTSLayerView,
-        Vector: VectorLayerView
+        Vector: VectorLayerView,
+        Graticule: GraticuleLayerView,
       };
 
+      this.controlsRegistry = {};
       this.layerRegistry = {};
       this._rendering_counter = 0;
       this._loading_placeholder = $('<div class="loading-placeholder"><div class="img"></div></div>');
@@ -84,11 +87,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       // Disable mouse wheel zoom.
       var nav_control = this.map.getControlsByClass('OpenLayers.Control.Navigation')[0];
       nav_control.disableZoomWheel();
-
-      scaleline = new OpenLayers.Control.ScaleLine({
-        div: $('.map-controls .scale.control', this.el)[0]
-      });
-      this.map.addControl(scaleline);
 
     },
 
@@ -161,25 +159,11 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       if (this.map){
         this.map.updateSize();
       }
-      // Some browsers require the graticule to be refreshed on resize.
-      if (this.graticule){
-        this.graticule.deactivate();
-        this.graticule.activate();
-      }
     },
 
     onReady: function(){
       this.map.render($('.map', this.el).get(0));
       this.mapRendered = true;
-
-      // Add graticule.
-      this.graticule = new OpenLayers.Control.Graticule({
-        intervals: this.model.get('graticule_intervals'),
-        numPoints: 2, 
-        labelled: true,
-        labelFormat: 'dd'
-      });
-      this.map.addControl(this.graticule);
 
       // Zoom to extent if given, max extent otherwise.
       if (this.model.get('extent')){
@@ -209,6 +193,11 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
     addLayer: function(model, layers, options){
       var layerView = this.getLayerView(model);
 
+      if (model.get('layer_type') == 'Graticule'){
+        this.controlsRegistry[model.cid] = layerView.graticuleControl;
+        this.map.addControl(layerView.graticuleControl);
+      }
+
       this.map.addLayer(layerView.layer);
 
       if (model.get('index')){
@@ -233,9 +222,13 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       var layer = this.layerRegistry[layerModel.id];
       if (layer.layer){
         this.map.removeLayer(layer.layer);
-        layer.trigger('remove');
+        delete this.layerRegistry[layerModel.id];
       }
-      delete this.layerRegistry[layerModel.id];
+      if (layerModel.get('layer_type') == 'Graticule'){
+        this.map.removeControl(layer.graticuleControl);
+        delete this.controlsRegistry[layerModel.cid];
+      }
+      layer.trigger('remove');
       this.trigger("removeLayerView");
     },
 

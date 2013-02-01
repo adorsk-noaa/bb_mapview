@@ -53,9 +53,14 @@ require(
           expanded: true
         });
 
+        var graticuleLayerModel = new Backbone.Model({
+          layer_type:"Graticule",
+          label:"Graticule Label",
+          disabled: false,
+        });
+
         var defaultMap = new Backbone.Model({
           extent: [-70, 30, -65, 50],
-          graticule_intervals:[2],
           default_layer_options: {
             transitionEffect:"resize",
           },
@@ -72,7 +77,7 @@ require(
             [baseLayerModel.clone(), baseLayerModel.clone()]
           ) ,
           overlay_layers: new Backbone.Collection(
-            [overlayLayerModel.clone(), overlayLayerModel.clone()]
+            [overlayLayerModel.clone(), graticuleLayerModel]
           )
         });
 

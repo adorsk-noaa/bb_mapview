@@ -14,9 +14,6 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
 
   var LayerCollectionEditorView = Backbone.View.extend({
 
-    events: {
-    },
-
     initialize: function(opts){
       opts = _.extend({
         sortable: true,
