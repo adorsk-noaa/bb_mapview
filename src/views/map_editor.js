@@ -9,8 +9,9 @@ define([
   "./layer_collection_editor",
   "text!./templates/map_editor.html",
   "qtip",
+  "./MapInfo",
 ],
-function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template, qtip){
+function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template, qtip, MapInfoView){
 
   var MapEditorView = Backbone.View.extend({
 
@@ -173,6 +174,14 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
     },
 
     setupMapInfoControl: function(){
+
+      this.mapInfo = new MapInfoView({
+        model: new Backbone.Model({
+          layers: this.layers,
+        }),
+        el: $('.map-info', this.el)
+      });
+
       var $control = $('.map-info-control', this.el);
       this.setupControl({
         $control: $control,

@@ -42,9 +42,11 @@ require(
           service_url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
           params: {"layers": 'basic'},
           options: {},
+          legend: 'bl legend',
         });
         var bm2 = baseLayerModel.clone();
         bm2.set('label', 'bm2');
+        bm2.set('legend', 'bm2');
 
         var overlayLayerModel = new Backbone.Model({
           layer_type:"WMS",
@@ -52,13 +54,15 @@ require(
           disabled: false,
           service_url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
           params: {"layers": 'basic'},
-          expanded: true
+          expanded: true,
+          legend: 'ovlery legend',
         });
 
         var graticuleLayerModel = new Backbone.Model({
           layer_type:"Graticule",
           label:"Graticule Label",
           disabled: false,
+          legend: 'grid legend',
         });
 
         var defaultMap = new Backbone.Model({
