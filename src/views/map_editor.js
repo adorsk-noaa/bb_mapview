@@ -105,8 +105,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       }, this);
 
       this.setupLayersControl();
-      this.setupMapInfoControl();
-
     },
 
     setupControl: function(opts){
@@ -172,32 +170,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         }
       });
     },
-
-    setupMapInfoControl: function(){
-
-      this.mapInfo = new MapInfoView({
-        model: new Backbone.Model({
-          layers: this.layers,
-        }),
-        el: $('.map-info', this.el)
-      });
-
-      var $control = $('.map-info-control', this.el);
-      this.setupControl({
-        $control: $control,
-        qtip: {
-          position: {
-            my: 'bottom left',
-            at: 'top left',
-            adjust: {
-              x: -1 * parseInt($('> .launcher', $control).css('paddingRight')),
-              y: parseInt($('> .launcher', $control).css('paddingBottom'))
-            },
-          },
-        }
-      });
-    },
-
 
     getLayerCollectionEditorClass: function(){
       return LayerCollectionEditorView;
