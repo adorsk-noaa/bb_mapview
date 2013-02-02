@@ -1,16 +1,17 @@
 <div class="slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
 </div>
 <div class="inputs">
-    <div class="vmin input">
-        <span class="label">min: </span>
-        <input type="text">
-        <input type="checkbox">
-        <span class="label">auto</span>
+    <% _.each(['vmin', 'vmax'], function(minmax){ 
+        var cbId = view.cid + '-' + minmax + '-cb';
+    %>
+    <div class="<%= minmax %> minmax-input">
+        <div class="text-container">
+            <input type="text">
+        </div>
+        <div class="checkbox-container">
+            <input type="checkbox" id="<%= cbId %>">
+            <label for="<%= cbId %>">auto</label>
+        </div>
     </div>
-    <div class="vmax input">
-        <span class="label">max: </span>
-        <input type="text">
-        <input type="checkbox">
-        <span class="label">auto</span>
-    </div>
+    <% }); %>
 </div>

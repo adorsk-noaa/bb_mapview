@@ -167,6 +167,9 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
               y: -1 * parseInt($('> .launcher', $control).css('paddingBottom'))
             },
           },
+          style: {
+            classes: 'control-body-qtip layers-control-qtip'
+          },
         }
       });
       var api = $control.qtip('api');

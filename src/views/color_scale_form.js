@@ -48,7 +48,7 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
     input_attrs: ['vmin', 'vmax'],
     css_classes: ['sequential'],
     renderBody: function(){
-      return (_.template(sequential_template, {model: this.model}));
+      return (_.template(sequential_template, {view: this}));
     },
     postInitialize: function(){
       ColorScaleFormView.prototype.postInitialize.apply(this, arguments);
@@ -75,7 +75,7 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
     input_attrs: ['vmiddle', 'vradius'],
     css_classes: ['diverging'],
     renderBody: function(){
-      return (_.template(diverging_template, {model: this.model}));
+      return (_.template(diverging_template, {view: this}));
     },
     postInitialize: function(){
       ColorScaleFormView.prototype.postInitialize.apply(this, arguments);
