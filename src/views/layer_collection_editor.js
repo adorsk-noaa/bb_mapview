@@ -183,7 +183,6 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
 
         // Radio buttons.
         else if (this.selectable == 'single'){
-          console.log('doing ', rowId);
           $optionWidget = $('<input type="radio" name="' + this.cid + '-select">');
           this.registry[rowId].$optionWidget = $optionWidget;
 
@@ -195,7 +194,6 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
             if (selected){
               _.each(_this.registry, function(item, itemRowId){
                 if (itemRowId != rowId){
-                  console.log("i is: ", item.model.get('label'), item.editor);
                   item.model.set('disabled', true);
                   item.$optionWidget.prop('checked', false);
                 }
@@ -222,9 +220,6 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
         $optionWidget.prop('checked', ! disabled);
       });
 
-      // Set expanded state.
-
-
       // Add to body.
       this.$body.append($row);
 
@@ -232,20 +227,6 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
         this.$body.sortable('refresh');
       }
 
-    },
-
-    toggleLayerForm: function(e){
-      var toggleText;
-      if (this.$body.is(':hidden')){
-        this.$body.slideDown();
-        toggleText = '-';
-      }
-      else{
-        this.$body.slideUp();
-        toggleText = '+';
-      }
-
-      this.$arrow.html(toggleText);
     },
 
     remove: function(){

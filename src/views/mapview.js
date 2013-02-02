@@ -78,6 +78,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       }
 
       this.map = new OpenLayers.Map(mapOptions);
+      this.map.addControl(new OpenLayers.Control.LayerSwitcher());
 
       // Add initial layers.
       _.each(this.layers.models, function(layerModel){
@@ -186,9 +187,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
         this.map.addControl(layerView.graticuleControl);
       }
 
-      console.log(model.get('label'), model.get('visible'), layerView.layer.getVisibility());
       this.map.addLayer(layerView.layer);
-      console.log(model.get('label'), model.get('visible'), layerView.layer.getVisibility());
 
       if (model.get('index')){
         this.map.setLayerIndex(layerView.layer, model.get('index'));
@@ -223,7 +222,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
     },
 
     onMapMoveEnd: function(){
-      // Update model extend and resolution after moves.
       this.model.set({
         extent: this.map.getExtent().toArray(),
         resolution: this.map.getResolution(),
@@ -239,7 +237,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       this.model.off();
       this.off();
     }
-
 
   });
 
