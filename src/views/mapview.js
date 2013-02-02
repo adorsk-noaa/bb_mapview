@@ -78,7 +78,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       }
 
       this.map = new OpenLayers.Map(mapOptions);
-      this.map.addControl(new OpenLayers.Control.LayerSwitcher());
 
       // Add initial layers.
       _.each(this.layers.models, function(layerModel){
