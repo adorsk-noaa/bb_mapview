@@ -9,9 +9,8 @@ define([
   "./layer_collection_editor",
   "text!./templates/map_editor.html",
   "qtip",
-  "./MapInfo",
 ],
-function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template, qtip, MapInfoView){
+function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template, qtip){
 
   var MapEditorView = Backbone.View.extend({
 
@@ -112,13 +111,14 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       var $controlBody = $('> .control-body', $control);
       var $controlLauncher = $('> .launcher', $control);
       var $toggleIcon = $('> .toggleIcon', $controlLauncher);
-
+      var $container = $('> .inner', this.el);
       var qtipOpts = {
         content: {
           text: $controlBody,
         },
         position: {
-          container: $('> .inner', this.el)
+          container: $container,
+          viewport: $container,
         },
         show: {
           event: 'click'
@@ -169,6 +169,13 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
           },
         }
       });
+      var api = $control.qtip('api');
+      var origShowCallback = api.get('events.show');
+      var decoratedShowCallback = function(event, api){
+        origShowCallback(arguments);
+        $(api.elements.tooltip).css('bottom', 5);
+      }
+      api.set('events.show', decoratedShowCallback);
     },
 
     getLayerCollectionEditorClass: function(){
