@@ -108,6 +108,7 @@ require(
           vmax: features.length,
           colormap: Colormap.COLORMAPS['ColorBrewer:RdBu'],
           expanded: true,
+          scale_type: 'diverging',
         });
 
         var defaultMap = new Backbone.Model({

@@ -52,14 +52,20 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
         }
       }, this);
 
-      // Listen for min/max auto changes.
-      _.each(['min', 'max'], function(minmax){
-        this.model.on('change:v' + minmax+ 'Auto', function(model, value){
-          if (value){
-            this.updateVMinMax(minmax);
-          }
+      // Listen for changes to auto attributes.
+      var scaleType = this.model.get('scale_type');
+      if (scaleType == 'diverging'){
+        this.model.on('change:vrAuto', this.updateVr, this);
+      }
+      else if (scaleType == 'sequential'){
+        _.each(['min', 'max'], function(minmax){
+          this.model.on('change:v' + minmax+ 'Auto', function(model, value){
+            if (value){
+              this.updateVMinMax(minmax);
+            }
+          }, this);
         }, this);
-      }, this);
+      }
 
       // Listen for property changes, and throttle changes.
       // Otherwise mass updates of features will trigger a lot of
@@ -78,6 +84,28 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
       }, this);
 
       this.updateStyleRules();
+    },
+
+    updateVr: function(){
+      var minMaxValues = {};
+      var minmaxAttrs = ['min', 'max'];
+      for (var i in minmaxAttrs){
+        var minmax = minmaxAttrs[i];
+        var value = this.getVMinMax(minmax);
+        if (! $.isNumeric(value)){
+          return;
+        }
+        minMaxValues[minmax] = this.getVMinMax(minmax);
+      }
+
+      var vmid = this.model.get('vmid');
+      if (! $.isNumeric(vmid)){
+        return;
+      }
+      var minDist = Math.abs(minMaxValues.min - vmid);
+      var maxDist = Math.abs(minMaxValues.max - vmid);
+      var dist = Math.max(minDist, maxDist);
+      this.model.set('vr', dist);
     },
 
     updateVMinMax: function(minmax){
@@ -185,19 +213,27 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
     },
 
     onPropertiesChange: function(){
-      // Update min/max.
-      var setObj = {};
-      _.each(['min', 'max'], function(minmax){
-        if (this.model.get('v' + minmax + 'Auto')){
-          setObj['v' + minmax] = this.getVMinMax(minmax);
+      var scaleType = this.model.get('scale_type');
+
+      if (scaleType == 'diverging'){
+        if (this.model.get('vrAuto')){
+          this.updateVr();
         }
-      }, this);
-      this.model.set(setObj);
+      }
+      else if (scaleType == 'sequential'){
+        var setObj = {};
+        _.each(['min', 'max'], function(minmax){
+          if (this.model.get('v' + minmax + 'Auto')){
+            setObj['v' + minmax] = this.getVMinMax(minmax);
+          }
+        }, this);
+        this.model.set(setObj);
+      }
     },
 
     renderFormElements: function(){
       LayerEditorView.prototype.renderFormElements.call(this);
-      var scale_type = this.model.get('color_scale_type') || 'sequential';
+      var scale_type = this.model.get('scale_type') || 'sequential';
       var scale_class;
       if (scale_type == 'sequential'){
         scale_class = ColorScaleForms.Sequential;

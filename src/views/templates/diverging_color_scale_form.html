@@ -1,3 +1,42 @@
-<div class="inputs">
-    <input data-attr="vmiddle" type="text" class="vmiddle"/> +/- <input data-attr="vradius" type="text" class="vradius"/>
-</div>
+<div class="slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"></div>
+<table class="main-table">
+    <tbody>
+    <tr>
+        <td class="vmin-label"></td>
+        <td>
+            <% var cbId = view.cid + '-vr-cb'; %>
+            <table class="inputs">
+                <tbody>
+                <tr>
+                    <td>
+                        <input class="vmid-text" type="text">
+                    </td>
+
+                    <td>
+                        <div class="plus-minus-icon">+/-</div>
+                    </td>
+
+                    <td>
+                        <input class="vr-text" type="text">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div class="checkbox-container">
+                            <input class="vr-auto-cb" type="checkbox" id="<%= cbId %>">
+                            <label for="<%= cbId %>">auto</label>
+                        </div>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+        <td class="vmax-label"></td>
+    </tr>
+    </tbody>
+</table>
+

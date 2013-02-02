@@ -8,9 +8,10 @@ define([
   "text!./templates/sequential_color_scale_form.html",
   "text!./templates/diverging_color_scale_form.html",
   "../util/Colormap",
-  "Util/views/MinMaxForm"
+  "Util/views/MinMaxForm",
+  "Util/views/PlusMinusForm",
 ],
-function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diverging_template, Colormap, MinMaxFormView){
+function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diverging_template, Colormap, MinMaxFormView, PlusMinusFormView){
   var label = 'Color Scale';
   var css_class = 'color-scale-form';
 
@@ -72,23 +73,57 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
   });
 
   var DivergingColorScaleFormView = ColorScaleFormView.extend({
-    input_attrs: ['vmiddle', 'vradius'],
+    input_attrs: ['vmid', 'vr'],
     css_classes: ['diverging'],
     renderBody: function(){
       return (_.template(diverging_template, {view: this}));
     },
+    initialize: function(options){
+      if (typeof this.model.get('vmid') == 'undefined'){
+        this.model.set('vmid', 0);
+      }
+      if (typeof this.model.get('vr') == 'undefined'){
+        this.model.set('vr', 1);
+      }
+      ColorScaleFormView.prototype.initialize.apply(this, arguments);
+    },
     postInitialize: function(){
       ColorScaleFormView.prototype.postInitialize.apply(this, arguments);
-      this.model.on('change:vmiddle', this.setVminVmax, this);
+      this.labels = {};
+      _.each(['vmin', 'vmax'], function(vminmax){
+        this.labels[vminmax] = $('.' + vminmax + '-label', this.el);
+      }, this);
+
+      this.$vminLabel = ''
+      this.plusMinusForm = new PlusMinusFormView({
+        el: this.el,
+        model: this.model,
+        attrs: {
+          mid: 'vmid',
+          r: 'vr',
+          rAuto: 'vrAuto',
+        },
+        selectors:{
+          mid: '.vmid-text',
+          r: '.vr-text',
+          rAuto: '.vr-auto-cb',
+        }
+      });
+      this.model.on('change:vmid change:vr', _.throttle(this.setVMinMax, 100), this);
+      this.setVMinMax();
     },
-    setVminVmax: function(){
-      var vmiddle = this.model.get('vmiddle');
-      var vradius = this.model.get('vradius');
-      if (vmiddle != null && vradius != null){
+    setVMinMax: function(){
+      console.log('yo');
+      var vmid = this.model.get('vmid');
+      var vr = this.model.get('vr');
+      if (vmid != null && vr != null){
         this.model.set({
-          vmin: vmiddle - vradius,
-          vmax: vmiddle + vradius
+          vmin: vmid - vr,
+          vmax: vmid + vr,
         });
+        _.each(this.labels, function($label, vminmax){
+          $label.html(this.model.get(vminmax));
+        }, this);
       }
     }
   });

@@ -11,6 +11,10 @@
       input[type="text"]{
           width: 50px;
       }
+      input[type="checkbox"]{
+        margin-top: 1px;
+        margin-bottom: 1px;
+      }
   }
 
   &.sequential{
@@ -35,8 +39,36 @@
   }
 
   &.diverging {
+    table {
+      border-spacing: 0;
+    }
+    .main-table {
+      > tbody > tr > td{
+        vertical-align: top;
+      }
+      width: 100%;
+      .vmin-label {
+        text-align: left;
+      }
+      .vmax-label {
+        text-align: right;
+      }
+    }
     .inputs {
+
+      .plus-minus-icon {
+        font-family: sans;
+        color: black;
+        font-size: 14px;
+      }
+
+      .vmid-text {
+        width: 25px;
+      }
       text-align: center;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
+
 }
