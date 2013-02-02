@@ -101,24 +101,24 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         _.each(layers.models, function(layer){
           this.layers.add(layer);
         }, this);
-
       }, this);
 
-      var $layersControl = $('.layers-control', this.el);
-      var $layersControlBody = $('> .control-body', $layersControl);
-      var $layersControlLauncher = $('> .launcher', $layersControl);
-      var $toggleIcon = $('> .toggleIcon', $layersControlLauncher);
-      $layersControl.qtip({
+      this.setupLayersControl();
+      this.setupMapInfoControl();
+
+    },
+
+    setupControl: function(opts){
+      var $control = opts.$control;
+      var $controlBody = $('> .control-body', $control);
+      var $controlLauncher = $('> .launcher', $control);
+      var $toggleIcon = $('> .toggleIcon', $controlLauncher);
+
+      var qtipOpts = {
         content: {
-          text: $layersControlBody,
+          text: $controlBody,
         },
         position: {
-          my: 'top right',
-          at: 'bottom right',
-          adjust: {
-            x: parseInt($('> .launcher', $layersControl).css('paddingRight')),
-            y: -1 * parseInt($('> .launcher', $layersControl).css('paddingBottom'))
-          },
           container: $('> .inner', this.el)
         },
         show: {
@@ -134,8 +134,8 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         },
         events: {
           render: function(event, api){
-            $layersControlBody.css('min-width', $layersControl.outerWidth());
-            $layersControlBody.removeClass('uninitialized');
+            $controlBody.css('min-width', $control.outerWidth());
+            $controlBody.removeClass('uninitialized');
             // Toggle when target is clicked.
             $(api.elements.target).on('click', function(clickEvent){
               clickEvent.preventDefault();
@@ -149,10 +149,46 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
             if ($toggleIcon){$toggleIcon.html('+');}
           },
         }
-      });
-
+      };
+      $.extend(true, qtipOpts, opts.qtip);
+      $control.qtip(qtipOpts);
 
     },
+
+    setupLayersControl: function(){
+      var $control = $('.layers-control', this.el);
+      this.setupControl({
+        $control: $control,
+        qtip: {
+          position: {
+            my: 'top right',
+            at: 'bottom right',
+            adjust: {
+              x: parseInt($('> .launcher', $control).css('paddingRight')),
+              y: -1 * parseInt($('> .launcher', $control).css('paddingBottom'))
+            },
+          },
+        }
+      });
+    },
+
+    setupMapInfoControl: function(){
+      var $control = $('.map-info-control', this.el);
+      this.setupControl({
+        $control: $control,
+        qtip: {
+          position: {
+            my: 'bottom left',
+            at: 'top left',
+            adjust: {
+              x: -1 * parseInt($('> .launcher', $control).css('paddingRight')),
+              y: parseInt($('> .launcher', $control).css('paddingBottom'))
+            },
+          },
+        }
+      });
+    },
+
 
     getLayerCollectionEditorClass: function(){
       return LayerCollectionEditorView;
