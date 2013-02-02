@@ -3,8 +3,10 @@ require(
     "jquery",
     "rless!MapView/styles/mapview.less",
     "MapView/views/map_editor",
+    "MapView/util/Colormap",
+    "MapView/models/Feature",
   ],
-  function($, MapViewCSS, MapEditorView){
+  function($, MapViewCSS, MapEditorView, Colormap, FeatureModel){
     $(document).ready(function(){
       $(document.body).append('<p id="stylesLoaded" style="display: none;"></p>');
       cssEl = document.createElement('style');
@@ -65,6 +67,48 @@ require(
           legend: 'grid legend',
         });
 
+        var createFeatures = function(xMin, xMax, yMin, yMax, dx, dy){
+          var features = new Backbone.Collection();
+          var featureCounter = 0;
+          for (var x=xMin; x < xMax; x += dx){
+            for (var y=yMin; y < yMax; y += dy){
+              featureCounter += 1;
+              var coords = [[x, y],[x,y+dy],[x+dx,y+dy],[x+dx,y],[x,y]];
+              var feature = new FeatureModel({
+                id: featureCounter,
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [coords],
+                },
+                properties: {
+                  p1: featureCounter
+                }
+              });
+              features.add(feature);
+            }
+          }
+          return features;
+        };
+
+        var xMin = -40;
+        var xMax = 40;
+        var dx = 1;
+        var yMin = -40;
+        var yMax = 40;
+        var dy = 1;
+        var features = createFeatures(xMin, xMax, yMin, yMax, dx, dy);
+
+        var vectorLayerModel = new Backbone.Model({
+          label: 'Test Vector Layer',
+          layer_category: 'data',
+          layer_type: 'Vector',
+          features: features,
+          dataProp: 'p1',
+          vmin: 0,
+          vmax: features.length,
+          colormap: Colormap.COLORMAPS['ColorBrewer:RdBu'],
+        });
+
         var defaultMap = new Backbone.Model({
           maxExtent: [-180, -90, 180, 90],
           extent: [-70, 30, -65, 50],
@@ -80,7 +124,7 @@ require(
             [baseLayerModel.clone(), bm2]
           ) ,
           overlay_layers: new Backbone.Collection(
-            [overlayLayerModel.clone(), graticuleLayerModel]
+            [overlayLayerModel.clone(), graticuleLayerModel, vectorLayerModel]
           )
         });
 
