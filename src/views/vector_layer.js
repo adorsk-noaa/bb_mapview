@@ -16,9 +16,14 @@ function($, Backbone, _, ol, LayerView){
       if (! this.model.get('features')){
         this.model.set('features', new Backbone.Collection());
       }
+
       if (! this.model.get('styleMap')){
         this.model.set('styleMap', new Backbone.Collection());
       }
+      if (this.model.get('styleMap').length){
+        this.updateStyleMap({silent: true});
+      }
+
       this.postInitialize();
     },
 
@@ -37,9 +42,6 @@ function($, Backbone, _, ol, LayerView){
         },this);
       }
 
-      if (this.model.get('styleMap').length){
-        this.updateStyleMap({silent: true});
-      }
     },
 
     createLayer: function(){

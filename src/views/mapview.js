@@ -13,7 +13,8 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
 
   var MapViewView = Backbone.View.extend({
 
-    initialize: function(options){
+    initialize: function(opts){
+      this.opts = opts;
       $(this.el).addClass('mapview');
 
       this.layerViewClasses = {
@@ -48,7 +49,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       this.on('resizeView', this.resize, this);
 
       this.on('ready', this.onReady, this);
-      if (options.ready){
+      if (opts.ready){
         this.trigger('ready');
       }
 
@@ -85,8 +86,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       }, this);
 
       // Disable mouse wheel zoom.
-      var nav_control = this.map.getControlsByClass('OpenLayers.Control.Navigation')[0];
-      nav_control.disableZoomWheel();
+      if (this.opts.noWheel){
+        var nav_control = this.map.getControlsByClass('OpenLayers.Control.Navigation')[0];
+        nav_control.disableZoomWheel();
+      }
 
     },
 

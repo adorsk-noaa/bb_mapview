@@ -169,14 +169,14 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
       });
 
       // Update model's default styleMap.
-      var defaultStyleMap = this.model.get('styleMap').get('default');
-      if (! defaultStyleMap){
-        defaultStyleMap = new Backbone.Model({
+      var defaultStyle = this.model.get('styleMap').get('default');
+      if (! defaultStyle){
+        defaultStyle = new Backbone.Model({
           id: 'default'
         });
-        this.model.get('styleMap').add(defaultStyleMap, {silent: true});
+        this.model.get('styleMap').add(defaultStyle, {silent: true});
       }
-      defaultStyleMap.set('rules', rules);
+      defaultStyle.set('rules', rules);
     },
 
     colorBinsToRules: function(opts){

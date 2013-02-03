@@ -133,7 +133,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         },
         events: {
           render: function(event, api){
-            console.log("c is: ", $container.get(0));
             $controlBody.css('min-width', $control.outerWidth());
             $controlBody.removeClass('uninitialized');
             // Toggle when target is clicked.
