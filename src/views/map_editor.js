@@ -133,6 +133,7 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         },
         events: {
           render: function(event, api){
+            console.log("c is: ", $container.get(0));
             $controlBody.css('min-width', $control.outerWidth());
             $controlBody.removeClass('uninitialized');
             // Toggle when target is clicked.
@@ -163,8 +164,8 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
             my: 'top right',
             at: 'bottom right',
             adjust: {
-              x: parseInt($('> .launcher', $control).css('paddingRight')),
-              y: -1 * parseInt($('> .launcher', $control).css('paddingBottom'))
+              x: parseInt($('> .launcher', $control).css('paddingRight')) || null,
+              y: -1 * parseInt($('> .launcher', $control).css('paddingBottom')) || null,
             },
           },
           style: {
