@@ -19,6 +19,7 @@ function($, Backbone, _, ol){
       }
 
       this.layer = this.createLayer();
+      this.layer.id = this.model.cid;
       this.model.on('change:params', this.updateParams, this);
       this.model.on('change:visibility', this.onVisibilityChange, this);
       this.model.on('change:disabled', this.onDisabledChange, this);

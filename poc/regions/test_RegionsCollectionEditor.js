@@ -38,6 +38,8 @@ require(
       cssDeferred.done(function(){
         console.log('styles loaded');
 
+        var map = new OpenLayers.Map('map');
+
         var createFeatures = function(xMin, xMax, yMin, yMax, dx, dy){
           var features = new Backbone.Collection();
           var featureCounter = 0;
@@ -61,13 +63,12 @@ require(
           return features;
         };
 
-        /*
         var xMin = -40;
         var xMax = 40;
-        var dx = 1;
+        var dx = 5;
         var yMin = -40;
         var yMax = 40;
-        var dy = 1;
+        var dy = 5;
         var features = createFeatures(xMin, xMax, yMin, yMax, dx, dy);
         var vLayerModel = new Backbone.Model({
           label: 'Test Vector Layer',
@@ -79,9 +80,8 @@ require(
         var vLayer = new VectorLayerView({
           model: vLayerModel
         });
-        */
+        map.addLayer(vLayer.layer);
 
-        var map = new OpenLayers.Map('map');
         var wms = new OpenLayers.Layer.WMS(
           "OpenLayers WMS",
           "http://vmap0.tiles.osgeo.org/wms/vmap0",
@@ -90,16 +90,16 @@ require(
         map.addLayer(wms);
         map.zoomToMaxExtent();
 
-        regionsModel = new Backbone.Model({
-          regions: new Backbone.Collection()
+        regionsEditorModel = new Backbone.Model({
+          regions: new Backbone.Collection(),
+          observed_layer: vLayerModel,
         });
 
         regionsEditor = new RegionsCollectionEditor({
-          model: regionsModel,
-          el: $("#regionsEditor")
+          model: regionsEditorModel,
+          el: $("#regionsEditor"),
+          map: map,
         });
-        map.addLayer(regionsEditor.regionsLayer);
-        map.addControl(regionsEditor.drawControl);
 
       });
     });

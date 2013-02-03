@@ -6,9 +6,10 @@ define(
     "_s",
     "ui",
     "openlayers",
+    "./Region",
     "text!./templates/RegionsCollectionEditor.html"
 ],
-function($, Backbone, _, _s, ui, ol, RegionsCollectionEditorTemplate){
+function($, Backbone, _, _s, ui, ol, RegionView, RegionsCollectionEditorTemplate){
 
   var gj = new OpenLayers.Format.GeoJSON();
 
@@ -24,6 +25,7 @@ function($, Backbone, _, _s, ui, ol, RegionsCollectionEditorTemplate){
 
       $(this.el).addClass('regions-collection-editor');
       this.regions = this.model.get('regions');
+      this.map = opts.map;
 
       this.registry = {};
       this.initialRender();
@@ -35,6 +37,7 @@ function($, Backbone, _, _s, ui, ol, RegionsCollectionEditorTemplate){
       $(this.el).html(_.template(RegionsCollectionEditorTemplate, {view: this}));
       this.$regionsContainer = $('.regions', this.el);
       this.regionsLayer = new OpenLayers.Layer.Vector("Regions Layers");
+      this.map.addLayer(this.regionsLayer);
 
       var rbox = {
         x0: 0,
@@ -42,19 +45,10 @@ function($, Backbone, _, _s, ui, ol, RegionsCollectionEditorTemplate){
         y0: 0,
         y1: 20,
       };
-      var dummyFeature = gj.read({
-        type: "Feature",
-        geometry: {
-          type: "Polygon",
-          coordinates: [[[rbox.x0, rbox.y0], [rbox.x0, rbox.y1], [rbox.x1, rbox.y1], [rbox.x1, rbox.y0], [rbox.x0, rbox.y0]]]
-        }
-      });
-      this.regionsLayer.addFeatures(dummyFeature);
 
       this.drawControl = new OpenLayers.Control.DrawFeature(this.regionsLayer, OpenLayers.Handler.Polygon);
       this.drawControl.featureAdded = _.bind(this.onDrawFeatureFinish, this);
-
-      this.renderRegionViews();
+      this.map.addControl(this.drawControl);
 
     },
 
@@ -62,46 +56,45 @@ function($, Backbone, _, _s, ui, ol, RegionsCollectionEditorTemplate){
       this.on('remove', this.remove, this);
       this.regions.on('add', this.addRegion, this);
       this.regions.on('remove', this.removeRegion, this);
-    },
 
-    renderRegionViews: function(){
-      this.$regionsContainer.empty();
-      var _this = this;
-      _.each(this.regions.models, function(regionModel){
-        var $regionView = $('<div></div>');
-        $regionView.append($('<div>' + regionModel.cid + '</div>'));
-        var $removeLink = $('<div>remove</div>');
-        $removeLink.on('click', function(){
-          _this.regions.remove(regionModel);
-        });
-        $regionView.append($removeLink);
-        this.$regionsContainer.append($regionView);
-        if (! this.registry[regionModel.cid]){
-          this.registry[regionModel.cid] = {};
-        }
-        this.registry[regionModel.cid].$regionView = $regionView;
-      }, this);
+      _.each(this.regions.models, this.addRegion, this);
     },
 
     addRegion: function(regionModel){
-      this.renderRegionViews();
-      if (! this.registry[regionModel.cid]){
-        this.registry[regionModel.cid] = {};
+      regionModel.set('observed_layer', this.model.get('observed_layer'));
+      var regionView = new RegionView({
+        model: regionModel,
+        map: this.map,
+      });
+      this.regionsLayer.addFeatures(regionView.feature);
+      var $listItem = this.renderListItem(regionModel);
+      this.$regionsContainer.append($listItem);
+      this.registry[regionModel.cid] = {
+        regionView: regionView,
+        $listItem: $listItem,
       }
-      var registryItem = this.registry[regionModel.cid];
-      if (! registryItem.feature){
-        console.log('render feature');
-      }
+    },
+
+    renderListItem: function(regionModel){
+      var _this = this;
+      var $listItem = $('<div></div>');
+      $listItem.append($('<div>' + regionModel.cid + '</div>'));
+      var $removeLink = $('<div>remove</div>');
+      $removeLink.on('click', function(){
+        _this.regions.remove(regionModel);
+      });
+      $listItem.append($removeLink);
+      return $listItem;
     },
 
     removeRegion: function(regionModel){
       var registryItem = this.registry[regionModel.cid];
       if (registryItem){
-        if (registryItem.feature){
-          this.regionsLayer.removeFeatures(registryItem.feature);
+        if (registryItem.regionView.feature){
+          this.regionsLayer.removeFeatures(registryItem.regionView.feature);
         }
-        if (registryItem.$regionView){
-          registryItem.$regionView.remove();
+        if (registryItem.$listItem){
+          registryItem.$listItem.remove();
         }
         delete this.registry[regionModel.cid];
       }
@@ -115,11 +108,10 @@ function($, Backbone, _, _s, ui, ol, RegionsCollectionEditorTemplate){
       console.log("feature added");
       this.drawControl.deactivate();
       var regionModel = new Backbone.Model({
+        geometry: JSON.parse(gj.write(feature.geometry)),
       });
-      this.registry[regionModel.cid] = {
-        feature: feature
-      };
       this.regions.add(regionModel);
+      this.regionsLayer.removeFeatures(feature);
     },
 
     remove: function(){
