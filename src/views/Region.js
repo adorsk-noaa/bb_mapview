@@ -39,10 +39,11 @@ function($, Backbone, _, _s, ui, ol){
     postInitialize: function(){
       this.on('remove', this.remove, this);
       this.updateSelectedFeatures();
+      this.updateData();
     },
 
     updateSelectedFeatures: function(){
-      this.selectedFeatures = {};
+      this.selectedFeatures = [];
 
       if (! this.feature){return;}
 
@@ -54,13 +55,22 @@ function($, Backbone, _, _s, ui, ol){
 
       _.each(observedLayer.features, function(feature){
         if (feature.geometry.intersects(this.feature.geometry)){
-          this.selectedFeatures[feature.id] = feature;
+          this.selectedFeatures.push(feature);
         }
       }, this);
-      console.log("sf: ", this.selectedFeatures);
     },
 
     updateData: function(){
+      var getDataFn = this.model.get('getData');
+      if (! getDataFn){
+        this.data = null;
+        return;
+      }
+      if (typeof getDataFn == 'string'){
+        getDataFn = eval(getDataFn);
+      }
+      this.data = getDataFn(this.selectedFeatures);
+      console.log("d: ", this.data);
     },
 
   });

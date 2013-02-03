@@ -62,6 +62,7 @@ function($, Backbone, _, _s, ui, ol, RegionView, RegionsCollectionEditorTemplate
 
     addRegion: function(regionModel){
       regionModel.set('observed_layer', this.model.get('observed_layer'));
+      regionModel.set('getData', this.model.get('getData'));
       var regionView = new RegionView({
         model: regionModel,
         map: this.map,

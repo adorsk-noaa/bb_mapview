@@ -65,10 +65,10 @@ require(
 
         var xMin = -40;
         var xMax = 40;
-        var dx = 5;
+        var dx = 1;
         var yMin = -40;
         var yMax = 40;
-        var dy = 5;
+        var dy = 1;
         var features = createFeatures(xMin, xMax, yMin, yMax, dx, dy);
         var vLayerModel = new Backbone.Model({
           label: 'Test Vector Layer',
@@ -93,6 +93,7 @@ require(
         regionsEditorModel = new Backbone.Model({
           regions: new Backbone.Collection(),
           observed_layer: vLayerModel,
+          getData: '(function(features){return features.length;})'
         });
 
         regionsEditor = new RegionsCollectionEditor({
