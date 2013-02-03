@@ -180,6 +180,8 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         $(api.elements.tooltip).css('bottom', 5);
       }
       api.set('events.show', decoratedShowCallback);
+
+      this.$layersControl = $control;
     },
 
     getLayerCollectionEditorClass: function(){
@@ -209,6 +211,7 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       this.resize();
       this.resizeStop();
       this.mapView.trigger('ready');
+      this.$layersControl.qtip('show');
     },
 
     onPagePositionChange: function(){
