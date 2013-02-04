@@ -119,6 +119,7 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         position: {
           container: $container,
           viewport: $container,
+          effect: null,
         },
         show: {
           event: 'click'
