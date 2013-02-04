@@ -69,7 +69,21 @@ require(
         var yMin = -40;
         var yMax = 40;
         var dy = 1;
-        var features = createFeatures(xMin, xMax, yMin, yMax, dx, dy);
+        //var features = createFeatures(xMin, xMax, yMin, yMax, dx, dy);
+
+        features = new Backbone.Collection();
+        $.ajax({
+          url: '/sa.json',
+          dataType: 'json',
+          success: function(data){
+            _.each(data.features, function(feature){
+              features.add(new FeatureModel(feature));
+            });
+          },
+          async: false
+        });
+
+
         var vLayerModel = new Backbone.Model({
           label: 'Test Vector Layer',
           layer_category: 'data',
