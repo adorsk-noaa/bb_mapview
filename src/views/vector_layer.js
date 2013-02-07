@@ -44,15 +44,38 @@ function($, Backbone, _, ol, LayerView){
 
     },
 
+    sanitizeOptions: function(){
+      LayerView.prototype.sanitizeOptions.apply(this, arguments);
+
+    },
+
     createLayer: function(){
       this.sanitizeOptions();
+
+      var options = this.model.get('options');
+
+      // Parse event callbacks.
+      var callbacks = {};
+      _.each(['onFeatureInsert', 'preFeatureInsert'], function(callbackId){
+        var callback = options[callbackId];
+        if (callback){
+          if (typeof callback != 'function'){
+            callback = eval(callback);
+          }
+          callbacks[callbackId] = callback;
+        }
+      }, this);
+
       var layer = new OpenLayers.Layer.Vector(
         this.model.get('label'),
-        _.extend({}, this.model.get('options'),{
+        _.extend({}, options, callbacks, {
           visibility: this.model.get('visible'),
           opacity: this.model.get('opacity'),
         })
       );
+
+
+
       // Customize moveByPx for smoother panning.
       layer.moveByPx = function(dx, dy){
         var ps = ['left', 'top'];

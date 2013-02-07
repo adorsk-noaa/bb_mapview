@@ -8,8 +8,10 @@ define([
   "./wmts_layer",
   "./vector_layer",
   "./graticule_layer",
+  "./XYZLayer",
+  "./ArcGISCacheLayer",
 ],
-function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerView, GraticuleLayerView){
+function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerView, GraticuleLayerView, XYZLayerView, ArcGISCacheLayerView){
 
   var MapViewView = Backbone.View.extend({
 
@@ -22,6 +24,8 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
         WMTS: WMTSLayerView,
         Vector: VectorLayerView,
         Graticule: GraticuleLayerView,
+        XYZ: XYZLayerView,
+        ArcGISCache: ArcGISCacheLayerView,
       };
 
       this.controlsRegistry = {};
@@ -40,7 +44,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       // Listen for map move events.
       this.map.events.register('moveend', this, this.onMapMoveEnd);
 
-      this.model.on('change:extent', this.onChangeExtent, this);
+      this.model.on('change:extent', this.updateExtent, this);
 
       this.layers.on('add', this.addLayer, this);
       this.layers.on('remove', this.removeLayer, this);
@@ -78,7 +82,29 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
         mapOptions.theme = null;
       }
 
+      // Project options per displayProjection.
+      if (mapOptions.displayProjection && mapOptions.projection){
+        _.each(['extent', 'maxExtent', 'restrictedExtent'], function(attr){
+          var val = mapOptions[attr];
+          if (val){
+            val = new OpenLayers.Bounds(val).transform(
+              mapOptions.displayProjection, mapOptions.projection);
+          }
+          mapOptions[attr] = val;
+        }, this);
+      }
       this.map = new OpenLayers.Map(mapOptions);
+      window.m = this.map;
+      window.mv = this;
+
+      if (! this.opts.noMousePos){
+        this.map.addControl(new OpenLayers.Control.MousePosition({
+          prefix: 'coordinates: ',
+          separator: ' | ',
+          numDigits: 2,
+          emptyString: 'Mouse is not over map.'
+        }));
+      }
 
       // Add initial layers.
       _.each(this.layers.models, function(layerModel){
@@ -158,13 +184,18 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
 
       // Zoom to extent if given, max extent otherwise.
       if (this.model.get('extent')){
-        this.map.zoomToExtent(this.model.get('extent'));
+        this.updateExtent();
       }
     },
 
-    onChangeExtent: function(){
+    updateExtent: function(){
       if (this.mapRendered){
-        this.map.zoomToExtent(this.model.get('extent'));
+        var extent = this.model.get('extent');
+        if (this.map.displayProjection && this.map.projection){
+          extent = new OpenLayers.Bounds(extent).transform(
+            this.map.displayProjection, this.map.projection);
+        }
+        this.map.zoomToExtent(extent);
       }
     },
 
@@ -224,10 +255,15 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
     },
 
     onMapMoveEnd: function(){
+      var extent = this.map.getExtent();
+      if (this.map.displayProjection && this.map.projection){
+        extent = extent.clone().transform(
+          this.map.projection, this.map.displayProjection);
+      }
       this.model.set({
-        extent: this.map.getExtent().toArray(),
+        extent: extent.toArray(),
         resolution: this.map.getResolution(),
-      });
+      }, {silent: true});
     },
 
     remove: function(){
