@@ -22,15 +22,15 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       this.mapView = new MapViewView({
         model: this.model.get('map') || new Backbone.Model()
       });
-      this.layers = this.mapView.model.get('layers');
+      this.mapViewLayers = this.mapView.model.get('layers');
 
       // Sort layers by index.
-      this.layers.comparator = function(layerModel){
+      this.mapViewLayers.comparator = function(layerModel){
         return layerModel.get('properties').get('index');
       };
 
       // Listen for changes in layer category indices.
-      this.layers.on('change:category_index', this.onLayerCategoryIndexChange, this);
+      this.mapViewLayers.on('change:category_index', this.onLayerCategoryIndexChange, this);
 
       $(this.el).addClass('map-editor');
 
@@ -79,26 +79,22 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       // Setup map.
       this.$map_container.append(this.mapView.el);
 
-      // Setup layer categories and editors.
-      this.layerCollectionEditors = {};
-      _.each(this.categoryConfigs, function(config, category){
-        var layers = this.model.get(category + '_layers') || [];
+      // Setup layer collection editor.
+      var layers = this.model.get('layers');
+      var LayerCollectionEditorClass = this.getLayerCollectionEditorClass();
+      this.layerCollectionEditor = new LayerCollectionEditorClass({
+        startIndex: 100,
+        selectable: 'multiple',
+        sortable: true,
+        model: new Backbone.Model({
+          layers: layers,
+        }),
+        el: $('.layers-editor', this.el),
+      });
 
-        // Create layer collection editor.
-        var LayerCollectionEditorClass = this.getLayerCollectionEditorClass();
-        var layerCollectionEditor = new LayerCollectionEditorClass(_.extend({
-          model: new Backbone.Model({
-            layers: layers,
-          }),
-          el: $(_s.sprintf('.%s-layers-editor', category), this.el)
-        }, config));
-
-        this.layerCollectionEditors[category] = layerCollectionEditor;
-
-        // Add layers to overall map layer collection.
-        _.each(layers.models, function(layer){
-          this.layers.add(layer);
-        }, this);
+      // Add layers to overall map layer collection.
+      _.each(layers.models, function(layer){
+        this.mapViewLayers.add(layer);
       }, this);
 
       this.setupLayersControl();
