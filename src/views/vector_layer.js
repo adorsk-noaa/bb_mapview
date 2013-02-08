@@ -44,16 +44,11 @@ function($, Backbone, _, ol, LayerView){
 
     },
 
-    sanitizeOptions: function(){
-      LayerView.prototype.sanitizeOptions.apply(this, arguments);
-
-    },
-
     createLayer: function(){
       // Parse event callbacks.
       var callbacks = {};
       _.each(['onFeatureInsert', 'preFeatureInsert'], function(callbackId){
-        var callback = options[callbackId];
+        var callback = this.model.get('properties').get(callbackId);
         if (callback){
           if (typeof callback != 'function'){
             callback = eval(callback);
