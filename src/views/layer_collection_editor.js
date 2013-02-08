@@ -211,17 +211,15 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       $bodyCell.attr('colspan', numCols);
 
       // Set disabled state.
-      if (layerModel.get('disabled')){
+      if (! layerModel.get('properties').get('visibility')){
         $row.addClass('disabled');
       }
 
-      // Listen for changes to disabled/visibilty.
-      layerModel.on('change:disabled', function(){
-        $row.toggleClass('disabled', layerModel.get('disabled'));
-      });
-
+      // Listen for changes to visibilty.
       layerModel.get('properties').on('change:visibility', function(){
-        $optionWidget.prop('checked', layerModel.get('properties').get('visibility'));
+        var visibility = layerModel.get('properties').get('visibility');
+        $row.toggleClass('disabled', ! visibility);
+        $optionWidget.prop('checked', visibility);
       });
 
       // Add to body.
