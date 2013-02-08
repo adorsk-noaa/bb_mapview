@@ -25,8 +25,8 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       this.layers = this.mapView.model.get('layers');
 
       // Sort layers by index.
-      this.layers.comparator = function(layer){
-        return layer.get('index');
+      this.layers.comparator = function(layerModel){
+        return layerModel.get('properties').get('index');
       };
 
       // Listen for changes in layer category indices.
@@ -53,8 +53,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       this.on('ready', this.onReady, this);
       this.on('resize', this.resize, this);
       this.on('resizeStop', this.resizeStop, this);
-      this.on('activate', this.activate, this);
-      this.on('deactivate', this.deactivate, this);
       this.on('pagePositionChange', this.onPagePositionChange, this);
       this.on('remove', this.remove, this);
 
@@ -197,14 +195,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
 
     resizeStop: function(){
       this.mapView.resize();
-    },
-
-    deactivate: function(){
-      this.mapView.deactivate();
-    },
-
-    activate: function(){
-      this.mapView.activate();
     },
 
     onReady: function(){

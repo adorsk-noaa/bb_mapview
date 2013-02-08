@@ -50,10 +50,6 @@ function($, Backbone, _, ol, LayerView){
     },
 
     createLayer: function(){
-      this.sanitizeOptions();
-
-      var options = this.model.get('options');
-
       // Parse event callbacks.
       var callbacks = {};
       _.each(['onFeatureInsert', 'preFeatureInsert'], function(callbackId){
@@ -68,10 +64,7 @@ function($, Backbone, _, ol, LayerView){
 
       var layer = new OpenLayers.Layer.Vector(
         this.model.get('label'),
-        _.extend({}, options, callbacks, {
-          visibility: this.model.get('visible'),
-          opacity: this.model.get('opacity'),
-        })
+        _.extend({}, this.model.get('properties').toJSON(), callbacks)
       );
 
 

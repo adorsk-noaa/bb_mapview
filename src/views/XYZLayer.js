@@ -18,20 +18,16 @@ function($, Backbone, _, ol, LayerView){
     },
 
     createLayer: function(){
-      this.sanitizeOptions();
       return new OpenLayers.Layer.XYZ(
         this.model.get('label'),
         this.model.get('url'),
-        _.extend({}, this.model.get('options'),{
-          visibility: this.model.get('visible'),
-          opacity: this.model.get('opacity'),
-        })
+        this.model.get('properties').toJSON()
       );
     },
 
     updateURL: function(){
       var _this = this;
-      if (! _this.model.get('visible')){
+      if (! _this.model.get('properties').get('visibility')){
         _this.model.trigger('load:start');
         _this.layer.url = _this.model.get('url');
         _this.layer.clearGrid();

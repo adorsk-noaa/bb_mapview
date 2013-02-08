@@ -175,9 +175,9 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
           $optionWidget = $('<input type="checkbox">');
           this.registry[rowId].$optionWidget = $optionWidget;
 
-          $optionWidget.prop('checked', ! layerModel.get('disabled'));
+          $optionWidget.prop('checked', layerModel.get('properties').get('visibility'));
           $optionWidget.on('change', function(){
-            layerModel.set('disabled', ! $optionWidget.prop('checked'));
+            layerModel.get('properties').set('visibility', $optionWidget.prop('checked'));
           });
         }
 
@@ -188,20 +188,20 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
 
           $optionWidget.on('change', function(){
             var selected = $optionWidget.prop('checked');
-            layerModel.set('disabled', ! selected);
+            layerModel.get('properties').set('visibility', selected);
 
             // Disable other layers in the set.
             if (selected){
               _.each(_this.registry, function(item, itemRowId){
                 if (itemRowId != rowId){
-                  item.model.set('disabled', true);
+                  item.model.get('properties').set('visibility', false);
                   item.$optionWidget.prop('checked', false);
                 }
               }, _this);
             }
           });
 
-          $optionWidget.prop('checked', ! layerModel.get('disabled'));
+          $optionWidget.prop('checked', ! layerModel.get('properties').get('visibility'));
           $optionWidget.trigger('change');
         }
         $optionContainer.append($optionWidget);
@@ -214,10 +214,14 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       if (layerModel.get('disabled')){
         $row.addClass('disabled');
       }
+
+      // Listen for changes to disabled/visibilty.
       layerModel.on('change:disabled', function(){
-        var disabled = layerModel.get('disabled');
-        $row.toggleClass('disabled', disabled);
-        $optionWidget.prop('checked', ! disabled);
+        $row.toggleClass('disabled', layerModel.get('disabled'));
+      });
+
+      layerModel.get('properties').on('change:visibility', function(){
+        $optionWidget.prop('checked', layerModel.get('properties').get('visibility'));
       });
 
       // Add to body.

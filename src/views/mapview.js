@@ -19,6 +19,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       this.opts = opts;
       $(this.el).addClass('mapview');
 
+      if (! this.model.get('properties')){
+        this.model.set('properties', new Backbone.Model())
+      }
+
       this.layerViewClasses = {
         WMS: WMSLayerView,
         WMTS: WMTSLayerView,
@@ -44,7 +48,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       // Listen for map move events.
       this.map.events.register('moveend', this, this.onMapMoveEnd);
 
-      this.model.on('change:extent', this.updateExtent, this);
+      this.model.get('properties').on('change:extent', this.updateExtent, this);
 
       this.layers.on('add', this.addLayer, this);
       this.layers.on('remove', this.removeLayer, this);
@@ -65,37 +69,14 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       rendered_html = _.template(template);
       $(this.el).html(rendered_html);
 
-      var mapOptions = JSON.parse(JSON.stringify(this.model.get('options') || {}));
-
-      // Merge in other options stored in model attributes.
-      _.each(['resolution', 'extent'], function(attr){
-        var value = this.model.get(attr);
-        if (typeof value != 'undefined'){
-          mapOptions[attr] = value;
-        }
-      }, this);
-
-      // Clean up theme option.
-      // Should be null, rather than empty object.
+      // Default theme should be null, rather than empty object.
       // This can get bargled by OpenLayers.
-      if (mapOptions.theme && $.isEmptyObject(mapOptions.theme)){
-        mapOptions.theme = null;
-      }
+      var mapProperties = {
+        theme: null,
+      };
+      $.extend(true, mapProperties, this.model.get('properties').toJSON());
 
-      // Project options per displayProjection.
-      if (mapOptions.displayProjection && mapOptions.projection){
-        _.each(['extent', 'maxExtent', 'restrictedExtent'], function(attr){
-          var val = mapOptions[attr];
-          if (val){
-            val = new OpenLayers.Bounds(val).transform(
-              mapOptions.displayProjection, mapOptions.projection);
-          }
-          mapOptions[attr] = val;
-        }, this);
-      }
-      this.map = new OpenLayers.Map(mapOptions);
-      window.m = this.map;
-      window.mv = this;
+      this.map = new OpenLayers.Map(mapProperties);
 
       if (! this.opts.noMousePos){
         this.map.addControl(new OpenLayers.Control.MousePosition({
@@ -183,18 +164,14 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       this.mapRendered = true;
 
       // Zoom to extent if given, max extent otherwise.
-      if (this.model.get('extent')){
+      if (this.model.get('properties').get('extent')){
         this.updateExtent();
       }
     },
 
     updateExtent: function(){
       if (this.mapRendered){
-        var extent = this.model.get('extent');
-        if (this.map.displayProjection && this.map.projection){
-          extent = new OpenLayers.Bounds(extent).transform(
-            this.map.displayProjection, this.map.projection);
-        }
+        var extent = this.model.get('properties').get('extent');
         this.map.zoomToExtent(extent);
       }
     },
@@ -255,14 +232,9 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
     },
 
     onMapMoveEnd: function(){
-      var extent = this.map.getExtent();
-      if (this.map.displayProjection && this.map.projection){
-        extent = extent.clone().transform(
-          this.map.projection, this.map.displayProjection);
-      }
-      this.model.set({
-        extent: extent.toArray(),
+      this.model.get('properties').set({
         resolution: this.map.getResolution(),
+        extent: this.map.getExtent().toArray(),
       }, {silent: true});
     },
 

@@ -9,20 +9,18 @@ function($, Backbone, _, ol){
   var LayerView = Backbone.View.extend({
 
     initialize: function(){
-      var opts = this.model.get('options');
-      if (! opts){
-        this.model.set('options', {});
+      if (! this.model.get('properties')){
+        this.model.set('properties', new Backbone.Model())
       }
 
-      if (typeof this.model.get('opacity') == 'undefined'){
-        this.model.set('opacity', 1);
+      if (typeof this.model.get('properties').get('opacity') == 'undefined'){
+        this.model.get('properties').set('opacity', 1);
       }
 
       this.layer = this.createLayer();
       this.model.on('change:params', this.updateParams, this);
-      this.model.on('change:visibility', this.onVisibilityChange, this);
-      this.model.on('change:disabled', this.onDisabledChange, this);
-      this.model.on('change:opacity', this.onOpacityChange, this);
+      this.model.get('properties').on('change:visibility', this.onVisibilityChange, this);
+      this.model.get('properties').on('change:opacity', this.onOpacityChange, this);
       this.on('remove', this.remove, this);
     },
 
@@ -30,17 +28,9 @@ function($, Backbone, _, ol){
       return {};
     },
 
-    sanitizeOptions: function(){
-      var options = this.model.get('options');
-      if (options.tileSize){
-        options.tileSize = new OpenLayers.Size(options.tileSize.w, options.tileSize.h)
-      }
-    },
-
     postInitialize: function(){
       this.layer.events.register("loadstart", this, this.onLoadStart);
       this.layer.events.register("loadend", this, this.onLoadEnd);
-      this.onDisabledChange();
       this.onVisibilityChange();
     },
 
@@ -86,15 +76,11 @@ function($, Backbone, _, ol){
     },
 
     onVisibilityChange: function(){
-      this.layer.setVisibility(this.model.get('visibility'));
+      this.layer.setVisibility(this.model.get('properties').get('visibility'));
     },
 
     onOpacityChange: function(){
-      this.layer.setOpacity(this.model.get('opacity'));
-    },
-
-    onDisabledChange: function(){
-      this.model.set('visibility', ! this.model.get('disabled'));
+      this.layer.setOpacity(this.model.get('properties').get('opacity'));
     },
 
     remove: function(){
