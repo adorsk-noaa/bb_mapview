@@ -29,9 +29,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         return layerModel.get('properties').get('index');
       };
 
-      // Listen for changes in layer category indices.
-      this.mapViewLayers.on('change:category_index', this.onLayerCategoryIndexChange, this);
-
       $(this.el).addClass('map-editor');
 
       // Iniitialize configs for layers categories.

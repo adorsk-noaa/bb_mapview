@@ -44,6 +44,7 @@ require(
           url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
           params: {"layers": 'basic'},
           legend: 'bl legend',
+          properties: new Backbone.Model(),
         });
 
         var overlayLayerModel = new Backbone.Model({
@@ -54,6 +55,7 @@ require(
           params: {"layers": 'basic'},
           expanded: true,
           legend: 'ovlery legend',
+          properties: new Backbone.Model(),
         });
 
         var graticuleLayerModel = new Backbone.Model({
@@ -61,6 +63,7 @@ require(
           label:"Graticule Label",
           disabled: false,
           legend: 'grid legend',
+          properties: new Backbone.Model(),
         });
 
         var createFeatures = function(xMin, xMax, yMin, yMax, dx, dy){
@@ -105,6 +108,7 @@ require(
           colormap: Colormap.COLORMAPS['ColorBrewer:RdBu'],
           expanded: true,
           scale_type: 'diverging',
+          properties: new Backbone.Model(),
         });
 
         var defaultMap = new Backbone.Model({

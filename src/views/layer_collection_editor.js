@@ -30,8 +30,8 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
 
       // Set sorting to be by index.
       this.layers.comparator = function(l1, l2){
-        index_l1 = l1.get('index') || 0;
-        index_l2 = l2.get('index') || 0;
+        index_l1 = l1.get('properties').get('index') || 0;
+        index_l2 = l2.get('properties').get('index') || 0;
         if (index_l1 > index_l2){
           return -1;
         }
@@ -82,7 +82,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       });
       _.each(rowIds, function(rowId, i){
         var localIndex = rowIds.length - 1 - i;
-        this.registry[rowId].model.set('index', this.startIndex + localIndex);
+        this.registry[rowId].model.get('properties').set('index', this.startIndex + localIndex);
       }, this);
       this.layers.sort();
     },
