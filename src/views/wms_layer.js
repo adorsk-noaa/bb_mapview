@@ -13,7 +13,7 @@ function($, Backbone, _, ol, LayerView){
 
       LayerView.prototype.initialize.apply(this, arguments);
 
-      this.model.on('change:service_url', this.onServiceURLChange, this);
+      this.model.on('change:url', this.onURLChange, this);
 
       this.postInitialize();
     },
@@ -27,7 +27,7 @@ function($, Backbone, _, ol, LayerView){
       );
     },
 
-    onServiceURLChange: function(){
+    onURLChange: function(){
       var _this = this;
       if (! _this.model.get('properties').get('visibility')){
         _this.model.trigger('load:start');

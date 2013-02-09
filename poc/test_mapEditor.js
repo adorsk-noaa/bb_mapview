@@ -45,6 +45,7 @@ require(
           params: {"layers": 'basic'},
           legend: 'bl legend',
           properties: new Backbone.Model(),
+          info: 'Mungus <a href="javascript:{}">Foogazi</a>'
         });
 
         var overlayLayerModel = new Backbone.Model({
@@ -56,6 +57,7 @@ require(
           expanded: true,
           legend: 'ovlery legend',
           properties: new Backbone.Model(),
+          info: 'morgos <a href="javascript:{}">Fungloid</a>'
         });
 
         var graticuleLayerModel = new Backbone.Model({
@@ -64,6 +66,7 @@ require(
           disabled: false,
           legend: 'grid legend',
           properties: new Backbone.Model(),
+          info: 'kriblach <a href="javascript:{}">cacto</a>'
         });
 
         var createFeatures = function(xMin, xMax, yMin, yMax, dx, dy){
