@@ -80,10 +80,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
 
       if (! this.opts.noMousePos){
         this.map.addControl(new OpenLayers.Control.MousePosition({
-          prefix: 'coordinates: ',
-          separator: ' | ',
+          prefix: 'Lon: ',
+          separator: ' , Lat:',
           numDigits: 2,
-          emptyString: 'Mouse is not over map.'
+          emptyString: ''
         }));
       }
 
