@@ -41,7 +41,11 @@ function($, Backbone, _, ol, LayerView){
       });
 
       var graticuleOpts = {gratLayer: gratLayer};
-      $.extend(true, graticuleOpts, this.model.get('properties').toJSON());
+      $.extend(
+        true, 
+        graticuleOpts, 
+        this.sanitizeProperties(this.model.get('properties').toJSON())
+      );
       this.graticuleControl = new OpenLayers.Control.Graticule(graticuleOpts);
 
       return this.graticuleControl.gratLayer;

@@ -21,7 +21,7 @@ function($, Backbone, _, ol, LayerView){
       return new OpenLayers.Layer.XYZ(
         this.model.get('label'),
         this.model.get('url'),
-        this.model.get('properties').toJSON()
+        this.sanitizeProperties(this.model.get('properties').toJSON())
       );
     },
 

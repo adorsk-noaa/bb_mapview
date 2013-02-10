@@ -24,6 +24,14 @@ function($, Backbone, _, ol){
       this.on('remove', this.remove, this);
     },
 
+    sanitizeProperties: function(properties){
+      var tileSize = properties.tileSize;
+      if (tileSize){
+        properties.tileSize = new OpenLayers.Size(tileSize.w, tileSize.h);
+      }
+      return properties;
+    },
+
     createLayer: function(){
       return {};
     },

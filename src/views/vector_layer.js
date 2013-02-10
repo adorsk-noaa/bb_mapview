@@ -59,7 +59,10 @@ function($, Backbone, _, ol, LayerView){
 
       var layer = new OpenLayers.Layer.Vector(
         this.model.get('label'),
-        _.extend({}, this.model.get('properties').toJSON(), callbacks)
+        _.extend(
+          {},
+          this.sanitizeProperties(this.model.get('properties').toJSON()),
+          callbacks)
       );
 
 

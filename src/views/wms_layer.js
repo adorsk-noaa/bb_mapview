@@ -23,7 +23,7 @@ function($, Backbone, _, ol, LayerView){
         this.model.get('label'),
         this.model.get('url'),
         this.model.get('params'),
-        this.model.get('properties').toJSON()
+        this.sanitizeProperties(this.model.get('properties').toJSON())
       );
     },
 
