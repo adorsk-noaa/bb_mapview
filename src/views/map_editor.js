@@ -8,9 +8,9 @@ define([
   "./mapview",
   "./layer_collection_editor",
   "text!./templates/map_editor.html",
-  "qtip",
+  "tabble",
 ],
-function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template, qtip){
+function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, template, tabble){
 
   var MapEditorView = Backbone.View.extend({
 
@@ -20,7 +20,8 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
 
       // Create the map view.
       this.mapView = new MapViewView({
-        model: this.model.get('map') || new Backbone.Model()
+        model: this.model.get('map') || new Backbone.Model(),
+        noMousePos: true,
       });
       this.mapViewLayers = this.mapView.model.get('layers');
 
@@ -62,16 +63,18 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
     initialRender: function(){
       $(this.el).html(_.template(template, {view: this}));
 
-      this.$table = $(this.el).children('table.body');
-      this.$map_container = $('.map-container', this.el);
+      this.$table = $(this.el).children('table');
 
-      // Accordionize the layer editor sections
-      $('.layers-editor > .accordions > .accordion', this.el).each(function(i, el){
-        $(el).accordion({
-          collapsible: true,
-          heightStyle: 'content'
-        });
+      this.$cells = {
+        map: $('.map-cell', this.$table),
+        layersEditor: $('.layers-editor-cell', this.$table),
+      };
+
+      this.$table.tabble({
+        stretchTable: true,
+        resize: _.bind(this.onTabbleResize, this),
       });
+      this.$map_container = $('.map-container', this.el);
 
       // Setup map.
       this.$map_container.append(this.mapView.el);
@@ -94,85 +97,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
         this.mapViewLayers.add(layer);
       }, this);
 
-      this.setupLayersControl();
-    },
-
-    setupControl: function(opts){
-      var $control = opts.$control;
-      var $controlBody = $('> .control-body', $control);
-      var $controlLauncher = $('> .launcher', $control);
-      var $toggleIcon = $('> .toggleIcon', $controlLauncher);
-      var $container = $('> .inner', this.el);
-      var qtipOpts = {
-        content: {
-          text: $controlBody,
-        },
-        position: {
-          container: $container,
-          viewport: $container,
-          effect: null,
-        },
-        show: {
-          event: 'click'
-        },
-        hide: {
-          fixed: true,
-          event: null,
-        },
-        style: {
-          classes: 'control-body-qtip',
-          tip: false
-        },
-        events: {
-          render: function(event, api){
-            $controlBody.css('min-width', $control.outerWidth());
-            $controlBody.removeClass('uninitialized');
-            // Toggle when target is clicked.
-            $(api.elements.target).on('click', function(clickEvent){
-              clickEvent.preventDefault();
-              api.toggle();
-            });
-          },
-          show: function(event, api){
-            if ($toggleIcon){$toggleIcon.html('-');}
-          },
-          hide: function(event, api){
-            if ($toggleIcon){$toggleIcon.html('+');}
-          },
-        }
-      };
-      $.extend(true, qtipOpts, opts.qtip);
-      $control.qtip(qtipOpts);
-
-    },
-
-    setupLayersControl: function(){
-      var $control = $('.layers-control', this.el);
-      this.setupControl({
-        $control: $control,
-        qtip: {
-          position: {
-            my: 'top right',
-            at: 'bottom right',
-            adjust: {
-              x: parseInt($('> .launcher', $control).css('paddingRight')) || null,
-              y: -1 * parseInt($('> .launcher', $control).css('paddingBottom')) || null,
-            },
-          },
-          style: {
-            classes: 'control-body-qtip layers-control-qtip'
-          },
-        }
-      });
-      var api = $control.qtip('api');
-      var origShowCallback = api.get('events.show');
-      var decoratedShowCallback = function(event, api){
-        origShowCallback(arguments);
-        $(api.elements.tooltip).css('bottom', 5);
-      }
-      api.set('events.show', decoratedShowCallback);
-
-      this.$layersControl = $control;
     },
 
     getLayerCollectionEditorClass: function(){
@@ -187,14 +111,36 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
     },
 
     resizeStop: function(){
+      this.$table.tabble('resize');
       this.mapView.resize();
+    },
+
+    onTabbleResize: function(){
+      var minDims = this.getMinDims();
+      this.$table.css({
+        'minWidth': minDims.w,
+        'minHeight': minDims.h,
+      });
+    },
+
+    getMinDims: function(){
+      var mapCellDims = {
+        h: parseInt(this.$cells.map.css('min-height')),
+        w: parseInt(this.$cells.map.css('min-width')),
+      };
+      var layersEditorDims = {
+        w: this.$cells.layersEditor.width(),
+      }
+      return {
+        w: mapCellDims.w + layersEditorDims.w,
+        h: mapCellDims.h,
+      };
     },
 
     onReady: function(){
       this.resize();
       this.resizeStop();
       this.mapView.trigger('ready');
-      this.$layersControl.qtip('show');
     },
 
     onPagePositionChange: function(){

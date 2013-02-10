@@ -2,74 +2,46 @@
 @import url("require:CommonStyles/styles/rounded-corners.less");
 @import url("require:CommonStyles/styles/button.less");
 @import url("require:ui/css/smoothness/jquery-ui-1.9.1.custom.min.css");
+@import url("require:tabble/jquery.ui.tabble.less");
 
 @controlPadding: 8px;
 @controlBgColor: rgba(0, 60, 136, 1);
 
 .map-editor{
-
   display: inline-block;
   position: relative;
 
-  > .inner {
+  > table {
     height: 100%;
     width: 100%;
-    position: relative;
 
-    > .map-container{
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
+    .map-cell {
+      min-width: 300px;
+      min-height: 300px;
+    }
+
+    .map-container{
       z-index: 0;
+      height: 100%;
+      width: 100%;
     }
 
-    > .control {
-      position: absolute;
-      z-index: 1;
-      > .launcher {
-        .rounded_corners(3px);
-        display: inline-block;
-        background-color: @controlBgColor;
-        padding: 3px;
-        margin: 1px;
-        color: white;
-        text-decoration: none;
-        font-family: sans;
-
-        > .toggleIcon {
-          font-family: mono;
-        }
-      }
-
-      .control-body{
-        &.uninitialized {
-          display: none;
-        }
-      }
-
+    .layers-editor-tab{
+      background-color: inherit;
     }
 
-    > .control-body-qtip {
-      .rounded_corners(3px);
-      border-width: thin;
-      border-style: solid;
-      border-color: @controlBgColor;
-      background-color: white;
-      overflow: auto;
-      > .qtip-content {
-      }
+    .layers-editor-header {
+      .button;
+      margin: 0;
+    }
+
+    .layers-editor {
+      width: 200px;
+      font-size: 80%;
+      padding: @padding_normal;
+      overflow-y: auto;
     }
 
   }
 
-  .layers-control {
-    top: @controlPadding;
-    right: @controlPadding;
-  }
-
-  .layers-control-qtip {
-    width: 200px;
-  }
 }

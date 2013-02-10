@@ -113,7 +113,6 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       this.setVMinMax();
     },
     setVMinMax: function(){
-      console.log('yo');
       var vmid = this.model.get('vmid');
       var vr = this.model.get('vr');
       if (vmid != null && vr != null){
