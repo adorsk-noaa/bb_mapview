@@ -43,7 +43,6 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
         }
       };
       this.layers.sort();
-      this.layers.each(function(m){console.log(m.get('label'), m.get('zIndex'))});
 
       this.registry = {};
       this.initialRender();

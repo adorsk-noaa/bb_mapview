@@ -35,7 +35,6 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       this.controlsRegistry = {};
       this.layerRegistry = {};
       this._rendering_counter = 0;
-      this._loading_placeholder = $('<div class="loading-placeholder"><div class="img"></div></div>');
 
       this.layers = this.model.get('layers');
       if (! this.layers){
@@ -66,8 +65,8 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
     },
 
     initialRender: function(){
-      rendered_html = _.template(template);
-      $(this.el).html(rendered_html);
+      $(this.el).html(_.template(template));
+
 
       // Default theme should be null, rather than empty object.
       // This can get bargled by OpenLayers.
@@ -122,7 +121,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
     onRenderStart: function(){
       if (this._rendering_counter == 0){
         var _this = this;
-        this.loading_placeholder_timeout = setTimeout(function(){_this.showLoadingPlaceholder()}, 500);
+        this.loading_placeholder_timeout = setTimeout(function(){_this.showLoadingPlaceholder()}, 750);
       }
       this._rendering_counter += 1;
     },
@@ -133,24 +132,18 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
         if (this.loading_placeholder_timeout){
           clearTimeout(this.loading_placeholder_timeout);
         }
-        this.hideLoadingPlaceholder();
+        if (this.$loadingPlaceholder){
+          this.$loadingPlaceholder.hide('slow');
+        }
       }
     },
 
     showLoadingPlaceholder: function(){
-      viewport_el = $('.olMapViewport', this.el);
-      viewport_el.append(this._loading_placeholder);
-      $(this._loading_placeholder).css('left', viewport_el.width()/2 - this._loading_placeholder.width()/2);
-      $(this._loading_placeholder).css('top', viewport_el.height()/2 - this._loading_placeholder.height()/2);
-
-      this._loading_placeholder.animate({opacity: 1}, 500);
-    },
-
-    hideLoadingPlaceholder: function(){
-      _this = this;
-      this._loading_placeholder.animate({opacity: 0}, 750, function(){
-        _this._loading_placeholder.remove();
-      });
+      if (this.$loadingPlaceholder){
+        this.$loadingPlaceholder.css('left', this.$viewport.width()/2 - this.$loadingPlaceholder.width()/2);
+        this.$loadingPlaceholder.css('top', this.$viewport.height()/2 - this.$loadingPlaceholder.height()/2);
+        this.$loadingPlaceholder.show('slow');
+      }
     },
 
     resize: function(){
@@ -161,6 +154,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
 
     onReady: function(){
       this.map.render($('.map', this.el).get(0));
+      this.$viewport = $('.olMapViewport', this.el);
+      this.$loadingPlaceholder = $('<div class="loading-placeholder" style="display: none;"><div class="img"></div></div>');
+      this.$loadingPlaceholder.appendTo(this.$viewport);
+
       this.mapRendered = true;
 
       // Zoom to extent if given, max extent otherwise.
@@ -208,10 +205,10 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
         this.map.setLayerZIndex(layerView.layer, model.get('zIndex'));
       }, this);
 
-      layerView.model.on('render:start', this.onRenderStart, this);
-      layerView.model.on('render:end', this.onRenderEnd, this);
-      layerView.model.on('load:start', this.onLoadStart, this);
-      layerView.model.on('load:end', this.onLoadEnd, this);
+      layerView.on('render:start', this.onRenderStart, this);
+      layerView.on('render:end', this.onRenderEnd, this);
+      layerView.on('load:start', this.onLoadStart, this);
+      layerView.on('load:end', this.onLoadEnd, this);
 
       this.layerRegistry[model.id] = layerView;
 

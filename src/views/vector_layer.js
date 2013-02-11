@@ -178,7 +178,9 @@ function($, Backbone, _, ol, LayerView){
     },
 
     redraw: function(){
+      this.trigger('render:start');
       this.layer.redraw();
+      this.trigger('render:end');
     }
   });
 

@@ -56,26 +56,26 @@ function($, Backbone, _, ol){
     },
 
     onLoadStart: function(){
-      this.model.trigger('load:start');
+      this.trigger('load:start');
     },
 
     onLoadEnd: function(){
-      this.model.trigger('load:end');
+      this.trigger('load:end');
     },
 
     // Update layer parameters.
     updateParams: function(){
       var _this = this;
-      _this.model.trigger('load:start');
+      this.trigger('load:start');
 
       var promise = _this.fadeOut();
       promise.then(function(){
         // Temporary callback for load:end.
         var tmpOnLoadEnd = function(){
-          _this.model.off('load:end', tmpOnLoadEnd);
+          _this.off('load:end', tmpOnLoadEnd);
           _this.fadeIn();
         };
-        _this.model.on('load:end', tmpOnLoadEnd);
+        _this.on('load:end', tmpOnLoadEnd);
 
         // Clear grid and merge params, this will trigger a redraw and load.
         _this.layer.clearGrid();
