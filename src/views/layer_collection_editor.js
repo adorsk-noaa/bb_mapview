@@ -28,14 +28,14 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       this.selectable = opts.selectable;
       this.startIndex = opts.startIndex;
 
-      // Set sorting to be by index.
+      // Set sorting to be by zIndex.
       this.layers.comparator = function(l1, l2){
-        index_l1 = l1.get('properties').get('index') || 0;
-        index_l2 = l2.get('properties').get('index') || 0;
-        if (index_l1 > index_l2){
+        zIndex_l1 = l1.get('zIndex') || 0;
+        zIndex_l2 = l2.get('zIndex') || 0;
+        if (zIndex_l1 > zIndex_l2){
           return -1;
         }
-        else if( index_l1 < index_l2){
+        else if( zIndex_l1 < zIndex_l2){
           return 1;
         }
         else{
@@ -43,6 +43,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
         }
       };
       this.layers.sort();
+      this.layers.each(function(m){console.log(m.get('label'), m.get('zIndex'))});
 
       this.registry = {};
       this.initialRender();
@@ -82,7 +83,7 @@ function($, Backbone, _, _s, ui, LayerEditorView, DataLayerEditorView, VectorDat
       });
       _.each(rowIds, function(rowId, i){
         var localIndex = rowIds.length - 1 - i;
-        this.registry[rowId].model.get('properties').set('index', this.startIndex + localIndex);
+        this.registry[rowId].model.set('zIndex', this.startIndex + localIndex);
       }, this);
       this.layers.sort();
     },

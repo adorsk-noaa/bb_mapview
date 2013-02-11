@@ -24,26 +24,7 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       });
       this.mapViewLayers = this.mapView.model.get('layers');
 
-      // Sort layers by index.
-      this.mapViewLayers.comparator = function(layerModel){
-        return layerModel.get('properties').get('index');
-      };
-
       $(this.el).addClass('map-editor');
-
-      // Iniitialize configs for layers categories.
-      this.categoryConfigs = {
-        base: {
-          startIndex: 100,
-          selectable: 'single',
-          sortable: false,
-        },
-        overlay: {
-          startIndex: 200,
-          selectable: 'multiple',
-          sortable: true,
-        }
-      };
 
       this.initialRender();
 
@@ -210,10 +191,6 @@ function($, Backbone, _, _s, ui, Util, MapViewView, LayerCollectionEditorView, t
       this.model.off();
       this.off();
     },
-
-    togglerLayersControl: {
-
-    }
 
   });
 

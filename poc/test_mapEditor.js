@@ -45,7 +45,8 @@ require(
           params: {"layers": 'basic'},
           legend: 'bl legend',
           properties: new Backbone.Model(),
-          info: 'Mungus <a href="javascript:{}">Foogazi</a>'
+          info: 'Mungus <a href="javascript:{}">Foogazi</a>',
+          zIndex: 0,
         });
 
         var overlayLayerModel = new Backbone.Model({
@@ -57,7 +58,8 @@ require(
           expanded: true,
           legend: 'ovlery legend',
           properties: new Backbone.Model(),
-          info: 'morgos <a href="javascript:{}">Fungloid</a>'
+          info: 'morgos <a href="javascript:{}">Fungloid</a>',
+          zIndex: 1,
         });
 
         var graticuleLayerModel = new Backbone.Model({
@@ -65,8 +67,11 @@ require(
           label:"Graticule Label",
           disabled: false,
           legend: 'grid legend',
-          properties: new Backbone.Model(),
-          info: 'kriblach <a href="javascript:{}">cacto</a>'
+          properties: new Backbone.Model({
+            visibility: true
+          }),
+          info: 'kriblach <a href="javascript:{}">cacto</a>',
+          zIndex: 2,
         });
 
         var createFeatures = function(xMin, xMax, yMin, yMax, dx, dy){
@@ -111,7 +116,10 @@ require(
           colormap: Colormap.COLORMAPS['ColorBrewer:RdBu'],
           expanded: true,
           scale_type: 'diverging',
-          properties: new Backbone.Model(),
+          properties: new Backbone.Model({
+            visibility: true
+          }),
+          zIndex: 1,
         });
 
         var defaultMap = new Backbone.Model({

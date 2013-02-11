@@ -199,14 +199,14 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
 
       this.map.addLayer(layerView.layer);
 
-      if (model.get('properties').get('index')){
-        this.map.setLayerIndex(layerView.layer, model.get('index'));
+      var zIndex = model.get('zIndex');
+      if (typeof zIndex != 'undefined'){
+        this.map.setLayerZIndex(layerView.layer, zIndex);
       }
 
-      var _map = this.map;
-      model.get('properties').on('change:index', function(){
-        _map.setLayerZIndex(layerView.layer, model.get('properties').get('index'));
-      });
+      model.on('change:zIndex', function(){
+        this.map.setLayerZIndex(layerView.layer, model.get('zIndex'));
+      }, this);
 
       layerView.model.on('render:start', this.onRenderStart, this);
       layerView.model.on('render:end', this.onRenderEnd, this);
