@@ -22,6 +22,9 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       $(this.el).addClass([css_class].concat(this.css_classes).join(' '));
       this.initialRender();
       this.postInitialize();
+
+      this.formatter = options.formatter || _s.sprintf;
+      this.format = options.format || '%.3e';
     },
 
     initialRender: function(){
@@ -67,7 +70,8 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
           minAuto: '.vmin input[type="checkbox"]',
           max: '.vmax input[type="text"]',
           maxAuto: '.vmax input[type="checkbox"]',
-        }
+        },
+        formatter: this.formatter,
       });
     },
   });
@@ -79,13 +83,13 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       return (_.template(diverging_template, {view: this}));
     },
     initialize: function(options){
+      ColorScaleFormView.prototype.initialize.apply(this, arguments);
       if (typeof this.model.get('vmid') == 'undefined'){
         this.model.set('vmid', 0);
       }
       if (typeof this.model.get('vr') == 'undefined'){
         this.model.set('vr', 1);
       }
-      ColorScaleFormView.prototype.initialize.apply(this, arguments);
     },
     postInitialize: function(){
       ColorScaleFormView.prototype.postInitialize.apply(this, arguments);
@@ -107,13 +111,13 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
           mid: '.vmid-text',
           r: '.vr-text',
           rAuto: '.vr-auto-cb',
-        }
+        },
+        formatter: this.formatter,
       });
       this.model.on('change:vmid change:vr', _.throttle(this.setVMinMax, 100), this);
       this.setVMinMax();
     },
     setVMinMax: function(){
-      console.log('yo');
       var vmid = this.model.get('vmid');
       var vr = this.model.get('vr');
       if (vmid != null && vr != null){
@@ -122,7 +126,8 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
           vmax: vmid + vr,
         });
         _.each(this.labels, function($label, vminmax){
-          $label.html(this.model.get(vminmax));
+          var formattedMinMax = this.formatter(this.format, this.model.get(vminmax));
+          $label.html(formattedMinMax);
         }, this);
       }
     }
