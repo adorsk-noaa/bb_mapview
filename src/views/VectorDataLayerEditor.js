@@ -186,7 +186,13 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
 
       _.each(colorBins, function(colorBin){
         var bMin = colorBin[0][0];
+        if ($.isNumeric(bMin)){
+          bMin = bMin.toFixed(10);
+        }
         var bMax = colorBin[0][1];
+        if ($.isNumeric(bMax)){
+          bMax= bMax.toFixed(10);
+        }
         var color = colorBin[1];
         var filter = '';
         if (bMin == null && bMax != null){
