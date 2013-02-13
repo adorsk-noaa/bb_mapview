@@ -20,11 +20,13 @@ function($, Backbone, _, _s, ui, LayerOptionFormView, sequential_template, diver
       options.label = 'Color Scale';
       LayerOptionFormView.prototype.initialize.apply(this, arguments);
       $(this.el).addClass([css_class].concat(this.css_classes).join(' '));
-      this.initialRender();
-      this.postInitialize();
 
       this.formatter = options.formatter || _s.sprintf;
       this.format = options.format || '%.3e';
+
+      this.initialRender();
+      this.postInitialize();
+
     },
 
     initialRender: function(){
