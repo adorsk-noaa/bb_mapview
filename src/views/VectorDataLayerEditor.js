@@ -12,7 +12,13 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
 
   var VectorDataLayerEditorView = LayerEditorView.extend({
 
-    initialize: function(){
+    initialize: function(opts){
+      var mergedOpts = {};
+      $.extend(true, mergedOpts, {
+        numBins: 50
+      }, opts);
+      this.opts = mergedOpts;
+
       $(this.el).addClass('vector-data-layer-editor');
 
       if (! this.model.get('features')){
@@ -152,7 +158,8 @@ function($, Backbone, _, _s, ui, LayerEditorView, ColorScaleForms, Colormap){
         vmin: attrValues.vmin,
         vmax: attrValues.vmax,
         colormap: attrValues.colormap,
-        schema: 'hex'
+        schema: 'hex',
+        numBins: this.opts.numBins || 50,
       });
 
       // Add bins for values outside of bounds.
