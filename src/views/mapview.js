@@ -133,7 +133,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
           clearTimeout(this.loading_placeholder_timeout);
         }
         if (this.$loadingPlaceholder){
-          this.$loadingPlaceholder.hide('slow');
+          this.$loadingPlaceholder.fadeOut('slow');
         }
       }
     },
@@ -142,7 +142,7 @@ function($, Backbone, _, ol, template, WMSLayerView, WMTSLayerView, VectorLayerV
       if (this.$loadingPlaceholder){
         this.$loadingPlaceholder.css('left', this.$viewport.width()/2 - this.$loadingPlaceholder.width()/2);
         this.$loadingPlaceholder.css('top', this.$viewport.height()/2 - this.$loadingPlaceholder.height()/2);
-        this.$loadingPlaceholder.show('slow');
+        this.$loadingPlaceholder.fadeIn('slow');
       }
     },
 
